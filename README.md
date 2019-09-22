@@ -110,13 +110,13 @@ conn.close()
 import socket
 
 sock = socket.socket()
-sock.connect(('localhost', 9090))
-sock.send('hello, world!')
+sock.connect(("localhost", 9090))
+sock.send(bytes("hello, world", encoding="UTF-8"))
 
 data = sock.recv(1024)
 sock.close()
 
-print data
+print(data)
 ```
 
 Думаю, что все понятно, т.к. все уже разбиралось ранее. Единственное новое здесь — это метод connect, с помощью которого мы подключаемся к серверу. Дальше мы читаем 1024 байт данных и закрываем сокет.
