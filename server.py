@@ -13,7 +13,7 @@ while True:
 	if not data:
 		break
 	msg += data.decode()
-	conn.send(data)
+	conn.send(data.decode().upper().encode())
 
 print(msg)
 
