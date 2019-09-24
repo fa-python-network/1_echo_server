@@ -1,20 +1,29 @@
 import socket
 
 sock = socket.socket()
-sock.bind(('', 9092))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
+sock.bind(('', 8975))
+sock.listen(1)
 
-msg = ''
 
 while True:
-	data = conn.recv(1024)
-	if data.decode()=='exit':
-		break
-	msg += data.decode()
-	conn.send(data)
+	conn, addr = sock.accept()
+	print("Подключение к ", addr)
+	while True:
+		msg=conn.recv(1024)
+		if msg.decode()=='exit':
+			conn.send(b"bye!")
+			break
+		conn.send(b"Accepted, write on")
+		print(msg.decode())
+	conn.close()
+		
 
-print(msg)
+	#data = conn.recv(1024)
+	#if data.decode()=='exit':
+	#	break
+	#msg += data.decode()
+	#conn.send(data)
 
-conn.close()
+#print(msg)
+
+
