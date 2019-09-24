@@ -1,7 +1,18 @@
 import socket
 
-sock = socket.socket()
-sock.bind(('', 9090))
+stand_port = 9090
+print("Введите номер порта: ")
+port = int(input())
+
+if port == 0:
+	port = stand_port
+elif port >=0 and port <= 1024:
+		print("Данный порт занят, введите новое значение: ")
+		port = int(input())
+
+
+sock = socket.socket()	
+sock.bind(('', port))
 sock.listen(1)
 
 while True:
