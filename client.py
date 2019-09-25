@@ -6,9 +6,9 @@ sock.setblocking(1)
 sock.connect(('localhost', 9090))
 
 msg = input()
-
-sock.send(msg.encode())
-
+while msg!='exit':
+ sock.send(msg.encode())
+ msg= input()
 data = sock.recv(1024)
 
 sock.close()

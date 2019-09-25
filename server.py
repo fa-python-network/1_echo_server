@@ -8,12 +8,15 @@ print(addr)
 
 msg = ''
 
-while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
+while True:
+    findings = conn.recv(1024)
+    if findings:
+        data.append(findings.decode())
+    else:
+        conn.close()
+        break
+data='\n'.join(data)
+print(data)
 
 print(msg)
 
