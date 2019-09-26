@@ -1,8 +1,10 @@
 import socket
 
+port =  int(input("Порт:"))
+port = port if (port >= 0 and port <= 65535)  else  9090
 while True:
     sock = socket.socket()
-    sock.bind(('', 9090))
+    sock.bind(('', port))
     sock.listen(1)
     conn, addr = sock.accept()
     data=list()
