@@ -1,16 +1,24 @@
 import socket
-from time import sleep
+port=int(input())
+if not 0 <= port <= 65535:
+    with open('dannye.txt','w') as f:
+        f.write('Wrong port from client')
+else:
+    port=9090
+sock=socket.socket()
+sock.connect(('localhost',port))
+msg=input("Enter your message: ")
+while True:
+    if msg != 'exit':
+        sock.send(msg.encode())
+        msg=input("Enter your message: ")
+    else:
+        print('Connection end')
+        sock.close()
+        break
+#sock.close()
 
-sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+    
 
-data = sock.recv(1024)
 
-sock.close()
-
-print(data.decode())
