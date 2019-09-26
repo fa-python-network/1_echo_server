@@ -2,7 +2,7 @@ import socket
 from time import sleep
 
 sock = socket.socket()
-sock.setblocking(1)
+sock.setblocking(True)
 sock.connect(('localhost', 9090))
 
 msg = input()
@@ -14,9 +14,4 @@ while True:
 	else:
 		break
 
-
-data = sock.recv(1024)
-
 sock.close()
-
-print(data.decode())
