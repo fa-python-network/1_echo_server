@@ -3,11 +3,17 @@ from time import sleep
 
 sock = socket.socket()
 sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+sock.connect(('localhost', 9090))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+msg = input()
+#msg = "Hi!"
+while True:
+	if msg != "rabbit":
+		sock.send(msg.encode())
+		msg = input()
+	else:
+		break
+
 
 data = sock.recv(1024)
 
