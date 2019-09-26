@@ -10,7 +10,7 @@ sock.connect((input("Your host:"), p))
 msg = input()
 #msg = "Hi!"
 while True:
-	if msg != "rabbit":
+	if msg != "exit":
 		sock.send(msg.encode())
 		msg = input()
 	else:
