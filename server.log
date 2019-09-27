@@ -1,0 +1,9 @@
+2019-09-28 01:16:52,948 - serverLogger - INFO - Start server
+2019-09-28 01:16:56,354 - serverLogger - INFO - Connect client 127.0.0.1:58260
+2019-09-28 01:16:58,752 - serverLogger - INFO - From client 127.0.0.1:58260 - b'dsf'
+2019-09-28 01:16:59,631 - serverLogger - INFO - From client 127.0.0.1:58260 - b'xzcv'
+2019-09-28 01:17:00,705 - serverLogger - INFO - From client 127.0.0.1:58260 - b'asdf'
+2019-09-28 01:17:11,881 - serverLogger - INFO - From client 127.0.0.1:58270 - b'asdf'
+2019-09-28 01:17:12,928 - serverLogger - INFO - From client 127.0.0.1:58270 - b'xcv'
+2019-09-28 01:17:13,843 - serverLogger - INFO - From client 127.0.0.1:58270 - b'asdf'
+2019-09-28 01:17:14,742 - serverLogger - INFO - From client 127.0.0.1:58270 - b'qwer'
