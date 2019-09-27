@@ -2,7 +2,7 @@ import socket
 from time import sleep
 import logging as log
 
-log.basicConfig(format='%(filename)s [LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level=log.DEBUG)
+log.basicConfig(filename='client.log', format='%(filename)s [LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level=log.DEBUG)
 
 ADDRESS, PORT = 'localhost', 9797
 
@@ -24,16 +24,21 @@ if 'Enter your name' in data.decode():
 else:
     print(data.decode())
 
-msg = input('<= ')
+while True:
 
-log.debug(f'Sending "{msg}"')
-sock.send(msg.encode())
+    msg = input('<= ')
 
-log.debug('Receiving data from server')
-data = sock.recv(1024)
+    if msg == '/disconnect':
+        break
 
-log.debug(f'Disconnecting from {ADDRESS}:{PORT}')
+    log.debug(f'Sending "{msg}"')
+    sock.send(msg.encode())
+
+    log.debug('Receiving data from server')
+    data = sock.recv(1024)
+
+    log.debug(f'Disconnecting from {ADDRESS}:{PORT}')
+
+    print(f'=> {data.decode()}')
+
 sock.close()
-
-print(f'=> {data.decode()}')
-# sock.close()

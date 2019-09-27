@@ -65,8 +65,8 @@ with socket.socket() as sock:
 					break
 				data = data.decode()
 				log.info(f'Received msg: {data}')
-				if data == 'exit':
-					log.debug('Received "exit"')
+				if data == '/exit':
+					log.debug('Received "/exit"')
 					log.info('Server is closing')
 					running = False
 					conn.close()
