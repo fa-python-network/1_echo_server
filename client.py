@@ -3,11 +3,9 @@ from datetime import datetime
 
 def check_port(port):
 	default=9090
-	if type(port)=='int':
-		if 0<port<65536:
-			pass
-		else:
-			port=default
+	port=int(port)
+	if 1024<port<65536:
+		pass
 	else:
 		port=default
 	return port
