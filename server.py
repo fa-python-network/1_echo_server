@@ -1,16 +1,15 @@
 import socket
+sock=socket.socket()
+port=int(input("Give me your port, server: "))
+if not 0 <= port <= 65535:
+    with open('dannye.txt','w') as f:
+        f.write('Wrong port from server')
+else:
+    port=9092
+sock.bind(('',9092))
+sock.listen(1)
 while True:
-    sock=socket.socket()
-    port=int(input())
-    if not 0 <= port <= 65535:
-        with open('dannye.txt','w') as f:
-            f.write('Wrong port from server')
-    else:
-        port=9090
-    sock.bind(('',9090))
-    sock.listen(1)
     conn,addr=sock.accept()
-    #msg=''
     while True:
         dan=conn.recv(1024)
         if dan:
@@ -19,8 +18,7 @@ while True:
         else:
             conn.close()
         break
-#print(msg)
-conn.close()
+    conn.close()
 
    
 
