@@ -1,7 +1,7 @@
 import socket
 
 sock = socket.socket()
-num_port = input("Input port number to start a server")
+num_port = input("Input port number to start a server: ")
 try:
 	num_port = int(num_port)
 except:
@@ -27,13 +27,14 @@ while True:
 		print("Disconnection client")
 		sock.listen(1)
 		print("Server started listening")
+		tmp = input("If you want to shutdown server - input 'stop', else - input any text: ")
+		if tmp == "stop":
+			break
 		conn, addr = sock.accept()
 		print("Connected client ", addr)
 		continue
 	print("Sending data to client")
 	conn.send(data)
 
-conn.close()
-print("Disconnection client")
 sock.close()
 print("Shutdown server")
