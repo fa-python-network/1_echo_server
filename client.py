@@ -6,6 +6,12 @@ log.basicConfig(format='%(filename)s [LINE:%(lineno)d]# %(levelname)-8s [%(ascti
 
 ADDRESS, PORT = 'localhost', 9797
 
+address_ = input(f'Address (empty for {ADDRESS}): ')
+ADDRESS = address_ if address_ else ADDRESS
+port_ = input(f'Port (empty for {PORT}): ')
+PORT = port_ if port_ else PORT
+
+
 sock = socket.socket()
 log.debug('Socket sterted')
 sock.connect((ADDRESS, PORT))
