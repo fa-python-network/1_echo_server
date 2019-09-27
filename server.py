@@ -1,14 +1,19 @@
 import socket
 
 sock = socket.socket()
-sock.bind(('', 9090))
+num_port = input("Input port number to start a server")
+try:
+	num_port = int(num_port)
+except:
+	num_port = 4444
+	print("incorrect format of port number")
+sock.bind(('', num_port))
 print("Server started working")
 sock.listen(1)
 print("Server started listening")
 conn, addr = sock.accept()
-print("Connected client ", addr)
-
-msg = ''
+client_name = conn.recv(1024)
+print("Connected client ", addr, client_name.decode())
 
 while True:
 	print("Taking data from client")
@@ -25,11 +30,8 @@ while True:
 		conn, addr = sock.accept()
 		print("Connected client ", addr)
 		continue
-	msg += data.decode()
 	print("Sending data to client")
 	conn.send(data)
-
-print(msg)
 
 conn.close()
 print("Disconnection client")

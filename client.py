@@ -1,10 +1,20 @@
 import socket
 
 sock = socket.socket()
+num_port = input("Input port number of server: ")
+try:
+    num_port = int(num_port)
+except:
+    num_port = 4444
+    print("incorrect format of port number")
 print("Connection to server")
-sock.connect(('localhost', 9090))
+sock.connect(('localhost', num_port))
+client_name = input("Input your name: ")
+if not client_name:
+    client_name = "Client"
+sock.send(client_name.encode())
 while True:
-    msg = input("Введите сообщение для сервера: ")
+    msg = input("Input a message to server: ")
     print("Sending data to server")
     sock.send(msg.encode())
     if msg == "exit":
