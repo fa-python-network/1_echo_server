@@ -5,16 +5,22 @@ f = open('log.txt', 'w')
 num_port = input("Input port number to start a server: ")
 try:
 	num_port = int(num_port)
-except:
-	num_port = 4445
+except ValueError:
+	num_port = 4448
 	f.write("Incorrect format of port number\n")
+except OSError:
+	num_port += 11
+	f.write("Port is already used, it was automaticly changed")
+
+print("Server is running on port "+str(num_port)+"\n")
+
 sock.bind(('', num_port))
 f.write("Server started working\n")
 sock.listen(1)
 f.write("Server started listening\n")
 conn, addr = sock.accept()
 client_name = conn.recv(1024)
-f.write("Connected client " + str(addr) + str(client_name.decode()) + "\n")
+f.write("Connected client " + str(addr) +" "+ str(client_name.decode()) + "\n")
 
 while True:
 	f.write("Taking data from client\n")
