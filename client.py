@@ -9,13 +9,20 @@ ADDRESS, PORT = 'localhost', 9797
 address_ = input(f'Address (empty for {ADDRESS}): ')
 ADDRESS = address_ if address_ else ADDRESS
 port_ = input(f'Port (empty for {PORT}): ')
-PORT = port_ if port_ else PORT
+PORT = int(port_) if port_ else PORT
 
 
 sock = socket.socket()
-log.debug('Socket sterted')
+log.debug('Socket started')
 sock.connect((ADDRESS, PORT))
 log.info(f'Connected to {ADDRESS}:{PORT}')
+
+data = sock.recv(1024)
+if 'Enter your name' in data.decode():
+    name = input(data.decode())
+    sock.send(name.encode())
+else:
+    print(data.decode())
 
 msg = input('<= ')
 
