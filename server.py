@@ -4,7 +4,10 @@ from json import load, dump
 
 log.basicConfig(filename = 'server.log', format='%(filename)s [LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level=log.DEBUG)
 
-def get_address():
+def get_address() -> str:
+	"""
+	Get your local ip-address 
+	"""
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
 		s.connect(('8.8.8.8', 53))
@@ -27,7 +30,10 @@ PORT = port_ if port_ else PORT
 
 
 
-def identify(addr, conn):
+def identify(addr: str, conn: socket.socket) -> None:
+	"""
+	Read saved id's and greet user
+	"""
 	with open('identify.json', encoding='utf-8') as f:
 		data = load(f)
 	if addr in data:
@@ -67,14 +73,14 @@ with socket.socket() as sock:
 				log.info(f'Received msg: {data}')
 				if data == '/exit':
 					log.debug('Received "/exit"')
-					log.info('Server is closing')
 					running = False
 					conn.close()
 					break
 				conn.send(data.encode())
+	except KeyboardInterrupt:
+		log.debug('Received Ctrl+C')
 	except Exception as e:
 		log.critical(f'Exception {e.__class__.__name__}: {e}')
 	finally:
-		log.debug('Received Ctrl+C')
 		log.info('Server is closing')
 		sock.close()
