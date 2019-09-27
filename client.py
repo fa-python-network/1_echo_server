@@ -5,7 +5,7 @@ num_port = input("Input port number of server: ")
 try:
     num_port = int(num_port)
 except:
-    num_port = 4444
+    num_port = 4445
     print("incorrect format of port number")
 print("Connection to server")
 sock.connect(('localhost', num_port))
