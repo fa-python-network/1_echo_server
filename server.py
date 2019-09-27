@@ -34,9 +34,9 @@ while True:
 		data = conn.recv(1024) 
 		log(f"Получает новые данные от пользователя {addr[0]}:{addr[0]}")
 		if not data: 
-		msg += data.decode("utf-8") 
-		conn.send(data) 
-		log(f"Отправка '{data}' пользователю {addr[0]}:{addr[0]}")
+			msg += data.decode("utf-8") 
+			conn.send(data) 
+			log(f"Отправка '{data}' пользователю {addr[0]}:{addr[0]}")
 	log(f"Пользователь {addr[0]}:{addr[0]} отключился")
 	print(msg) 
 
