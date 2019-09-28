@@ -1,3 +1,5 @@
+import json
+
 from socket import socket, SO_REUSEADDR, SOL_SOCKET
 from asyncio import Task, get_event_loop
 from threading import Thread
@@ -149,7 +151,6 @@ class Loger(Thread):
 
 
 class Peer(object):
-
     ENCODING = "utf-8"
     BUFFER_SIZE = 1024
 
@@ -209,6 +210,9 @@ class Peer(object):
             if data == "exit":
                 self.loger.socket_closed_other_side(self.address)
                 self._server.peer_remove(self)
+            elif self._server.db[self.address[0]] is None:
+                self._server.db.update({self.address[0]: data})
+                await self.send(f"Запомнили ваше имя, {data}")
 
 
 class Server(object):
@@ -220,7 +224,7 @@ class Server(object):
         :param host:
         :param port:
         :param listen:
-        """ 
+        """
 
         self.loop = get_event_loop()
         self._server_sock = socket()
@@ -231,12 +235,40 @@ class Server(object):
         self.loger = Loger(host, port)
         self.loger.run()
         self._users = list()
+        self.db = self.open_file()
         Task(self._server())
         self.loger.server_is_running()
         try:
             self.loop.run_forever()
         except KeyboardInterrupt:
             self.loger.server_is_stopped()
+            self.close_file()
+
+    def open_file(self, file_name: str = "db.json") -> dict:
+        """
+        Открывает файл
+
+        :param file_name:
+        :return:
+        """
+        try:
+            open(file_name)
+        except (FileNotFoundError, IOError):
+            self.close_file({})
+        with open(file_name, 'r', encoding='utf-8') as file_one:
+            return json.load(file_one)
+
+    def close_file(self, data: dict = None, file_name: str = "db.json"):
+        """
+        Открывает файл
+
+        :param data:
+        :param file_name:
+        :return:
+        """
+
+        with open(file_name, 'w', encoding='utf-8') as file_one:
+            json.dump(self.db if data is None else data, file_one, ensure_ascii=False, sort_keys=False, indent=4)
 
     def peer_remove(self, peer: Peer):
         """
@@ -262,7 +294,15 @@ class Server(object):
             user = Peer(self, user_sock, client, self.loger)
             self._users.append(user)
             self.loger.new_connection(user.address)
-            message = f"Привет {user.address[0]}:{user.address[1]}!"
+            if user.address[0] in self.db:
+                if self.db[user.address[0]] is None:
+                    message = "Привет! Прошлый раз ты так и не отправил свое имя. Пришли свое имя :)"
+                else:
+                    message = f"Привет {self.db[user.address[0]]}"
+            else:
+                self.db.update({user.address[0]: None})
+                message = f"Привет! Давай знакомиться! Пришли свое имя"
+            print(self.db)
             await user.send(message)
             self.loger.send_data(user.address, message)
 
@@ -320,7 +360,6 @@ class Ports(socket):
 
 
 if __name__ == '__main__':
-
     # Это для будущих поколений(4 задание), я думаю оно только мешает, ибо порт задается насольно, и я уверен,
     # что он свободен
 
@@ -333,4 +372,5 @@ if __name__ == '__main__':
     # server = Server(host=answer, port=Ports().select_port())
     # Написано за 1 час, 30 минут
 
+    # server = Server(port=9090)
     server = Server(port=Ports().select_port())
