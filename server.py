@@ -16,7 +16,7 @@ while True:
             break
         msg += ' ' + data.decode()
         conn.send(data)
+        
 
     conn.close()
-
     print('Соединение завершено')
