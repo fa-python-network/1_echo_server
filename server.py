@@ -182,7 +182,7 @@ class Peer(object):
 
     async def _peer_handler(self):
         """
-        Получает новых данных для сокета экземлпляра текущего класса
+        Получает новые данные для сокета экземпляра текущего класса
 
         :return:
         """
@@ -260,7 +260,7 @@ class Server(object):
 
     def close_file(self, data: dict = None, file_name: str = "db.json"):
         """
-        Открывает файл
+        Закрывает файл
 
         :param data:
         :param file_name:
