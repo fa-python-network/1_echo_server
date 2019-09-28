@@ -10,17 +10,19 @@ count_of_clients = 1
 sock.listen(count_of_clients)
 print(f'Сервер готов к прослушиванию')
 
-conn, addr = sock.accept()
-print(f'Сервер подключился к клиенту {addr}')
-
 while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	conn.send(data)
+	conn, addr = sock.accept()
+	print(f'Сервер подключился к клиенту {addr}')
+	while True:
+		data = conn.recv(1024)
+		if not data:
+			break
+		conn.send(data)
+		print('Отправка сообщения клиенту')
+	conn.close()
+	print('Соединение завершено')
 
-conn.close()
-print('Соединение завершено')
+
 
 
 
