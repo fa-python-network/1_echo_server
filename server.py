@@ -1,20 +1,14 @@
 import socket
-
 sock = socket.socket()
-sock.bind(('', 9090))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
-
-msg = ''
-
+sock.bind(("",9094))
+sock.listen(5)
 while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
-
-print(msg)
-
-conn.close()
+    conn, addr = sock.accept()
+    print(addr)
+    msg =''
+    data = conn.recv(1024)
+    print(f'Data: {data.decode()}')
+    msg = data.decode()    
+    print(f'MSG: {msg}')
+    conn.send(msg.encode())
+    conn.close()
