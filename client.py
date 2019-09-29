@@ -13,7 +13,20 @@ while True:
 sock.send(msg.encode())
 
 data = sock.recv(1024)
+host=input()
+hostlt=host.split(".",4)
+for i in hostlt:
+	if 0<=int(i)<=255:
+		pass
+	else
+		host='localhost'
+port=input()
+if 1024 <=int(port)<=65535:
+	pass
+else:
+	port=9091
 
 sock.close()
 
 print(data.decode())
+
