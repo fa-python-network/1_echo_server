@@ -2,9 +2,9 @@ import socket
 from time import sleep
 import re
 while True:
-    inputPort = input('Vvedite port nomber or \'Ok\' if you want port 9090: ')
-    if inputPort == 'Ok':
-        print('Ok')
+    inputPort = input('Vvedite port nomber or \'ok\' if you want port 9090: ')
+    if inputPort == 'ok':
+        print('ok')
         inputPort = 9090
         break
     elif not inputPort.isnumeric():
@@ -16,9 +16,9 @@ while True:
         print('great')
         break
 while True:
-    inputHost = input('Vvedite host or \'Ok\' if you want localhost: ')
-    if inputHost == 'Ok':
-        print('Ok')
+    inputHost = input('Vvedite host or \'ok\' if you want localhost: ')
+    if inputHost == 'ok':
+        print('ok')
         inputHost = 'localhost'
         break
     elif re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', inputHost) == None:

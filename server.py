@@ -1,27 +1,38 @@
 import socket
-
+f = open ('log.txt', 'w')
 sock = socket.socket()
-sock.bind(('', 9091))
-print("Server starts")
+sock.bind(('', 9019))
+print("Server starts", file = f)
 sock.listen(0)
-print("Now listen")
+print("Now listen", file = f)
 
 while True:
     conn, addr = sock.accept()
-    print("new connection: " + f"{addr}")
+    print("connection: " + f"{addr}", file = f)
 
     msg = ''
+    e = ''
 
     while True:
+
         data = conn.recv(1024)
-        print("new data from client")
+        print("new data from client", file = f)
         if not data:
             break
         msg += data.decode()
         conn.send(data)
-        print("data to client")
+        print("data to client", file = f)
+
 
     print(msg)
 
     conn.close()
-    print('stop client')
+    print('stop client', file = f)
+    e = input('To stop vvevide \'stop\' if not something else: ')
+    if e == 'stop':
+        sock.close()
+        print('server stop', file = f)
+        f.close()
+        break
+
+
