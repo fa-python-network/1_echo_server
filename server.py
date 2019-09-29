@@ -1,13 +1,14 @@
 import socket
 from datetime import datetime
-
+from contextlib import closing
 class Server():
 	def __init__(self, log = "file.log"):
 		self.__log = log
 		self.port =  int(input("Порт:"))
-		self.port = self.port if (self.port >= 0 and self.port <= 65535)  else  9090
 	@property
 	def startServer(self):
+		self.port = self.check_port()
+		print(f"Ваш порт {self.port}")
 		while True:
 			sock = socket.socket()
 			sock.bind(('', self.port))
@@ -24,6 +25,18 @@ class Server():
 					conn.close()
 					self.serverStopped(addr)
 					break
+
+	def check_port(self):
+		self.port = self.port if (self.port >= 0 and self.port <= 65535)  else  9090
+		for port in range(self.port, 65536):
+			try:
+				sock = socket.socket()
+				sock.bind(('',port))
+				sock.close
+				return port
+			except:
+				pass
+		assert False, "Порт не найден"
 	def serverStarted(self,ip):
 		with open(self.__log, "a", encoding="utf-8") as f:
 			print(f"{datetime.now().time()} Server Launched {ip}", file=f)
