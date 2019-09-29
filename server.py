@@ -23,20 +23,32 @@ while True:
 	else:
 		print('Введен неверный формат адреса.')
 		file.write("Введен неверный адрес хоста, запрашиваю адрес снова.\n")
+
+
 while True:
 	file=open('server.log','a')
 	port=input('Введите номер порта от 1024 до 49151: \n')
+	port=int(port)
 	file.write("Запрашиваю номер порта...\n")
-	if 1023<int(port)<49152:
+	if 1023<port<49152:
 		file.write(f"введенный номер порта: {port} \n")
 		file.close()
 		break
 	else:
 		print('Неверный номер порта.')
 		file.write("введен неверный номер порта, запрашиваю номер снова...\n")
-sock.bind(('', int(port)))
-sock.listen(1)
+while True:
+	try:
+		sock.bind(('', port))
+		break
+	except:
+		if 1023<port<=49150:
+			port+=1
+		else:
+			port=9090
 
+sock.listen(1)
+print(f'Слушаю порт {port}.')
 while True:
 	file=open('server.log','a')
 	conn, addr = sock.accept()
