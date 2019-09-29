@@ -1,0 +1,5 @@
+server starts
+listen
+data from client to server
+data from server to client
+stop
