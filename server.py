@@ -5,9 +5,13 @@ while True:
 	if 65535>=port>=1024:
 		break
 	print("Mistakes were made....")
+
 sock = socket.socket()
 sock.bind(('', port))
+log = open('log.txt','w')
+log.write("Server starts working!")
 sock.listen(0)
+msg=''
 while True:
 
 	conn, addr = sock.accept()
@@ -21,7 +25,7 @@ while True:
 			break
 		msg += data.decode()
 		conn.send(data)
-
+	log.write("Message is received")
 	print(msg)
 
 	conn.close()
