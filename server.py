@@ -9,12 +9,17 @@ print(addr)
 msg = ''
 
 while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
-
-print(msg)
+	try:
+		conn, addr = sock.accept()
+	except sock.error:
+		pass
+	msg = ''
+	while True:
+		data = conn.recv(1024)
+		if not data:
+			break
+		msg+=data.decode()
+		conn.send(data)
+	print(msg)
 
 conn.close()
