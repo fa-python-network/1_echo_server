@@ -8,3 +8,7 @@ sock.send(msg.encode())
 
 response = sock.recv(1024).decode()
 print(response)
+
+s = str(input('Tell somethink:'))
+if s = 'exit':
+  sock.close()
