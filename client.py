@@ -29,8 +29,18 @@ sock = socket.socket()
 sock.setblocking(1)
 sock.connect((inputHost, inputPort))
 print("Connection with server")
+aut = sock.recv(1024).decode()
+print(aut)
+if aut == 'Hello, You\'re new, please enter you name ':
+    sock.send(input().encode())
+    print(sock.recv(1024).decode())
+    sock.send(input().encode())
+else:
+    sock.send(input().encode())
+aut = sock.recv(1024).decode()
+print(aut)
 data = b''
-while True:
+while aut != 'It\'s Not Correct':
     msg = input("Vvedite: ")
     if msg == "exit":
         sock.close()
