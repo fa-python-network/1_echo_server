@@ -18,13 +18,14 @@ port = 8080
 client_base='serverclients.pickle'
 ourclients={}
 
+#6 task
 #меняем порт, если он занят
-#while True:
-#	try:
-#		sock.bind(('', port))
-#		break
-#	except:
-#		port+=1
+while True:
+	try:
+		sock.bind(('', port))
+		break
+	except:
+		port+=1
 
 sock.bind(('', port))
 print(f'Сервер подключился к порту {port}')
