@@ -1,20 +1,25 @@
 import socket
+import re
 
 sock = socket.socket()
 sock.bind(('', 9090))
 sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
 
-msg = ''
+logfile = open('logfile.txt', 'w')
 
 while True:
-	data = conn.recv(1024)
-	if not data:
+	msg = ''
+	conn, addr = sock.accept()
+	logfile.write(str(addr[0])+" "+str(addr[0])+"\n")
+	while True:
+		data = conn.recv(1024)
+		if not data:
+			break
+		msg += data.decode()
+		conn.send(data)
+		logfile.write(msg+"\n")
+	if "exit" in msg:
 		break
-	msg += data.decode()
-	conn.send(data)
-
-print(msg)
 
 conn.close()
+
