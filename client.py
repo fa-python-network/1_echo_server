@@ -34,7 +34,7 @@ while True:
 	msg+=client_msg+' '
 	sock.send(msg.encode())
 
-data = sock.recv(1024)
-print(data.decode())
+#data = sock.recv(1024)
+#print(data.decode())
 
 
