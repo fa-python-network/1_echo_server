@@ -1,6 +1,5 @@
 import socket
 import re
-from time import sleep
 
 while True:
     port = input('Введите порт от 1024 до 65535: \n')
