@@ -24,7 +24,7 @@ while True:
     print("connection: " + f"{addr}", file = f)
     with open("dataClients.json", "r+") as d:
         data = json.loads(d.read())
-        for i in data: #цикл на проверку пользователя
+        for i in data['clients']: #цикл на проверку пользователя
             if i['ip'] == addr[0]:
                 conn.send(b'Hello, enter the password: ')
                 if (conn.recv(1024)).decode() != i['password']:
@@ -41,7 +41,7 @@ while True:
             conn.send(b'And you\'re secret password ')
             password= conn.recv(1024).decode()
             newclient = {"ip": addr[0], "name": name, "password": password}
-            data.append(newclient)
+            data['clients'].append(newclient)
             d.seek(0)
             d.write(json.dumps(data))
             d.truncate()
