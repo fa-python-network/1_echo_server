@@ -5,11 +5,15 @@ sock = socket.socket()
 sock.setblocking(1)
 sock.connect(('localhost', 9090))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+while True:
 
-data = sock.recv(1024)
+	msg = input()
+	# msg = "Hi!"
+	sock.send(msg.encode())
+	if "exit" in msg:
+		break
+
+	data = sock.recv(1024)
 
 sock.close()
 
