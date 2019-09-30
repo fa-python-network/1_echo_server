@@ -1,8 +1,18 @@
 import socket
 
+host=input('Введите имя хоста или нажмите Enter для использования значения по умолчанию ')
+port=input('Введите номер порта или нажмите Enter для использования значения по умолчанию ')
+
+if host == '':
+    host = 'localhost'
+if port == '':
+    port = 9090
+else:
+    port=int(port)
+
 sock = socket.socket()
 
-sock.connect(('localhost', 9090))
+sock.connect((host, port))
 print('Соединение с сервером')
 
 msg = input('Для окончания работы с сервером введите exit ')
