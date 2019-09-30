@@ -5,7 +5,7 @@ port_standart = 9080
 server_standart = 'localhost'
 
 
-server = input("Введите сервера ")
+server = input("Введите номер сервера: ")
 server1 = server.split(".", 4)
 for el in server1:
 	el = int(el)
@@ -14,7 +14,7 @@ for el in server1:
 	else:
 		server = server_standart
 
-port = input("Введите номер порта ")
+port = input("Введите номер порта: ")
 if 1024<=int(port)<=65535:
 	pass
 else:
@@ -22,23 +22,29 @@ else:
 
 
 sock.connect((server, int(port)))
-#msg = ''
-#while True:
-data = sock.recv(1024)
-#	if not data:
-#		break
-#	msg+=data.decode()
-print(data.decode())
+data = sock.recv(1024).decode()
+print(data)
 
-msg2 = ''
-while True:
-	msg = input()
-	if msg == "exit":
-		break
-	msg2 = msg2 + msg
-
-
-sock.send(msg2.encode())
-
+#Если пользователь зарегестрирован, тогда просим ввести пароль
+if "Введи пароль." in data:
+	passwd = input()
+	sock.send(passwd.encode())
+	answer = sock.recv(1024).decode()
+	print(answer)
+#Если пользователь не зарегестрирован, 
+#тогда создаем нового пользователя
+elif "Введите свое имя" in data:
+	#Вводим имя
+	name = input()
+	sock.send(name.encode())
+	#Сообщение сервера о том, что нужно создать пароль
+	answer = sock.recv(1024).decode()
+	print(answer)
+	#Создаем пароль
+	passwd = input()
+	sock.send(passwd.encode())
+	#Сообщение от сервера о том, что все успешно.
+	answer = sock.recv(1024).decode()
+	print(answer)
 
 sock.close()
