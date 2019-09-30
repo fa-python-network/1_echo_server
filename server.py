@@ -22,7 +22,7 @@ while True:
     conn, addr = sock.accept()
     print(f"{addr[0]}")
     print("connection: " + f"{addr}", file = f)
-    with open("dataClients.json", "r+") as d:
+    with open("dataClients.json", "r+") as d:    #проверка пользователя с помощью файла
         data = json.loads(d.read())
         for i in data['clients']: #цикл на проверку пользователя
             if i['ip'] == addr[0]:
@@ -47,7 +47,7 @@ while True:
             d.truncate()
             conn.send(b'congratulation')
             cor = True
-   #проверка пользователя с помощью файла
+
     msg = ''
     e = ''
 

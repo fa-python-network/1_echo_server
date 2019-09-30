@@ -31,11 +31,11 @@ sock.connect((inputHost, inputPort))
 print("Connection with server")
 aut = sock.recv(1024).decode()
 print(aut)
-if aut == 'Hello, You\'re new, please enter you name ':
+if aut == 'Hello, You\'re new, please enter you name ': #регистрация нового пользователя
     sock.send(input().encode())
     print(sock.recv(1024).decode())
     sock.send(input().encode())
-else:
+else: #ввод пароля
     sock.send(input().encode())
 aut = sock.recv(1024).decode()
 print(aut)
