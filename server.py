@@ -11,15 +11,15 @@ while True:
 
 sock = socket.socket()
 sock.bind(('',port))
-print("just started...", file=f)
+f.write("just started...")
 sock.listen(0)
-print("listening...", file=f)
+f.write("listening...")
 
 while True:
 	conn,addr=sock.accept()
 	print(addr)
 
-	print('getting a message...', file=f)
+	f.write('getting a message...')
 	msg = ''
 	while True:
 		data = conn.recv(1024)
@@ -28,6 +28,6 @@ while True:
 		msg = data.decode()
 	#conn.send(data)
 	print(msg)
-print('closing...', file=f)
+f.write('closing...')
 f.close()
 conn.close()
