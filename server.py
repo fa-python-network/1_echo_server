@@ -10,7 +10,7 @@ sock = socket.socket()
 while True:
 	try:
 		sock.bind(('', port))
-	except:
+	except: 
 		port=port+1
 	else:
 		break
@@ -24,9 +24,28 @@ msg=''
 while True:
 
 	conn, addr = sock.accept()
-	print(addr)
+	print(addr[0])
 
 	msg = ''
+	names = open('names.txt','r')
+	nameflag=0
+	for i in names:
+		
+		if i.split(',')[0]=="['"+addr[0]+"'":
+			conn.send(str("Hello, "+str(i.split(',')[1])[2:-3]).encode())
+			nameflag=1
+			break
+
+	names.close()
+	if nameflag==0:
+		conn.send(("Enter your name please").encode())
+		name=(conn.recv(1024)).decode()
+		names = open('names.txt','a')
+		names.write(str([addr[0],name])+"\n")
+		names.close()
+		
+ 
+
 
 	while True:
 		data = conn.recv(1024)
@@ -36,5 +55,5 @@ while True:
 		conn.send(data)
 	log.write("Message is received")
 	print(msg)
-
+	log.close()
 	conn.close()

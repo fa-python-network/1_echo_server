@@ -24,6 +24,11 @@ while True:
 sock = socket.socket()
 sock.setblocking(1)
 sock.connect((ip, port))
+name_msg=sock.recv(1024).decode()
+print(name_msg)
+if name_msg=="Enter your name please":
+	name=input()
+	sock.send(name.encode())
 msg=""
 while msg!='exit':
 	msg = input()
