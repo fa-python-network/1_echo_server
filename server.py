@@ -7,7 +7,16 @@ while True:
 	print("Mistakes were made....")
 
 sock = socket.socket()
-sock.bind(('', port))
+while True:
+	try:
+		sock.bind(('', port))
+	except:
+		port=port+1
+	else:
+		break
+print("Port is ",port)
+
+
 log = open('log.txt','w')
 log.write("Server starts working!")
 sock.listen(0)
