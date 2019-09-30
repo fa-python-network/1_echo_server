@@ -1,8 +1,19 @@
 import socket
 f = open ('log.txt', 'w')
 sock = socket.socket()
-sock.bind(('', 9019))
+freeHost = 1025
+while True:
+    try:
+        if freeHost == 65536:
+            print('All ports busy')
+            break
+        sock.bind(('', freeHost))
+        break
+    except:
+        freeHost += 1
+print(freeHost)
 print("Server starts", file = f)
+print("Server starts")
 sock.listen(0)
 print("Now listen", file = f)
 
