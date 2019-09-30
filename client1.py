@@ -5,7 +5,7 @@ port_standart = 9080
 server_standart = 'localhost'
 
 
-server = input("Введите сервер ")
+server = input("Введите сервера ")
 server1 = server.split(".", 4)
 for el in server1:
 	el = int(el)
@@ -21,7 +21,15 @@ else:
 	port = port_standart
 
 
-sock.connect((server, port))
+sock.connect((server, int(port)))
+#msg = ''
+#while True:
+data = sock.recv(1024)
+#	if not data:
+#		break
+#	msg+=data.decode()
+print(data.decode())
+
 msg2 = ''
 while True:
 	msg = input()
