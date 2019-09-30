@@ -1,20 +1,26 @@
 import socket
 
+while True:
+	port = int(input('enter your port: '))
+	if 1024<=port<=65525:
+		break
+	else:
+		print('wrong port...')
+
 sock = socket.socket()
-sock.bind(('', 9090))
+sock.bind(('',port))
 sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
+
+while True:
+	conn,addr=sock.accept()
+	print(addr)
 
 msg = ''
-
 while True:
 	data = conn.recv(1024)
 	if not data:
 		break
-	msg += data.decode()
-	conn.send(data)
-
+	msg = data.decode()
+conn.send(data)
 print(msg)
-
 conn.close()
