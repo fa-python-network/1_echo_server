@@ -1,20 +1,26 @@
 import socket
 
+file = open('log1.txt', 'w')
 sock = socket.socket()
-sock.bind(('', 9090))
+sock.bind(('', 9095))
 sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
-
-msg = ''
-
 while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
+	conn, addr = sock.accept()
+	file.write(str(addr[0]) + " " + str(addr[0]) + "\n")
+	#print(addr)
 
-print(msg)
+	msg = ''
+
+	while True:
+		data = conn.recv(1024)
+		if not data:
+			break
+		msg += data.decode()
+		conn.send(data)
+		file.write(msg + "\n")
+
+	if "exit" in msg:
+		break
+	#print(msg)
 
 conn.close()
