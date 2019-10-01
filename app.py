@@ -2,6 +2,7 @@ import os
 import socket
 import sys
 from threading import Thread
+from common import SocketMethods
 
 sock = socket.socket()
 
@@ -15,17 +16,28 @@ else:
     port = int(port)
 
 sock.connect((address, port))
-ENCODING = 'utf-8'
 os.system('')
+
+try:
+    with open('.token', 'r') as file:
+        token = file.read()
+except FileNotFoundError:
+    token = '--no token--'
+SocketMethods.send_text(sock, token)
 
 
 def receive_messages():
     while True:
-        received = sock.recv(1024).decode(ENCODING)
+        received = SocketMethods.receive_text(sock)
+        if received[:2] == '//':
+            if received == '//close':
+                sock.close()
+                break
+            if received == '//token':
+                with open('.token', 'w') as file:
+                    file.write(SocketMethods.receive_text(sock))
+                continue
         print(received)
-        if 'Closing connection' in received:
-            sock.close()
-            break
     sys.exit()
 
 
@@ -33,4 +45,4 @@ Thread(target=receive_messages, daemon=True).start()
 
 while True:
     message = input()
-    sock.send(message.encode(ENCODING))
+    SocketMethods.send_text(sock, message)
