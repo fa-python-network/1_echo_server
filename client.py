@@ -3,7 +3,7 @@ import re
 from time import sleep
 
 while True:
-	port = int(input('укажите порт в диапазоне 1024-65535: \n))
+	port = int(input('укажите порт в диапазоне 1024-65535: \n'))
 	if 1024<= port <= 65535:
 		break
 	else:
@@ -14,7 +14,7 @@ while True:
 	if ip =='':
 		ip= 'localhost'
 		break
-	elif re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip) == None:
+	elif re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip) == None:
 		print('введите снова')
 	else:
 		break

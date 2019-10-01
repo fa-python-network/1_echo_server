@@ -3,14 +3,15 @@ import socket
 sock = socket.socket()
 f = open ('logfile.txt', 'w')
 
-
+port=9090
 while True:
-	port = int(input('укажите порт в диапазоне 1024-65535: \n'))
-	if 1024<= port <= 65535:
+	try:
+		sock.bind(('',port))
 		break
-	else:
-		print('ошибка, введите порт снова')
-sock.blind(('',int(port)))
+	except:
+		port+=1
+print(port)
+
 print ("server starts", file = f)
 sock.listen(0)
 print("listen",file = f)
