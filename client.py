@@ -3,7 +3,7 @@ from time import sleep
 
 sock = socket.socket()
 sock.setblocking(1)
-sock.connect(('localhost', 9090))
+sock.connect(('localhost', 9091))
 
 while True:
 
