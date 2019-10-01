@@ -1,7 +1,8 @@
 import socket
 import re
+import time
 
-
+lgf = open("logfile.txt", "a+")
 def checker():
     port = "4000"
     host = "localhost"
@@ -10,7 +11,7 @@ def checker():
           )
     while True:
         uhost = input("vvedite host:\n")
-        if uhost == "default" or uhost == "localhost":
+        if uhost == "default" or uhost == "localhost" or uhost == "lh":
             break
         elif re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', uhost) == None:
             print("try again")
@@ -34,18 +35,19 @@ sock = socket.socket()
 sock.bind(res)
 sock.listen(0)
 msg = ""
-print("\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n")
+print("SERVER IS ON")
+lgf.write(time.ctime()+"\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n\n")
 while True:
 	conn, addr = sock.accept()
-	print(f"CONNECTION FROM\nIP = {addr[0]} PORT = {addr[1]} \n")
+	lgf.write(time.ctime() + f"\nCONNECTION FROM IP = {addr[0]} PORT = {addr[1]}\nMESSAGES:\n\n")
 	while True:
 		data = conn.recv(1024)
 		if not data:
-			print("CLIENT DISCONNECTED\n")
+			lgf.write(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
 			break
 		msg += data.decode()
 		# conn.send(data)
-		print(data.decode(),'\n')
-
+		lgf.write(data.decode()+"\n\n")
 
 conn.close()
+lgf.close()

@@ -11,7 +11,7 @@ def checker():
           )
     while True:
         uhost = input("vvedite host:\n")
-        if uhost == "default" or uhost == "localhost":
+        if uhost == "default" or uhost == "localhost" or uhost == "lh":
             break
         elif re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', uhost) == None:
             print("try again")
@@ -29,22 +29,19 @@ def checker():
             break
     return host, int(port)
 
-
 res = checker()
+print('TYPE YOUR MESSAGES HERE, "exit" TO DISCONNECT')
 sock = socket.socket()
 sock.setblocking(1)
 sock.connect(res)
 
 while True:
-
-	msg = input()
-	# msg = "Hi!"
-	sock.send(msg.encode())
-	if "exit" in msg:
-		break
-
-	# data = sock.recv(1024)
+    msg = input()
+    # msg = "Hi!"
+    sock.send(msg.encode())
+    if "exit" in msg:
+        print("DISCONNECTING...")
+        break
+    # data = sock.recv(1024)
 
 sock.close()
-
-# print(data.decode())
