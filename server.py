@@ -3,6 +3,8 @@ import re
 import time
 
 lgf = open("logfile.txt", "a+")
+
+
 def checker():
     port = "4000"
     host = "localhost"
@@ -27,27 +29,42 @@ def checker():
         else:
             port = uport
             break
-    return host, int(port)
+    resu = [host, int(port)]
+    return resu
 
 
-res = checker()         
+res = checker()
 sock = socket.socket()
-sock.bind(res)
+while True:
+    try:
+        print("PORT =", res[1])
+        sock.bind((res[0], res[1]))
+        break
+    except:
+        print("PORT ALREADY IN USE, TRYING THE NEXT ONE")
+        res[1] += 1
+
+
+
 sock.listen(0)
 msg = ""
 print("SERVER IS ON")
-lgf.write(time.ctime()+"\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n\n")
+# lgf.write(time.ctime()+"\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n\n")
+print(time.ctime()+"\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n\n")
 while True:
-	conn, addr = sock.accept()
-	lgf.write(time.ctime() + f"\nCONNECTION FROM IP = {addr[0]} PORT = {addr[1]}\nMESSAGES:\n\n")
-	while True:
-		data = conn.recv(1024)
-		if not data:
-			lgf.write(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
-			break
-		msg += data.decode()
-		# conn.send(data)
-		lgf.write(data.decode()+"\n\n")
+    conn, addr = sock.accept()
+    # lgf.write(time.ctime() + f"\nCONNECTION FROM IP = {addr[0]} PORT = {addr[1]}\nMESSAGES:\n\n")
+    print(time.ctime() + f"\nCONNECTION FROM IP = {addr[0]} PORT = {addr[1]}\nMESSAGES:\n\n")
+    while True:
+        data = conn.recv(1024)
+        if not data:
+            print(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
+            # lgf.write(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
+            break
+        msg += data.decode()
+        # conn.send(data)
+        # lgf.write(data.decode()+"\n\n")
+        print(data.decode()+"\n\n")
 
 conn.close()
 lgf.close()
