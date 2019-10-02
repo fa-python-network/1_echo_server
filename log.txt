@@ -7,3 +7,8 @@ server responds to a client
 server receives datd from client ('127.0.0.1', 51280)
 server responds to a client
 server receives datd from client ('127.0.0.1', 51280)
+server uses port 45257
+server starts listen client
+server receives datd from client ('127.0.0.1', 37692)
+server uses port 9090
+server starts listen client

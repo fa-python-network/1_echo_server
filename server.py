@@ -2,7 +2,12 @@ import socket
 port = 9090
 file = open("log.txt", "a")
 sock = socket.socket()
-sock.bind(('', port))
+try:
+	sock.bind(('', port))
+except OSError: 
+	sock.bind(('',0))
+	port = sock.getsockname()[1]
+	print(f"use port {port}")
 file.write(f'server uses port {port}\n')
 
 sock.listen()

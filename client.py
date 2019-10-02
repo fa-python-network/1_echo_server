@@ -21,6 +21,8 @@ while k==False:
 			sock.send(msg.encode())
 			msg = input()
 		k=True
+	except KeyboardInterrupt:
+		break
 	except:
 		print("wrong host or port")
 	#data = sock.recv(1024)
