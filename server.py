@@ -1,4 +1,11 @@
 import socket
+import logging
+
+logger = logging.getLogger("logger")
+logger.setLevel(logging.INFO)
+log_handler = logging.FileHandler(filename = "info.log", encoding = "UTF-8")
+log_handler.setLevel(logging.INFO)
+logger.addHandler(log_handler)
 
 stand_port = 9090
 print("Введите номер порта: ")
@@ -15,9 +22,10 @@ sock = socket.socket()
 sock.bind(('', port))
 sock.listen(1)
 
+
 while True:
 	conn, addr = sock.accept()
-	print(addr)
+	logger.info(addr)
 
 	msg = ''
 
@@ -31,3 +39,4 @@ while True:
 	print(msg)
 
 	conn.close()
+
