@@ -1,41 +1,35 @@
 import socket
-
-log=''
+import logging
+logging.basicConfig(filename='sample.log', level=logging.INFO)
 
 while True:
-	port = int(input('enter your port: '))
+	port=int(input('enter port '))
 	if 1024<=port<=65525:
 		break
 	else:
-		print('wrong port...')
+		print('mistake')
 
 sock = socket.socket()
-sock.bind(('',port))
-with open('log.txt', 'a') as handle:
-	print('just started', file=handle)
-log+='just started...'
+sock.bind(('', port))
+logging.info('started')
 sock.listen(1)
-with open('log.txt', 'a') as handle:
-	print('connected...', file=handle)
+logging.info('listening')
 
 while True:
 	conn,addr=sock.accept()
 	print(addr)
 	print('dead')
-	log+='\nconnected...'
 
 	msg = ''
 	while True:
 		data = conn.recv(1024)
 		if not data:
 			break
-		with open('log.txt', 'a') as handle:
-			print('got a message from client', file=handle)
+		logging.info('got a message')
 		if 'exit' in input():
 			conn.close()
 		msg = data.decode()
 		print(msg)
 
-
-	#conn.send(data)
+logging,info('done')
 conn.close()
