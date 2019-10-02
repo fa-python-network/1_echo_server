@@ -34,7 +34,15 @@ while mem:
 port = int(port)
 sock = socket.socket()
 sock.connect((adress, port))
-print(sock.recv(1024))
+ans = sock.recv(1024)
+ans = ans.decode()
+print(ans)
+if "Введите" in ans:
+    name = input()
+    sock.send(name.encode())
+    ans = sock.recv(1024)
+    ans = ans.decode()
+    print(ans)
 
 ex = True
 while ex:
