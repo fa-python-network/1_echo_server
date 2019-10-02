@@ -37,12 +37,27 @@ sock.connect((adress, port))
 ans = sock.recv(1024)
 ans = ans.decode()
 print(ans)
+access = False
+
 if "Введите" in ans:
     name = input()
+    passw = input()
     sock.send(name.encode())
-    ans = sock.recv(1024)
-    ans = ans.decode()
-    print(ans)
+    sock.send(passw.encode())
+else:
+    while not access:
+        passw = input()
+        sock.send(passw.encode())
+        ans = sock.recv(1024)
+        ans = ans.decode()
+        print(ans)
+        if ans == 'ДАРОВА':
+            access = True
+
+
+ans = sock.recv(1024)
+ans = ans.decode()
+print(ans)
 
 ex = True
 while ex:
