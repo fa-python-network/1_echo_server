@@ -1,21 +1,36 @@
-#!/usr/bin/env python3
 import socket
-import time
 
-host = 'localhost'
-port = 8080
+sock = socket.socket()
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((host, port))
-print(s.recv(1024).decode('utf8'))
+host = input("Введите адрес хоста: " )
+host1 = host.split('.')
+for char in host1:
+	if 0<=int(char)<=255:
+		pass
+	else:
+		print("Incorrect IP")
+		host = 'localhost'
+
+port = int(input("Введите номер порта: "))
+if 1024<=port<=65535:
+	pass
+else:
+	print("Incorrect port")
+	port = 8080
+
+
+
+sock.connect((host, port))
+print(f'Клиент подлкючился к серверу {port}')
 
 while True:
-    buf = input()
-    s.send(buf.encode('utf8'))
-    result = s.recv(1024)
-    print('Ответ сервера: ', result.decode('utf8'))
-    if buf == "exit":
-        break
-s.close()
-
-time.sleep(10)
+	print('Введите текст сообщения')
+	data = input()
+	if data == 'exit':
+		break
+	print('Отправка сообщения')
+	sock.send(data.encode())
+	ans=sock.recv(1024) #ответ от сервера
+sock.close()
+print('Сервер передал вам сообщение')
+print(ans.decode())
