@@ -1,10 +1,7 @@
 import socket
 port=int(input("Give me your port,client: "))
 if not 0 <= port <= 65535:
-    with open('dannye.txt','w') as f:
-        f.write('Wrong port from client')
-else:
-    port=9092
+    print('Wrong port from client')
 sock=socket.socket()
 sock.connect(('localhost',port))
 msg=input("Enter your message: ")
@@ -16,7 +13,7 @@ while True:
         print('Connection end')
         sock.close()
         break
-#sock.close()
+
 
 
     
