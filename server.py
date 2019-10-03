@@ -1,4 +1,10 @@
 import socket
+import json
+
+
+
+
+
 
 sock = socket.socket()
 f = open ('logfile.txt', 'w')
@@ -15,19 +21,35 @@ print(port)
 print ("server starts", file = f)
 sock.listen(0)
 print("listen",file = f)
-conn,addr = sock.accept()
-print(addr)
-
-msg = ''
 while True:
-	data = conn.recv(1024)
-	print("data from client to server", file = f)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
-	print("data from server to client", file = f)
-print(msg)
-conn.close()
-        
-print("stop", file = f)
+	conn,addr = sock.accept()
+
+	with open("clientsdata.json","r+") as file:
+		data=json.loads(file.read())
+
+		for i in data["clients"]:
+			if i["ip"]==addr[0]:
+				aut = f"Hello,  {i['name']}"
+				conn.send(aut.encode())
+				break
+		else:
+			conn.send(b"input your name: ")
+			name = conn.recv(1024).decode()
+			newclient = {"ip": addr[0], "name": name}
+			data["clients"].append(newclient)
+			file.write(json.dumps(data))
+			
+
+	msg = ''
+	while True:
+		data = conn.recv(1024)
+		print("data from client to server", file = f)
+		if not data:
+			break
+		msg += data.decode()
+		conn.send(data)
+		print("data from server to client", file = f)
+	print(msg)
+	conn.close()
+	        
+	print("stop", file = f)
