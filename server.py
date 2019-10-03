@@ -2,23 +2,25 @@ import socket
 import logging
 logging.basicConfig(filename='sample.log', level=logging.INFO)
 
-while True:
-	port=int(input('enter port '))
-	if 1024<=port<=65525:
-		break
-	else:
-		print('mistake')
-
 sock = socket.socket()
-sock.bind(('', port))
-logging.info('started')
+ 
+port = 9090
+while port !=65525:
+	try:
+		sock.bind(('',port))
+		print(port)
+		break
+	except:
+		print('try again')
+		port+=1
+
+
 sock.listen(1)
 logging.info('listening')
 
 while True:
 	conn,addr=sock.accept()
 	print(addr)
-	print('dead')
 
 	msg = ''
 	while True:
