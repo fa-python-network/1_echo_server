@@ -25,6 +25,11 @@ sock = socket.socket()
 sock.setblocking(1)
 sock.connect((client_host, client_port))
 
+name=sock.recv(1024)
+print(name)
+client_name=input('enter: ')
+sock.send(client_name.encode())
+
 msg = ''
 while True:
 	client_msg=input()
