@@ -1,7 +1,8 @@
 import json
 import socket
+from myserver import Myserver
 f = open ('log.txt', 'w')
-sock = socket.socket()
+sock = Myserver()
 freeHost = 1025
 while True:
     try:
@@ -19,46 +20,46 @@ sock.listen(0)
 print("Now listen", file = f)
 
 while True:
-    conn, addr = sock.accept()
+    conn, addr = sock.newclient()
     print(f"{addr[0]}")
     print("connection: " + f"{addr}", file = f)
     with open("dataClients.json", "r+") as d:    #проверка пользователя с помощью файла
         data = json.loads(d.read())
         for i in data['clients']: #цикл на проверку пользователя
             if i['ip'] == addr[0]:
-                conn.send(b'Hello, enter the password: ')
-                if (conn.recv(1024)).decode() != i['password']:
-                    conn.send(b'It\'s Not Correct')
+                conn.sendmessage('Hello, enter the password: ')
+                if conn.newmessage() != i['password']:
+                    conn.sendmessage('It\'s Not Correct')
                     conn.close()
                     cor = False
                 else:
-                    conn.send((f'Hello {i["name"]}').encode())
+                    conn.sendmessage((f'Hello {i["name"]}'))
                     cor = True
                 break
         else: #добавление нового
-            conn.send(b'Hello, You\'re new, please enter you name ')
-            name = conn.recv(1024).decode()
-            conn.send(b'And you\'re secret password ')
-            password= conn.recv(1024).decode()
+            conn.sendmessage('Hello, You\'re new, please enter you name ')
+            name = conn.newmessage()
+            conn.sendmessage('And you\'re secret password ')
+            password= conn.newmessage()
             newclient = {"ip": addr[0], "name": name, "password": password}
             data['clients'].append(newclient)
             d.seek(0)
             d.write(json.dumps(data))
             d.truncate()
-            conn.send(b'congratulation')
+            conn.sendmessage('congratulation')
             cor = True
 
     msg = ''
     e = ''
-
+    data = ''
     while cor:
 
-        data = conn.recv(1024)
+        data = conn.newmessage()
         print("new data from cliqent", file = f)
         if not data:
             break
-        msg += data.decode()
-        conn.send(data)
+        msg += data
+        conn.sendmessage(data)
         print("data to client", file = f)
 
 
