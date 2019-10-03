@@ -21,7 +21,7 @@ log = open('log.txt','w')
 log.write("Server starts working!")
 sock.listen(0)
 msg=''
-while True:
+for i in range(3):
 
 	conn, addr = sock.accept()
 	print(addr[0])
@@ -55,5 +55,5 @@ while True:
 		conn.send(data)
 	log.write("Message is received")
 	print(msg)
-	log.close()
 	conn.close()
+log.close()
