@@ -2,7 +2,8 @@ import socket
 from datetime import datetime
 from random import randint
 class serv():
-    def __init__(self, log = "log.txt"):
+    def __init__(self, log = "log.txt", user = "user.txt"):
+    	self.__user = user
     	self.__logfile=log
     	self.p = int(input("Your port:"))
     	self.p = self.p if (self.p >= 1024 and self.p <= 65535) else print("Error") #Kick sistem port 
@@ -39,6 +40,22 @@ class serv():
     				return self.p
     			except: 
     				continue 
+    def check(self, conn, addr):
+    	try:
+    		open(self.__user).close()
+    	except:
+    		open(self.__user, 'w').close()
+    	with open(self.__user, 'r', encoding='utf-8') as file:
+    		d = dict(a.rstrip().split(None, 1) for a in file)
+    		try:
+    			n = d[str(addr[0])]
+    			conn.send("Identification completed".encode())
+    		except:
+    			conn.send("Who are you?".encode())
+    			n = conn.recv(1024).decode()
+    			with open(self.__user, 'a', encoding='utf-8') as f:
+    				print(f"{str(addr[0])} {n}", file=f)
+    	return "Nice to meet you"
     def server(self):
     	self.startserv()
     	while True:
@@ -47,6 +64,7 @@ class serv():
     		sock.bind(('', port))
     		sock.listen(1)
     		conn, addr = sock.accept()
+    		print(self.check(conn,addr))
     		self.newuser(addr)
     		novip = addr
     		data = []
