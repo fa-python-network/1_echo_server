@@ -32,6 +32,15 @@ else:
 		print("Сервер отказал. Неправильный пароль!")
 	else:
 		print(answer.decode())
+		print('Добро пожаловать в многопользовательский чат! Поделитесь своими мыслями!')
+		while True:
+			msg = input()
+			sock.send(msg.encode())
+			answ = sock.recv(1024)
+			print(f'--------------\n'+answ.decode())
+			if msg == "exit":
+				print("Вы покинули чат! Всего доброго!")
+				break
 
 
 print('Соединение закрыто!')

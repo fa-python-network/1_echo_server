@@ -47,6 +47,13 @@ while True:  # сервер, не спи, всегда внимательно с
 				answertouser = 'Привет, ' + clients[addr[0]] + '!'
 				conn.send(answertouser.encode())	#отправить имя
 				print('Отправил имя')
+				while True:
+					msg = conn.recv(1024)
+					conn.send(f'{clients[addr[0]]}:\n{msg.decode()}'.encode())
+					if msg.decode() == "exit":
+						conn.send(f'{clients[addr[0]]} покинул чат.'.encode())
+						break
+
 			else:
 				print('Неправильный пароль от клиента. Сбросил соединение с ним!')
 				conn.send("bad_password".encode())
