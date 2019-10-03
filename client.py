@@ -25,20 +25,19 @@ sock.connect((ip, int(port)))
 
 aut = sock.recv(1024).decode()
 print(aut)
-if aut[0]=="I":
+if aut[0]=="i":
 	name = input()
 	sock.send(name.encode())
 
 
 
 while True:
-	msg = input()
+	msg = input("input a massage: ")
 	if msg == "exit":
 		sock.close()
 		print('stop')
 		break
 	sock.send(msg.encode())
-	data+= sock.recv(1024)
+	data = sock.recv(1024)
 
-if data:
-	print(data.decode())
+

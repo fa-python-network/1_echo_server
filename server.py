@@ -4,8 +4,6 @@ import json
 
 
 
-
-
 sock = socket.socket()
 f = open ('logfile.txt', 'w')
 
@@ -37,8 +35,9 @@ while True:
 			name = conn.recv(1024).decode()
 			newclient = {"ip": addr[0], "name": name}
 			data["clients"].append(newclient)
+			file.seek(0)
 			file.write(json.dumps(data))
-			
+
 
 	msg = ''
 	while True:
