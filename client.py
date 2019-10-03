@@ -1,15 +1,19 @@
 import socket
+import logging as log
+
+
+log.basicConfig(filename='client.txt', level=log.DEBUG)
+
 sock = socket.socket()
-sock.connect(('localhost',9094))
-msg = "Hello, server!"
-while True:
-    mess = input()
-    print(f'MSG: {mess}')
-    sock.send(mess.encode())
-    data = sock.recv(1024)
-    print(data.decode())
-    if mess == 'exit':
-        print('Got exit')
-        sock.close()
-        break
- 
+log.info('Клиент запущен')
+sock.connect(('localhost', 23))
+log.info('Подключено к серверу')
+msg = ''
+while msg != 'exit':
+    msg = input()
+    log.info('Отправляю сообщение {}'.format(msg))
+    sock.send(msg.encode())
+    log.info('Получаю ответ сервера')
+    received_msg = sock.recv(1024)
+    print(received_msg.decode())
+sock.close()
