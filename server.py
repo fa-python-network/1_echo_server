@@ -1,5 +1,6 @@
 import socket
 from datetime import datetime
+from random import randint
 class serv():
     def __init__(self, log = "log.txt"):
     	self.__logfile=log
@@ -20,11 +21,30 @@ class serv():
     def stopserv(self):
     	with open(self.__logfile, "a", encoding="utf-8") as f:
     		print(f"{datetime.now().time()} Server Stopted", file=f)
+    def rand_port(self):
+    	try:
+    		sock = socket.socket()
+    		sock.bind(('', self.p))
+    		sock.close()
+    		print("Standart Port is Ready.")
+    		return self.p
+    	except:
+    		for i in range (1024, 65536):
+    			try:
+    				self.p = randint(1024,65535)
+    				sock = socket.socket()
+    				sock.bind(('', self.p))
+    				sock.close()
+    				print ("Port:", self.p)
+    				return self.p
+    			except: 
+    				continue 
     def server(self):
     	self.startserv()
     	while True:
+    		port = self.rand_port()
     		sock = socket.socket()
-    		sock.bind(('', self.p))
+    		sock.bind(('', port))
     		sock.listen(1)
     		conn, addr = sock.accept()
     		self.newuser(addr)
@@ -41,6 +61,6 @@ class serv():
     			if not msg:
     				conn.close()
     				break
-    	self.stopserv()
+    	return self.stopserv()
 S = serv()
 S.server()
