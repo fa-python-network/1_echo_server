@@ -2,15 +2,29 @@ import socket
 
 txt = open('log.txt', 'w')
 sock = socket.socket()
-sock.bind(('', 9000))
+
+#print("Начало работы сервера")
 print("Начало работы сервера", file = txt)
-sock.listen(1)
+
+cl_host_port = 1024
+while cl_host_port != 65536:
+	try:
+		sock.bind(('', cl_host_port))
+		break
+	except:
+		cl_host_port += 1
+
+print("Подключение по порту:", cl_host_port)
+print("Подключение по порту: ", cl_host_port, file = txt)
+
+sock.listen(0)
+#print("Идёт прослушивание")
 print("Идёт прослушивание", file = txt)
 
 while True:
 	try:
 		conn, addr = sock.accept()
-		print(f"Новое подключение: {addr}", file = txt)
+		print("Новое подключение:", addr)
 	except sock.error:
 		pass
 	msg = ''
@@ -20,6 +34,5 @@ while True:
 			break
 		msg+=data.decode()
 		conn.send(data)
-	print(msg)
-
+	print("Пользовательский ввод:", msg)
 conn.close()
