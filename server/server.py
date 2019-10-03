@@ -121,7 +121,6 @@ class Peer(object):
 
         if data and "type" in data and "data" in data:
             if data["type"] == "message":
-
                 user_data = self.chat(data["data"])
                 await self.send(user_data.to_json())
                 if user_data.notice == "OK":
@@ -131,13 +130,17 @@ class Peer(object):
                                       notice="OK").to_json()
                     await self._server.broadcast(self, data)
             elif data["type"] == "get_messages":
-                for i in Message.today_messages():
-                    data = ServerData(type="get_messages",
-                                      data=dict(message=i.message,
-                                                date=i.date.strftime("%H:%M:%S"),
-                                                login=User.search_user(id=i.user_id).login),
-                                      notice="OK").to_json()
-                    await self.send(data)
+                print(data)
+                if "token" in data["data"]:
+                    user = User.search_user(token=data["data"]["token"])
+                    if user is not None:
+                        for i in Message.today_messages():
+                            data = ServerData(type="get_messages",
+                                              data=dict(message=i.message,
+                                                        date=i.date.strftime("%H:%M:%S"),
+                                                        login=User.search_user(id=i.user_id).login),
+                                              notice="OK").to_json()
+                            await self.send(data)
             elif data["type"] == "authorization":
                 data = self.authorization(data["data"]).to_json()
                 await self.send(data)

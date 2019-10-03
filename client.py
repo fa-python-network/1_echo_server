@@ -52,7 +52,7 @@ class Client(socket):
         self.token = token
         self.location = "menu_login"
         self.request_status = None
-        self.wait_messages = None
+        self.wait_messages = False
         self.connect((self.host, self.port))
         self.open_file()
         try:
@@ -98,6 +98,7 @@ class Client(socket):
         """
 
         self.console_clear()
+        self.wait_messages = True
         self.send(Data(type="get_messages", data={"token": self.token}).to_json())
         time.sleep(0.5)
 
@@ -111,6 +112,7 @@ class Client(socket):
             data = input("")
 
         self.location = "menu_main"
+        self.wait_messages = False
         getattr(self, self.location)()
 
     def menu_main(self):
@@ -228,14 +230,14 @@ class Client(socket):
                 notice = data["notice"]
             else:
                 notice = None
-            if data["type"] == "broadcast_message":
+            if data["type"] == "broadcast_message" and self.wait_messages:
                 data = data["data"]
                 if "login" in data and "message" in data:
                     print(f"{strftime('%H:%M:%S', gmtime())} {data['login']}: {data['message']}")
             elif data["type"] == "get_messages":
                 data = data["data"]
                 if "login" in data and "message" in data and "date" in data:
-                    print(f"{strftime('%H:%M:%S', gmtime())} {data['login']}: {data['message']}")
+                    print(f"{data['date']} {data['login']}: {data['message']}")
             elif data["type"] == "authorization":
                 data = data["data"]
                 if "token" in data:

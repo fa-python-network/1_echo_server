@@ -110,7 +110,7 @@ class Message(db):
 
     id = Column(Integer, primary_key=True, index=True, unique=True)
     message = Column(String, default=None, index=True)
-    date = Column(DateTime, default=datetime.utcnow)
+    date = Column(DateTime)
     user_id = Column(Integer, ForeignKey('users.id'))
 
     def __init__(self, message: str):
@@ -121,6 +121,7 @@ class Message(db):
         """
 
         self.message = message
+        self.date = datetime.now()
 
     @classmethod
     def today_messages(cls):
