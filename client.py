@@ -25,10 +25,18 @@ sock = socket.socket()
 sock.setblocking(1)
 sock.connect((ip, port))
 name_msg=sock.recv(1024).decode()
-print(name_msg)
-if name_msg=="Enter your name please":
+if name_msg=="NamePassword":
+	print("Enter name:")
 	name=input()
-	sock.send(name.encode())
+	print("\nEnter password:")
+	password=input()
+	sock.send((name+','+password).encode())
+else:
+	
+	print("Hello, "+name_msg+"\nEnter a password:")
+	password=input()
+
+	sock.send(password.encode())
 msg=""
 while msg!='exit':
 	msg = input()
