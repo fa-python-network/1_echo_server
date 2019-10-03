@@ -2,6 +2,32 @@ import socket
 from loger import Logfile
 from random import randint
 
+def identification(c,ad):
+    try:
+        open('users.txt').close()
+    except:
+        open('users.txt','w').close()
+    with open('users.txt','r', encoding="utf-8") as f:
+        d=dict()
+        d = dict(x.rstrip().split(None, 1) for x in f)
+        x=d.get(ad[0],-1)
+        if x!=-1:
+            conn.send(x.encode())
+        else:
+            conn.send('Это неизвестный пользователь. Скажите мне ваше имя: '.encode())
+            name = conn.recv(1024).decode()
+            with open('users.txt','a', encoding="utf-8") as g:
+                print(f"{ad[0]} {name}", file=g)
+            
+
+
+        
+
+    
+
+
+
+
 l = Logfile()
 l.serverstart()
 try:
@@ -34,6 +60,7 @@ while True:
     sock.bind(('', port))
     sock.listen(1)
     conn, addr = sock.accept()
+    f=identification(conn,addr)
     msg = '\nconeccted'
     data=list()
     print(msg)

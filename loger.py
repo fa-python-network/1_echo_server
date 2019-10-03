@@ -22,3 +22,5 @@ class Logfile(object):
 
     def serverend(self):  
         self.write_to_file(" connection was stopped")
+
+

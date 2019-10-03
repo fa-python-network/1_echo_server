@@ -10,6 +10,12 @@ except ValueError :
 sock = socket.socket()
 sock.setblocking(True)
 sock.connect(('localhost', port))
+user = sock.recv(1024).decode()
+if "неизвестный" in user:
+    name = input(user)
+    sock.send(name.encode())
+else:
+    print(f"Здравствуйте, {user}")
 msg = input()
 while msg != 'exit':
     sock.send(msg.encode())
@@ -17,3 +23,4 @@ while msg != 'exit':
     msg = input()
 
 sock.close()
+
