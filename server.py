@@ -37,18 +37,16 @@ res = checker()
 sock = socket.socket()
 while True:
     try:
-        print("PORT =", res[1])
+        print("\nTRYING PORT =", res[1],"\n")
         sock.bind((res[0], res[1]))
         break
     except:
-        print("PORT ALREADY IN USE, TRYING THE NEXT ONE")
+        print("PORT ALREADY IN USE, TRYING THE NEXT ONE\n")
         res[1] += 1
-
-
 
 sock.listen(0)
 msg = ""
-print("SERVER IS ON")
+print("SERVER IS ON PORT", res[1])
 # lgf.write(time.ctime()+"\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n\n")
 print(time.ctime()+"\nSERVER UP AND RUNNING\nLIST OF CONNECTIONS:\n\n")
 while True:
