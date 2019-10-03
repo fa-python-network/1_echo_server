@@ -1,20 +1,22 @@
+#!/usr/bin/env python3
 import socket
 
-sock = socket.socket()
-sock.bind(('', 9090))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
-
-msg = ''
-
+host = 'localhost'
+port = 8080
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((host, port))
+s.listen(5)
+sock, addr = s.accept()
+print("client connected with address " + addr[0])
+sock.send(b"hello!")
 while True:
-	data = conn.recv(1024)
-	if not data:
+	buf = sock.recv(1024)
+	buf = buf.rstrip()
+	if buf.decode('utf8') == "exit":
+		sock.send(b"bye")
 		break
-	msg += data.decode()
-	conn.send(data)
-
-print(msg)
-
-conn.close()
+	elif buf:
+		sock.send(buf)
+		print(buf.decode('utf8'))
+sock.close()

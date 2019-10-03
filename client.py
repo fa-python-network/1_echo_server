@@ -1,16 +1,21 @@
+#!/usr/bin/env python3
 import socket
-from time import sleep
+import time
 
-sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+host = 'localhost'
+port = 8080
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((host, port))
+print(s.recv(1024).decode('utf8'))
 
-data = sock.recv(1024)
+while True:
+    buf = input()
+    s.send(buf.encode('utf8'))
+    result = s.recv(1024)
+    print('Ответ сервера: ', result.decode('utf8'))
+    if buf == "exit":
+        break
+s.close()
 
-sock.close()
-
-print(data.decode())
+time.sleep(10)
