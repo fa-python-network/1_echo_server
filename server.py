@@ -83,12 +83,12 @@ except FileNotFoundError:
         json.dump(data_users, file)
 
 #  Создается и используется объект логгирования
-logger = logging.getLogger("serverLogger")
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler("server.log")
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
+logger = logging.getLogger("serverLogger")  # Создает объект логгирования
+logger.setLevel(logging.INFO)  # Установка уровня логгирования
+fh = logging.FileHandler("server.log")  # Файл логгирования
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')  # Формат строчки лога
+fh.setFormatter(formatter)  # Устанавливает форматирование к файлу
+logger.addHandler(fh)  # Добавление хэндлера форматирования к объекту логгирования
 
 logger.info("Start server")
 
