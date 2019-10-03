@@ -3,13 +3,21 @@ import logging as l
 
 log_format = '%(levelname)s %(asctime)s - %(message)s'
 l.basicConfig(filename='server.log', format = log_format ,datefmt='%d.%m.%Y %H:%M:%S', level=l.INFO)
-
 l.info('Start logging INFO')
 
+port = 9090
 
 sock = socket.socket()
-sock.bind(('', 9090))
-l.info ('Сервер подключился к порту: 9090')
+
+while True:
+    try:
+        sock.bind(('', port))
+        break
+    except:
+        l.info(f'Порт {port} занят')
+        port += 1
+        
+l.info (f'Сервер подключился к порту: {port}')
 sock.listen(0)
 l.info('Сервер ожидает подключения...')
 
