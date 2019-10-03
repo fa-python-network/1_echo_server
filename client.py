@@ -13,7 +13,7 @@ port = input("Input port. Default - 9090: ")
 
 try:
     port = int(port)
-    if 1024 < port <= 65535:
+    if 1024 < port <= 10000:
         pass
     else:
         print("Data is not correct. Port is 9090")
@@ -27,8 +27,7 @@ sock.connect((host, port))
 msg = ''
 
 while msg.lower().strip() != "exit":
-    data = sock.recv(1024)
-    print(data.decode())
     msg = input(' -> ')
     sock.send(msg.encode())
-
+    data  =sock.recv(1024)
+    print(data.decode())
