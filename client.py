@@ -1,6 +1,6 @@
 import socket
-# from time import sleep
 import re
+import json
 
 
 def checker():
@@ -30,11 +30,34 @@ def checker():
     return host, int(port)
 
 res = checker()
-print('TYPE YOUR MESSAGES HERE, "exit" TO DISCONNECT')
+
 sock = socket.socket()
 sock.setblocking(1)
 sock.connect(res)
+msg = ""
 
+try:
+    users_source = open("users_list.json", "r")
+    usrs = users_source.read()
+    users_current = json.loads(usrs)
+    users_source.close()
+except:
+    pass
+
+
+
+try:
+    server_answer = sock.recv(1024).decode()
+    print(server_answer)
+except:
+    print("reading error")
+
+if "hi" not in server_answer:
+    msg = input("login:\n")
+    sock.send(msg.encode())
+
+
+print('TYPE YOUR MESSAGES HERE, "exit" TO DISCONNECT')
 while True:
     msg = input()
     # msg = "Hi!"
@@ -42,6 +65,5 @@ while True:
     if "exit" in msg:
         print("DISCONNECTING...")
         break
-    # data = sock.recv(1024)
 
 sock.close()

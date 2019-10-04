@@ -1,8 +1,34 @@
 import socket
 import re
 import time
+import json
 
 lgf = open("logfile.txt", "a+")
+
+
+def user_management(new_host):
+    try:
+        users_source = open("users_list.json", "r")
+        usrs = users_source.read()
+        users_current = json.loads(usrs)
+        users_source.close()
+
+    except:
+        users_current = dict()
+
+    if new_host in list(users_current.keys()):
+        conn.send(("hi, "+users_current[new_host]+"\n").encode())
+
+    else:
+        conn.send(("WELCOME TO THE SYSTEM, REGISTERING "+new_host+"\n").encode())
+        conn.send("Vvedite imya, pod\nkotorym vas zapomnit sistema:\n".encode())
+        name = conn.recv(1024).decode()
+        conn.send(("REGISTERED USER" + ' "' + name + '" ' + "SUCCESSFULLY\n").encode())
+        users_current.update({new_host: name})
+
+    users_out = open("users_list.json", "w+")
+    json.dump(users_current, users_out)
+    users_out.close()
 
 
 def checker():
@@ -37,7 +63,7 @@ res = checker()
 sock = socket.socket()
 while True:
     try:
-        print("\nTRYING PORT =", res[1],"\n")
+        print("\nTRYING PORT =", res[1], "\n")
         sock.bind((res[0], res[1]))
         break
     except:
@@ -53,8 +79,14 @@ while True:
     conn, addr = sock.accept()
     # lgf.write(time.ctime() + f"\nCONNECTION FROM IP = {addr[0]} PORT = {addr[1]}\nMESSAGES:\n\n")
     print(time.ctime() + f"\nCONNECTION FROM IP = {addr[0]} PORT = {addr[1]}\nMESSAGES:\n\n")
+    user_management(addr[0])
     while True:
-        data = conn.recv(1024)
+        try:
+            data = conn.recv(1024)
+        except:
+            print(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
+            # lgf.write(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
+            break
         if not data:
             print(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
             # lgf.write(time.ctime() + "\nCLIENT DISCONNECTED\n\n")
