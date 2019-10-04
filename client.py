@@ -1,16 +1,41 @@
 import socket
 from time import sleep
+import re
+
+while True:
+	port = input("Enter port: ")
+	if port == "main":
+		port = 7070
+		break
+	elif not port.isnumeric():
+		print("wrong port")
+	elif not 1024 < int(port) <= 65535:
+		print("try another port")
+
+while True:
+	lh = input("Enter adress: ")
+	if lh == "main":
+		lh = 'localhost'
+		break
+	elif re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', lh) == None:
+		print("try another host adress")
+	else:
+		break
 
 sock = socket.socket()
 sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+sock.connect((lh, port))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+while True:
+	msg = input("MSG: ")
+	if msg == "exit":
+		sock.close()
+		break
+	else:
+		sock.send(msg.encode())
 
-data = sock.recv(1024)
+#data = sock.recv(1024)
 
-sock.close()
+#sock.close()
 
-print(data.decode())
+#print(data.decode())
