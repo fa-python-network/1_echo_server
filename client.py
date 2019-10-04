@@ -1,6 +1,6 @@
 import socket
 
-port = "9090"
+port = 9090
 host = "localhost"
 
 sock = socket.socket()
