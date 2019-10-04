@@ -1,6 +1,6 @@
-Server started working
+Port is already used, it was automaticly changedServer started working
 Server started listening
-Connected client ('127.0.0.1', 59974)
+Connected client ('127.0.0.1', 60154)
 Taking data from client
 Client want to disconnect
 Disconnection client

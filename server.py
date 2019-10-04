@@ -33,13 +33,25 @@ with open("db.json", 'r') as file:
 	db = json.load(file)
 
 try:
+	client_name = db[addr[0]]["name"]
 	conn.send("OK".encode())
-	conn.send(("Hello, "+db[addr[0]]).encode())
+	conn.send(("Hello, "+client_name+" Введите свой пароль: ").encode())
+	client_password_check = conn.recv(1024)
+	try:
+		if db[addr[0]]["password"] != client_password_check.decode():
+			conn.send("FAIL".encode())
+		else:
+			conn.send("OK".encode())
+	except:
+		print("Какая-то ошибка, ща будем разбираться")
 except:
 	conn.send("FAIL".encode())
 	client_name = conn.recv(1024)
+	client_password = conn.recv(1024)
 	with open("db.json", 'w') as file:
-		db[addr[0]] = client_name.decode()
+		db[addr[0]] = {}
+		db[addr[0]]["name"] = client_name.decode()
+		db[addr[0]]["password"] = client_password.decode()
 		json.dump(db, file)
 
 while True:
