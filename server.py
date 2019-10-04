@@ -1,26 +1,46 @@
 import socket
+import json
 
-sock = socket.socket()
+
+def start_server():
+	sock = socket.socket()
+	num_port = input("Input port number to start a server: ")
+	try:
+		num_port = int(num_port)
+		sock.bind(('', num_port))
+	except ValueError:
+		num_port = 4412
+		sock.bind(('', num_port))
+		f.write("Incorrect format of port number\n")
+	except OSError:
+		num_port += 11
+		sock.bind(('', num_port))
+		f.write("Port is already used, it was automaticly changed")
+
+	print("Server is running on port " + str(num_port) + "\n")
+	f.write("Server started working\n")
+	sock.listen(1)
+	f.write("Server started listening\n")
+	return sock
+
+
 f = open('log.txt', 'w')
-num_port = input("Input port number to start a server: ")
-try:
-	num_port = int(num_port)
-except ValueError:
-	num_port = 4448
-	f.write("Incorrect format of port number\n")
-except OSError:
-	num_port += 11
-	f.write("Port is already used, it was automaticly changed")
-
-print("Server is running on port "+str(num_port)+"\n")
-
-sock.bind(('', num_port))
-f.write("Server started working\n")
-sock.listen(1)
-f.write("Server started listening\n")
+sock = start_server()
 conn, addr = sock.accept()
-client_name = conn.recv(1024)
-f.write("Connected client " + str(addr) +" "+ str(client_name.decode()) + "\n")
+f.write("Connected client " + str(addr) + "\n")
+
+with open("db.json", 'r') as file:
+	db = json.load(file)
+
+try:
+	conn.send("OK".encode())
+	conn.send(("Hello, "+db[addr[0]]).encode())
+except:
+	conn.send("FAIL".encode())
+	client_name = conn.recv(1024)
+	with open("db.json", 'w') as file:
+		db[addr[0]] = client_name.decode()
+		json.dump(db, file)
 
 while True:
 	f.write("Taking data from client\n")
