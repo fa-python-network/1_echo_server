@@ -35,6 +35,17 @@ sock.connect((host, port))
 
 print('Напишите exit для завершения работы с сервером')
 msg = ''
+
+answer = sock.recv(1024)
+answer = answer.decode()
+print(answer)
+if "Пожалуйста, введите ваше имя:" in answer:
+    name = input()
+    sock.send(name.encode())
+    answer = sock.recv(1024)
+    answer = answer.decode()
+    print(answer)
+    
 while True:
     if msg != 'exit':
         print('Введите сообщение:')
@@ -45,4 +56,6 @@ while True:
         break
     
 sock.close()
-print('Работа с сервером завершена.')
+print('Работа с сервером завершена.') 
+
+    
