@@ -10,9 +10,7 @@ def receving (name, sock):
 		try:
 			while True:
 				data, addr = sock.recvfrom(1024)
-				#print(data.decode("utf-8"))
 
-				# Begin
 				decrypt = ""; k = False
 				for i in data.decode("utf-8"):
 					if i == ":":
@@ -23,7 +21,6 @@ def receving (name, sock):
 					else:
 						decrypt += chr(ord(i)^key)
 				print(decrypt)
-				# End
 
 				time.sleep(0.2)
 		except:
@@ -50,12 +47,10 @@ while shutdown == False:
 		try:
 			message = input()
 
-			# Begin
 			crypt = ""
 			for i in message:
 				crypt += chr(ord(i)^key)
 			message = crypt
-			# End
 
 			if message != "":
 				s.sendto(("["+alias + "] :: "+message).encode("utf-8"),server)
