@@ -1,20 +1,24 @@
 import socket
 
+port = 9090
+clients = 1
+
 sock = socket.socket()
 sock.bind(('', 9090))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
-
-msg = ''
+sock.listen(clients)
 
 while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
 
-print(msg)
-
-conn.close()
+    conn, addr = sock.accept()
+    
+    while True:
+        
+        data = conn.recv(1024)
+        if not data:
+            break
+            
+      	conn.send(data)
+        print("Answer sent")
+        
+        conn.close()
+        print("Connection is cut off")
