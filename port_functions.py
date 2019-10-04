@@ -39,6 +39,14 @@ def change_port(port,server_socket):
         else:
             print("{} - номер порта".format(port))
             break
+
+def check_user(ip):
+    """Проверка наличия пользователя в системе по данному IP-адресу"""
+    pass
+    
+def add_user(ip,name):
+    """Добавить пользователя с данным именем и IP-адресом"""
+    pass
             
     
             
