@@ -1,38 +1,63 @@
 import socket
 
-txt = open('log.txt', 'w')
+
+log_file = open('log.txt', 'w')
 sock = socket.socket()
 
 #print("Начало работы сервера")
-print("Начало работы сервера", file = txt)
+print("Начало работы сервера", file = log_file)
 
-cl_host_port = 1024
-while cl_host_port != 65536:
+
+client_host_port = 1024
+while client_host_port != 65536:
 	try:
-		sock.bind(('', cl_host_port))
+		sock.bind(('', client_host_port))
 		break
 	except:
-		cl_host_port += 1
+		client_host_port += 1
 
-print("Подключение по порту:", cl_host_port)
-print("Подключение по порту: ", cl_host_port, file = txt)
+print("Подключение по порту:", client_host_port)
+print("Подключение по порту: ", client_host_port, file = log_file)
 
-sock.listen(0)
+sock.listen(1)
 #print("Идёт прослушивание")
-print("Идёт прослушивание", file = txt)
+print("Идёт прослушивание", file = log_file)
+log_file.close()
+
 
 while True:
 	try:
+		ip_name_list_read = open('man.txt', 'r')
 		conn, addr = sock.accept()
 		print("Новое подключение:", addr)
-	except sock.error:
+		f = 0
+		for line in ip_name_list_read:
+			l = line.strip()
+			if str(addr[0]) in l:
+				name = l.split(':')[1]
+				conn.send(("Good day, Dear{}\n".format(name)).encode())
+				f = 1
+				break
+		while f == 0:
+				ip_name_list_write = open("man.txt", 'a+')
+				conn.send(("Enter your name:").encode())
+				name1 = conn.recv(1024).decode()
+				ip_name_list_write.write("{0} : {1}\n".format(addr[0], name1))
+				ip_name_list_write.close()
+				ip_name_list_read.close()
+				break
+		else:
+			pass
+	except socket.error:
 		pass
+
 	msg = ''
 	while True:
-		data = conn.recv(1024)
+		data = conn.recv(1024).decode()
 		if not data:
 			break
-		msg+=data.decode()
-		conn.send(data)
-	print("Пользовательский ввод:", msg)
+		msg+=data
+		conn.send(data.encode())
+		print("Пользовательский ввод:", data)
+		break
 conn.close()
