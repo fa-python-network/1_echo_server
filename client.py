@@ -6,9 +6,9 @@ import re
 
 
 def accept(adr, port):
-    lst = [];
+    lst = []
     if re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', adr).group(0) == adr:
-        lst.append(adr);
+        lst.append(adr)
     if re.match(r'\d{1,4}', port).group(0) == port:
         lst.append(port)
     return lst
