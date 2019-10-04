@@ -1,19 +1,10 @@
 import socket
+import port_functions
+
 s=socket.socket()
-
-def check_port(port):
-	default=9090
-	port=int(port)
-	if 1024<port<65536:
-		pass
-	else:
-		port=default
-	return port
-
-port=check_port(input('Введите номер порта '))
+port=port_functions.check_port(input('Введите номер порта '))
 s.bind(('',port))
 s.listen(1)
-
 
 while True:
 	msg=''
