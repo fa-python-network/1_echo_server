@@ -2,6 +2,46 @@ import socket
 import logging
 import csv
 import sys
+import base64
+
+#Функция авторизации пользователей
+def auth (addr):
+
+    ip = addr[0]
+    arr = {}
+
+    #Чтение списка пользователей из csv файла
+    with open('users.csv', 'r') as users:
+        reader = csv.reader(users)
+        for row in reader:
+            for i in range(len(row)):
+                cur_arr = row[i].split(";")
+                arr[cur_arr[0]] = [cur_arr[1],cur_arr[2]]
+
+    #Проверка пользователя, передача соответствующих сообщений 
+    if str(ip) in arr.keys():
+        conn.send(("Введите пароль: ").encode())
+        password = conn.recv(1024).decode()
+        if password == arr[str(ip)][1]:
+            hi_msg = "Добро пожаловать, " + str(arr[str(ip)][0])
+            conn.send(hi_msg.encode())
+
+    else:
+        reg(ip, arr)
+
+#Функция регистрации пользователей        
+def reg(ip, arr):
+
+    conn.send(("Введите Ваше имя: ").encode())
+    name = conn.recv(1024).decode()
+    conn.send(("Придумайте пароль: ").encode())
+    password = conn.recv(1024).decode()
+    hi_msg = "Добро пожаловать, " + name 
+    conn.send(hi_msg.encode())
+    new_user = [str(ip), name, password]
+    with open('users.csv', 'w', newline='') as users:
+        writer = csv.writer(users, delimiter = ';')
+        writer.writerow(new_user)
 
 logger = logging.getLogger("logger")
 logger.setLevel(logging.INFO)
@@ -45,37 +85,12 @@ while True:
     conn, addr = sock.accept()
     logger.info(addr)
 
-    arr = {}
-
-    #Чтение списка пользователей из csv файла
-
-    with open('users.csv', 'r') as users:
-        reader = csv.reader(users)
-        for row in reader:
-            for i in range(len(row)):
-                cur_arr = row[i].split(";")
-                arr[cur_arr[0]] = cur_arr[1]
-
-    ip = addr[0]
-
-    #Проверка пользователя, передача соответствующих сообщений 
-
-    if str(ip) in arr.keys():
-        hi_msg = "Добро пожаловать, " + str(arr[str(ip)])
-        conn.send(hi_msg.encode())
-    else:
-        conn.send(("Введите Ваше имя: ").encode())
-        name = conn.recv(1024).decode()
-        hi_msg = "Добро пожаловать, " + name
-        conn.send(hi_msg.encode())
-        new_user = [str(ip), name]
-        with open('users.csv', 'w', newline='') as users:
-            writer = csv.writer(users, delimiter = ';')
-            writer.writerow(new_user)
+    #
+    auth(addr)
             
     conn.send("Введите сообщение; Для выхода введите exit: ".encode())
+    
     #Прием сообщений
-
     msg = ''
 
     while True:
