@@ -20,7 +20,7 @@ port = 9090
 while True:
     try:
         if port == 65536:
-            print('Все порты заняты')
+            print('Все порты заняты', file=f)
             break
         sock.bind(('', port))
         break
@@ -45,6 +45,14 @@ while True:
         print('Пользователь найден в базе', file=f)
         nick = datafile[client]["name"]
         password = datafile[client]["password"]
+        check = conn.recv(1024).decode()
+        if pass_hash(check) == password:
+            conn.send('1'.encode())
+            print('Пароль прошел проверку', file=f)
+        else:
+            conn.send('0'.encode())
+            print('Пароль не прошел проверку', file=f)
+
     else:
         conn.send('0'.encode())
         print('Пользователь не найден в базе, запись нового', file=f)
@@ -67,6 +75,8 @@ while True:
         datafile[client]['port'] = port
         datafile[client]['name'] = nick
         datafile[client]['password'] = password
+
+        print('Информация о клиенте сохранена', file=f)
 
         with open('data.json', 'w') as file:
             json.dump(datafile, file)

@@ -1,8 +1,4 @@
 import socket
-import json
-
-with open('data.json', 'r') as f:
-    datafile = json.load(f)
 
 sock = socket.socket()
 
@@ -24,11 +20,12 @@ identh = sock.recv(1024).decode()
 if identh == '1':
     while True:
         password = input("Введите пароль: ")
-        if password == datafile[client]['password']:
-            print(f"Ну привет, {datafile[client]['name']}")
+        sock.send(password.encode())
+        if sock.recv(1024).decode() == '1':
+            print("Вы успешно вошли")
             break
         else:
-            print('Неправильный пароль, попробуй еще раз')
+            print("Неправильно, попробуйте еще раз")
 else:
     nickname = input('О, да ты зеленый, Маня! Кто по масти? ')
     sock.send(nickname.encode())
