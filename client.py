@@ -1,18 +1,27 @@
 import socket
 
+port = "9090"
+host = "localhost"
+
 sock = socket.socket()
-sock.connect(('localhost', 9090))
+sock.connect((host, port))
 
 while True:
+    print("Enter the message")
     msg = input()
-    if msg == 'exit':
-        break
-    sock.send(msg.encode()) #отправить ответ
-
-    data = sock.recv(1024) #получить ответ
     
-    print(data.decode()) #вывод сообщения
+    if msg == 'exit': #прекращаем работу с сервером 
+        break
+    
+    print("Messagge sent")
+    sock.send(msg.encode())
+    
+    print("answer")
+    data = sock.recv(1024) 
+    
+    print(data.decode())
 
-    sock.close()
+print("Connection is cut off")
+sock.close()
 
 
