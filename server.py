@@ -1,7 +1,17 @@
 import socket
 
-port = 9090
+port = input()
 clients = 1
+
+try:
+    
+    if (int(port) > 1024) and (int(port) < 65000:
+        port = int(port)
+    else:
+        port = 9090
+            
+except:
+    port = 9090
 
 sock = socket.socket()
 sock.bind(('', 9090))
