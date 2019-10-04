@@ -13,8 +13,10 @@ try:
 except:
     port = 9090
 
+service_file = open("serviceCommand.log", "a")
+
 sock = socket.socket()
-sock.bind(('', 9090))
+sock.bind(('', port))
 sock.listen(clients)
 
 while True:
@@ -23,12 +25,16 @@ while True:
     
     while True:
         
+        service_file.close()
+        service_file.open("serviceCommand.log", "a")
+        
         data = conn.recv(1024)
         if not data:
             break
             
       	conn.send(data)
-        print("Answer sent")
+        service_file.Write("Answer sent")
         
-        conn.close()
-        print("Connection is cut off")
+    conn.close()
+    service_file.Write("Connection is cut off")
+    service_file.close()
