@@ -37,7 +37,7 @@ while True:
 		conn.send(b"What is your name?")
 		users[addr[0]] = (conn.recv(1024)).decode()
 		print(users[addr[0]])
-	msg_to_client = 'Hi,'+{users[addr[0]]}+'!'
+	msg_to_client = f'Hi,{users[addr[0]]}!'
 	conn.send(msg_to_client.encode())
 	write_into_json(users)	
 
