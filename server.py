@@ -1,7 +1,11 @@
 import socket
+import pickle
+import os
 
 port = 9090
 clients = 1
+client_file = 'clients.pkl'
+clients_dict = {}
 
 sock = socket.socket()
 while True:
@@ -16,10 +20,10 @@ while True:
 
 sock.listen(clients)
 
-service_file = open("serviceCommand.log", "a")
-
-service_file.Write(f'Port № {port} has been installed')
-
+if os.path.getsize(client_file) > 0:  #get client info
+    with open (client_file, 'rb') as f:
+        clients_dict = pickle.load(f)
+    
 
 while True:
 
@@ -27,16 +31,22 @@ while True:
     
     while True:
         
-        service_file.close()
-        service_file.open("serviceCommand.log", "a")
+        if addr[0] in clients_dict.keys():
+            msg = "Welcome " + clients_dict[addr[0]]
+            conn.send(msg.encode())
         
-        data = conn.recv(1024)
-        if not data:
-            break
+        else:
+            conn.send('Who_are_you'.encode()) # add new client
+            data = conn.recv(1024)
             
-      	conn.send(data)
-        service_file.Write("Answer sent")
+            client_file.update({addr[0]:data.decode()})
+            
+            with open(client_file, 'wb') as f:
+                pickle.dump(client_file, f)
+            
+
+        break
         
     conn.close()
-    service_file.Write("Connection is cut off")
-    service_file.close()
+    print("Connection is cut off")
+
