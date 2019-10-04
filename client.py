@@ -1,65 +1,76 @@
 import socket
-from time import sleep
 import re
 from sendcheck import *
 
 
-def accept(adr, port):
-    lst = []
-    print(re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', adr))
+def acceptadr(adr):  # Функция проверки адреса через регулярные выражения
+    if re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', adr) is None:
+        return False
     if re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', adr).group(0) == adr:
-        lst.append(adr)
+        return adr
+
+
+def acceptport(port):  # Функция проверки порта через регулярные выражения
+    if re.match(r'\d{1,4}', port) is None:
+        return False
     if re.match(r'\d{1,4}', port).group(0) == port:
-        lst.append(port)
-    return lst
+        return port
 
 
-kek = True
-while kek:
-    print("введите адрес хоста и номер порта")
+adressation = ['localhost', '192.168.0.101']  # Список возможных адресов по умолчанию
+
+go = True  # Переменные проверки адреса и порта
+po = True
+while go or po:
+    print("Введите адрес хоста: ((Пустая строка ввод по умолчанию))")
     adress = input()
+    print("Введите порт: ")
     port = input()
-    if not adress:
-        adress = "10.38.50.16"
-    if not port:
+    if acceptadr(adress):
+        go = False
+    if acceptport(port):
+        po = False
+    if adress == "" or adress == 'localhost':
+        adress = adressation[0]
+        go = False
+    if port == '':
         port = '9090'
-    check = accept(adress, port)
-    print(check)
-    if len(check) == 2:
-        kek = False
+        po = False
 
 port = int(port)
 sock = socket.socket()
-sock.connect((adress, port))
-ans = sock.recv(1024)
-ans = ans.decode()
+sock.connect((adress, port))  # Подключение к серверу
+ans = checkmsg(sock)
 print(ans)
 access = False
 
-if "Введите" in ans:
+if "Введите" in ans:  # Ветка создания нового пользователя
     name = input()
-    sock.send(name.encode())
+    sendmsg(sock, name)
     passw = input()
-    sock.send(passw.encode())
+    sendmsg(sock, passw)
 else:
-    while not access:
+    while not access:  # Ветка проверки пароля
         passw = input()
-        sock.send(passw.encode())
-        ans = sock.recv(1024)
-        ans = ans.decode()
+        sendmsg(sock, passw)
+        ans = checkmsg(sock)
         print(ans)
         if ans == 'ДАРОВА':
             access = True
 
-
-ans = sock.recv(1024)
-ans = ans.decode()
-print(ans)
-
+print(checkmsg(sock))
+print(checkmsg(sock))
 ex = True
-while ex:
+while ex:  # Main цикл, позволяет отправлять и читать сообщения от других пользователей.
     msg = input()
     if msg == "exit":
         ex = False
-    sock.send(msg.encode())
+    sendmsg(sock, msg)
+    if msg == 'send':
+        sendmsg(sock, input())
+        ans = checkmsg(sock)
+        print(ans)
+        if 'письмо' in ans:
+            sendmsg(sock, input())
+    print(checkmsg(sock))
 sock.close()
