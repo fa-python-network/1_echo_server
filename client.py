@@ -3,7 +3,7 @@ from datetime import datetime
 import port_functions
 
 host=port_functions.check_host(input('Введите хост '))
-port=port_functions.check_port(input('Введите номер порта '))
+port=port_functions.check_port(input('Введите номер порта '), 9090)
 msg=''
 
 while True:
