@@ -18,7 +18,7 @@ def get_address() -> str:
 		s.close()
 	return IP
 
-ADDRESS = get_address()
+ADDRESS = ''#get_address()
 PORT = 9797
 MAX_CONN = 1
 running = True
@@ -48,7 +48,7 @@ def identify(addr: str, conn: socket.socket) -> None:
 		dump(data, f, ensure_ascii=False)
 
 
-with socket.socket() as sock:
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 	try:
 		log.debug('Socket created')
 		try:
