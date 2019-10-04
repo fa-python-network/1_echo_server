@@ -9,7 +9,7 @@ while True:
 	else:
 		print('ошибка, введите порт снова')
 
-while True:
+while True: 
 	ip= input("введите ip или _ для localhost: \n")
 	if ip ==' ':
 		ip= 'localhost'
@@ -23,15 +23,22 @@ sock = socket.socket()
 sock.setblocking(1)
 sock.connect((ip, int(port)))
 
+
 aut = sock.recv(1024).decode()
 print(aut)
-if aut[0]=="i":
+if aut[0]=="g":  #проверка пароля у известного пользователя
+	passwd=input()
+	sock.send(passwd.encode())
+	print(sock.recv(1024).decode())
+
+if aut[0]=="i":  #ввод и отправка данных по новому пользователю
 	name = input()
 	sock.send(name.encode())
+	print(sock.recv(1024).decode())
+	passwd = input()
+	sock.send(passwd.encode())
 
-
-
-while True:
+while True:  
 	msg = input("input a massage: ")
 	if msg == "exit":
 		sock.close()

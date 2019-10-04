@@ -26,14 +26,23 @@ while True:
 		data=json.loads(file.read())
 
 		for i in data["clients"]:
-			if i["ip"]==addr[0]:
-				aut = f"Hello,  {i['name']}"
+			if i["ip"]==addr[0]:    #проверка известен ли пользователь
+				conn.send(b"give your password")
+				passwd=conn.recv(1024).decode()
+
+				if passwd==i["passwd"]:  #проверка пароля на правильность
+					aut = f"Hello,  {i['name']}"
+					
+				else:
+					aut = "Your password is incorrect."
 				conn.send(aut.encode())
 				break
-		else:
+		else:  #получение и запись информации о новом пользователе
 			conn.send(b"input your name: ")
 			name = conn.recv(1024).decode()
-			newclient = {"ip": addr[0], "name": name}
+			conn.send(b"input your password: ")
+			passwd= conn.recv(1024).decode()
+			newclient = {"ip": addr[0], "name": name, "passwd":passwd}
 			data["clients"].append(newclient)
 			file.seek(0)
 			file.write(json.dumps(data))
