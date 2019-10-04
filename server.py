@@ -27,20 +27,26 @@ for j in range(3):
 	print(addr[0])
 
 	names = open('names.txt','r')
-	nameflag=0
-	for i in names:
+	nameflag=0#user is unknown
+
+	for i in names:#check ip in names.txt
 		
-		if i.split(',')[0]=="['"+addr[0]+"'":
+		if i.split(',')[0]=="['"+addr[0]+"'":#if ip is known
 			
-			nameflag=1
+			nameflag=1#user is known
 			
-			message=str((i.split(',')[1])[2:-3]).encode()
+			message=str((i.split(',')[1])[2:-1]+'!').encode()#send username!
+			
 			conn.send(message)
-			password=(conn.recv(1024)).decode()
+			password_msg='1'
+			password_txt=""
+			while password_msg[-1]!='!':
+				password_msg=(conn.recv(1024)).decode()
+				password_txt+=password_msg
 
 			
-			if i.split(',')[2][2:-3]==password:
-					
+			if i.split(',')[2][2:-3]==password_txt[:-1]:
+			#If password is right		
 					print("\nPassword is right")
 					check=True
 					break
@@ -50,15 +56,18 @@ for j in range(3):
 	names.close()
 	if nameflag==0:
 		
-		conn.send(("NamePassword").encode())
-		namepass=(conn.recv(1024)).decode()
-		name=namepass.split(',')[0]
-		password=namepass.split(',')[1]
+		conn.send(("NamePassword!").encode())
+		namepass_msg='1'
+		namepass_txt=''
+		while namepass_msg[-1]!='!':
+			namepass_msg=(conn.recv(1024)).decode()
+			namepass_txt=namepass_txt+namepass_msg
+		name=namepass_txt.split(',')[0]
+		password=namepass_txt.split(',')[1][:-1]
 		names = open('names.txt','a')
 		names.write(str([addr[0],name,password])+"\n")
 		names.close()
 		check=True
-	
 	msg = ''
 	while check:
 		
