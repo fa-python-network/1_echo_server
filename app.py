@@ -19,22 +19,26 @@ sock.connect((address, port))
 os.system('')
 
 try:
-    with open('.token', 'r') as file:
+    with open('token', 'r') as file:
         token = file.read()
 except FileNotFoundError:
     token = '--no token--'
 SocketMethods.send_text(sock, token)
 
+connection_alive = True
+
 
 def receive_messages():
+    global connection_alive
     while True:
         received = SocketMethods.receive_text(sock)
         if received[:2] == '//':
             if received == '//close':
                 sock.close()
+                connection_alive = False
                 break
             if received == '//token':
-                with open('.token', 'w') as file:
+                with open('token', 'w') as file:
                     file.write(SocketMethods.receive_text(sock))
                 continue
         print(received)
@@ -45,4 +49,7 @@ Thread(target=receive_messages, daemon=True).start()
 
 while True:
     message = input()
-    SocketMethods.send_text(sock, message)
+    if connection_alive:
+        SocketMethods.send_text(sock, message)
+    else:
+        break

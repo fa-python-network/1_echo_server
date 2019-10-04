@@ -98,9 +98,11 @@ class ClientThread(Thread):
             message = self.receive_msg()
             if message == 'exit':
                 self.send_msg(f'Closing connection {self.addr}')
+                self.send_msg('//close')
                 self.conn.close()
                 logging.info(f'Connection closed {self.addr}')
                 connections_list.remove(self)
+                self.connected = False
                 break
             CommonFunctions.send_msg_all(f'{self.color}{self.username}\33[0m: {CommonFunctions.emoji_replace(message)}')
 
