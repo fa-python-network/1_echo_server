@@ -18,14 +18,25 @@ if port == 0:
 	
 sock.connect((hostname, port))
 
+#Получение "приветственного" сообщения от сервера/запрос имени
+
+data = sock.recv(1024).decode()
+print(data)
+if data == "Введите Ваше имя: ":
+	name = input()
+	sock.send(name.encode())
+	print(sock.recv(1024).decode())
+	
+print(sock.recv(1024).decode())
+
+#Отправка сообщений
+
 msg = ""
-data = []
 while True:
 	msg = input()
 	if msg == "exit":
 		break
 	sock.send(msg.encode())
-	data.append(sock.recv(1024).decode())
+	
 sock.close()
 
-print(data)
