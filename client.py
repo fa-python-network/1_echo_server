@@ -41,7 +41,7 @@ rT.start()
 
 while shutdown == False:
 	if join == False:
-		s.sendto(("["+alias + "] => join chat ").encode("utf-8"),server)
+		s.sendto(("["+ alias + "] => join chat ").encode("utf-8"),server)
 		join = True
 	else:
 		try:
