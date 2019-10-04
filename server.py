@@ -7,6 +7,8 @@ def write_into_json(dct):
 		json.dump(dct, f)
 
 
+
+
 users = {}
 port = 9090
 file = open("log.txt", "a")
@@ -35,9 +37,14 @@ while True:
 		c = users[addr[0]]
 	except KeyError:
 		conn.send(b"What is your name?")
-		users[addr[0]] = (conn.recv(1024)).decode()
-		print(users[addr[0]])
-	msg_to_client = f'Hi,{users[addr[0]]}!'
+		users[addr[0]] = []
+		users[addr[0]].append((conn.recv(1024)).decode())
+
+		conn.send(b"Write new password")
+		users[addr[0]].append((conn.recv(1024)).decode())
+
+
+	msg_to_client = f'Hi,{users[addr[0]][0]}!'
 	conn.send(msg_to_client.encode())
 	write_into_json(users)	
 

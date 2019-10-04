@@ -17,12 +17,19 @@ while k==False:
 		#
 		sock.connect((host, int(port)))
 		c = sock.recv(1024)
+		#new user
 		if c == "What is your name?":
 			msg = input()
 			sock.send(msg.encode())
+			#new password
+			c1 = sock.recv(1024)
+			c1 = input()
+			sock.send(c1.encode())
 			c = sock.recv(1024)
 		print(c.decode())
 		msg = input()
+
+		
 		while msg!='exit':
 			sock.send(msg.encode())
 			msg = input()

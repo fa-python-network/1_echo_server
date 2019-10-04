@@ -47,3 +47,22 @@ server receives datd from client ('127.0.0.1', 39834)
 server uses port 9090
 server starts listen client
 server receives datd from client ('127.0.0.1', 39852)
+server uses port 9090
+server starts listen client
+server uses port 9090
+server starts listen client
+server uses port 50589
+server starts listen client
+server uses port 9090
+server starts listen client
+server uses port 49531
+server starts listen client
+server uses port 9090
+server starts listen client
+server uses port 9090
+server starts listen client
+server uses port 9090
+server starts listen client
+server uses port 9090
+server starts listen client
+server receives datd from client ('127.0.0.1', 40772)
