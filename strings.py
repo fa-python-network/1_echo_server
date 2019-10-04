@@ -1,0 +1,5 @@
+ask_username = 'Username: '
+ask_password = 'Password: '
+incorrect_password = 'Username or password incorrect!'
+successful_login = 'Login sucessful!'
+greetings = 'Greetings, {}!'

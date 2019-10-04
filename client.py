@@ -1,44 +1,55 @@
 import socket
-from time import sleep
 import logging as log
+from re import match
+from strings import *
 
 log.basicConfig(filename='client.log', format='%(filename)s [LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level=log.DEBUG)
 
-ADDRESS, PORT = 'localhost', 9797
 
-address_ = input(f'Address (empty for {ADDRESS}): ')
-ADDRESS = address_ if address_ else ADDRESS
-port_ = input(f'Port (empty for {PORT}): ')
-PORT = int(port_) if port_ else PORT
+class Client:
+
+    ADDRESS = 'localhost'
+    PORT = 9797
+    HOST_REGEX = r'[1-2]?[0-9]{1, 2}\.[1-2]?[0-9]{1, 2}\.[1-2]?[0-9]{1, 2}\.[1-2]?[0-9]{1, 2}'
+    RUNNING = True
+    MAX_CONN = 2
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        log.debug('Socket started')
+        self.addr, self.port = self.ask_addr()
+        self.sock.connect((self.addr, self.port))
+        self.auth()
+
+    def ask_addr(self):
+        address_ = input(f'Address (empty for \'{self.ADDRESS}\'): ')
+        port_ = input(f'Port (empty for {self.PORT}): ')
+        return address_ if address_ and match(self.HOST_REGEX, address_) else self.ADDRESS, port_ if port_ and '1024' <= port_ <= '65535' else self.PORT
+
+    
+    def send(self, msg):
+        assert len(msg) <= 1020
+        header = f'{len(msg):<4}'
+        self.sock.send(f'{header}{msg}'.encode())
+
+    def recv(self):
+        header = int(self.sock.recv(4).decode().strip())
+        return self.sock.recv(header).decode()
+    
+    def auth(self):
+        logged_in = False
+        while not logged_in:
+            uname = input(self.recv())
+            self.send(uname)
+            pwd = input(self.recv())
+            self.send(pwd)
+            result = self.recv()
+            if result == successful_login:
+                logged_in = True
+            print(self.recv())
 
 
-sock = socket.socket()
-log.debug('Socket started')
-sock.connect((ADDRESS, PORT))
-log.info(f'Connected to {ADDRESS}:{PORT}')
 
-data = sock.recv(1024)
-if 'Enter your name' in data.decode():
-    name = input(data.decode())
-    sock.send(name.encode())
-else:
-    print(data.decode())
-
-while True:
-
-    msg = input('<= ')
-
-    if msg == '/disconnect':
-        break
-
-    log.debug(f'Sending "{msg}"')
-    sock.send(msg.encode())
-
-    log.debug('Receiving data from server')
-    data = sock.recv(1024)
-
-    log.debug(f'Disconnecting from {ADDRESS}:{PORT}')
-
-    print(f'=> {data.decode()}')
-
-sock.close()
+Client()
+            
