@@ -1,6 +1,1 @@
-{ 
-    "clients":
-    [
-        {"ip": "127.0.0.1", "name": "Erjan"}
-    ]
-}
+{"clients": [{"ip": "127.0.0.2", "name": "Erjan", "password": "vstavai"}, {"ip": "127.0.0.3", "name": "sergey", "password": "qwerty"}, {"ip": "127.0.0.1", "name": "Serj", "password": "kek"}]}
