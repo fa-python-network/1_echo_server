@@ -1,56 +1,69 @@
-import socket
-from time import sleep
+import socket, threading, time
 
-sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+key = 8194
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
-host = input('Введите имя хоста: ')
-if host == 'localhost':
-    pass
-else:
-    if any(c.isalpha() for c in host) == True:
-        print('Введено некорректное имя хоста.По умолчанию выбран локальный хост')
-        host = 'localhost'
-    else:
-        host_lst = host.split('.')
-        for i in host_lst:
-            if 0 <= int(i) <= 255:
-                pass
-            else:
-                host = 'localhost'
-                print('Введено некорректное имя хоста.По умолчанию выбран локальный хост')
+shutdown = False
+join = False
 
-data = sock.recv(1024)
-try:
-    port = int(input('Введите номер порта: '))
-    if 0 <= port <= 65535:
-        pass
-    else:
-        print('Введен некорректный номер порта.Номер порта по умолчанию 9090')
-        port = 9090
+def receving (name, sock):
+	while not shutdown:
+		try:
+			while True:
+				data, addr = sock.recvfrom(1024)
+				#print(data.decode("utf-8"))
 
-except ValueError:
-    print("Некорректный номер порта. Номер порта по умолчанию 9090")
-    port = 9090
+				# Begin
+				decrypt = ""; k = False
+				for i in data.decode("utf-8"):
+					if i == ":":
+						k = True
+						decrypt += i
+					elif k == False or i == " ":
+						decrypt += i
+					else:
+						decrypt += chr(ord(i)^key)
+				print(decrypt)
+				# End
 
-sock.close()
-sock.connect((host, port))
+				time.sleep(0.2)
+		except:
+			pass
+host = socket.gethostbyname(socket.gethostname())
+port = 0
 
-print(data.decode())
-print('Напишите exit для завершения работы с сервером')
-msg = ''
-while True:
-    if msg != 'exit':
-        print('Введите сообщение:')
-        msg = input()
-        sock.send(msg.encode())
-        data = sock.recv(1024)
-    else:
-        break
+server = ("127.0.0.1",9090)
 
-sock.close()
-print('Работа с сервером завершена.')
+s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+s.bind((host,port))
+s.setblocking(0)
+
+alias = input("Name: ")
+
+rT = threading.Thread(target = receving, args = ("RecvThread",s))
+rT.start()
+
+while shutdown == False:
+	if join == False:
+		s.sendto(("["+alias + "] => join chat ").encode("utf-8"),server)
+		join = True
+	else:
+		try:
+			message = input()
+
+			# Begin
+			crypt = ""
+			for i in message:
+				crypt += chr(ord(i)^key)
+			message = crypt
+			# End
+
+			if message != "":
+				s.sendto(("["+alias + "] :: "+message).encode("utf-8"),server)
+			
+			time.sleep(0.2)
+		except:
+			s.sendto(("["+alias + "] <= left chat ").encode("utf-8"),server)
+			shutdown = True
+
+rT.join()
+s.close()

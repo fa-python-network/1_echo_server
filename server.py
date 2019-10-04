@@ -1,41 +1,33 @@
-import socket
-import logging as l
+import socket, time
 
-log_format = '%(levelname)s %(asctime)s - %(message)s'
-l.basicConfig(filename='server.log', format = log_format ,datefmt='%d.%m.%Y %H:%M:%S', level=l.INFO)
+host = socket.gethostbyname(socket.gethostname())
+port = 9090
 
-l.info('Start logging INFO')
+clients = []
 
+s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+s.bind((host,port))
 
-sock = socket.socket()
-sock.bind(('', 9090))
-l.info ('Сервер подключился к порту: 9090')
-sock.listen(1)
-conn, addr = sock.accept()
-print(addr)
-l.info('Сервер ожидает подключения...')
+quit = False
+print("[ Server Started ]")
 
-msg = ''
+while not quit:
+	try:
+		data, addr = s.recvfrom(1024)
 
-while True:
-   data = conn.recv(1024)
-   if not data:
-       break
-   msg += data.decode()
-   conn.send(data)
-    conn, addr = sock.accept()
-    l.info(f'Клиент {addr} подключился к серверу')
-    msg = ''
+		if addr not in clients:
+			clients.append(addr)
 
-print(msg)
-    while True:
-        data = conn.recv(1024)
-        if not data:
-            break
-        conn.send(data)
-        l.info ('Сервер отправляет ответ клиенту')
+		itsatime = time.strftime("%Y-%m-%d-%H.%M.%S", time.localtime())
 
+		print("["+addr[0]+"]=["+str(addr[1])+"]=["+itsatime+"]/")
+		print(data.decode("utf-8"))
 
-conn.close()
-    conn.close()
-    l.info('Соединение завершено')
+		for client in clients:
+			if addr != client:
+				s.sendto(data,client)
+	except:	
+		print("\n[ Server Stopped ]")
+		quit = True
+		
+s.close()
