@@ -14,8 +14,14 @@ while k==False:
 		port = input()
 		if port == "":
 			port = 9090
-		
+		#
 		sock.connect((host, int(port)))
+		c = sock.recv(1024)
+		if c == "What is your name?":
+			msg = input()
+			sock.send(msg.encode())
+			c = sock.recv(1024)
+		print(c.decode())
 		msg = input()
 		while msg!='exit':
 			sock.send(msg.encode())
@@ -25,7 +31,7 @@ while k==False:
 		break
 	except:
 		print("wrong host or port")
-	#data = sock.recv(1024)
+	data = sock.recv(1024)
 
 #print(data.decode())
 sock.close()
