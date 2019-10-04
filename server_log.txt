@@ -1,0 +1,7 @@
+('127.0.0.1', 50688)  connected
+('127.0.0.1', 50877)  connected
+('127.0.0.1', 51024)  connected
+('127.0.0.1', 52075)  connected
+('127.0.0.1', 52154)  connected
+('127.0.0.1', 52154)  disconnected
+('127.0.0.1', 52075)  disconnected
