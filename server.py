@@ -1,23 +1,25 @@
 import socket
 
-port = input()
+port = 9090
 clients = 1
 
 try:
     
-    if (int(port) > 1024) and (int(port) < 65000:
-        port = int(port)
-    else:
-        port = 9090
+    sock.bind(('',port))
+    break
             
 except:
-    port = 9090
+    port += 1
 
 service_file = open("serviceCommand.log", "a")
+
+service_file.Write(f'Port № {port} has been installed')
 
 sock = socket.socket()
 sock.bind(('', port))
 sock.listen(clients)
+
+
 
 while True:
 
