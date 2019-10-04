@@ -3,20 +3,21 @@ import socket
 port = 9090
 clients = 1
 
-try:
-    
-    sock.bind(('',port))
-    break
-            
-except:
-    port += 1
-
 service_file = open("serviceCommand.log", "a")
 
 service_file.Write(f'Port № {port} has been installed')
 
 sock = socket.socket()
-sock.bind(('', port))
+while True:
+
+    try:
+        sock.bind(('',port))
+        break
+            
+    except:
+        port += 1
+
+
 sock.listen(clients)
 
 
