@@ -34,7 +34,7 @@ s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 s.bind((host,port))
 s.setblocking(0)
 
-alias = input("Name: ")
+alias = raw_input("Name: ")
 
 rT = threading.Thread(target = receving, args = ("RecvThread",s))
 rT.start()
