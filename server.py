@@ -3,10 +3,6 @@ import socket
 port = 9090
 clients = 1
 
-service_file = open("serviceCommand.log", "a")
-
-service_file.Write(f'Port № {port} has been installed')
-
 sock = socket.socket()
 while True:
 
@@ -20,6 +16,9 @@ while True:
 
 sock.listen(clients)
 
+service_file = open("serviceCommand.log", "a")
+
+service_file.Write(f'Port № {port} has been installed')
 
 
 while True:
