@@ -31,9 +31,7 @@ name=sock.recv(1024)
 if 'hi' in name.decode():
 	print(name.decode())
 else:
-	#print(name.decode())
-	#client_name=input('Enter: ')
-	sock.send(input('enter:').encode())
+	sock.send(input('Enter: ').encode())
 
 
 msg = ''
