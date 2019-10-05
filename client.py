@@ -1,16 +1,31 @@
 import socket
 
-try:
-    portnum = int(input("Write port number\n"))
+while True:
 
-except:
-    print("Wrong format of port number")
+    try:
+        portnum = int(input("Write port number\n"))
+        if 1024 <= portnum <= 65535:
+            break
+        else:
+            print("Wrong format of port number")
 
-try:
-    hostname = raw_input("Write hostname\n")
+    except:
+        print("Wrong format of port number")
 
-except:
-    print("Wrong format of hostname")
+while True:
+
+    try:
+        hostname = raw_input("Write host address\n")
+        for i in hostname.split("."):
+            if 255 < int(i) or int(i) < 0:
+                print("Wrong format of hostname")
+                break
+        break
+
+    except:
+        print("Wrong format of hostname, set default")
+        hostname = "localhost"
+        break
 
 sock = socket.socket()
 sock.connect((hostname, portnum))

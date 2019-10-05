@@ -6,24 +6,25 @@ def ask_send(conn, ask):
     '''Функция отправки сообщения'''
     conn.send(ask.encode())
     
-                    
-                
-    
-    
-
-
-    
 
 sock = socket.socket()
 f = open("log.txt", "w")
 
 # Безопасно вводим номер порта
-try:
-    portnum = int(input("Select port number\n"))
+while True:
+    try:
+        portnum = int(input("Write port number\n"))
+        if 1024 <= portnum <= 65535:
+            break
+        else:
+            print("Wrong format of port number")
+            f.write("Wrong format of port number\n")
 
-except:
-    portnum = 9090
-    f.write("Wrong format of port number\n")
+    except:
+        print("Wrong format of port number, default set")
+        portnum = 9090
+        f.write("Wrong format of port number, default set\n")
+        break
 
 while True:
 # Безопасно задаем номер порта. В случае ошибки, повышаем значение на единицу
@@ -39,10 +40,6 @@ while True:
         f.write("Port number is changed\n")
         print("Using port:", portnum)
 
-#######################################
-
-
-
 while True:
 # Запускает процесс прослушивания.
 
@@ -55,7 +52,8 @@ while True:
     f.write("User " + str(addr) + " connected\n")
 
     known = False
-
+    
+    # Чтение файла с именами
     with open("list.csv", "r") as ls:
 
         for line in csv.reader(ls):
@@ -65,11 +63,10 @@ while True:
                 f.write("Known user connected\n")
 
         ls.close()
-        
+    
+    # Если клиент неизвестен    
     if not known:
         ask_send(conn, "Who are you?")
-
-        
 
         try:
             data = conn.recv(1024)
