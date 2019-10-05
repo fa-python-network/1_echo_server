@@ -10,10 +10,10 @@ port = 9090
 while port !=65525:
 	try:
 		sock.bind(('',port))
-		print(port)
+		print('The port is: {}'.format(port))
 		break
 	except:
-		print('try again')
+		print('The port is not available. Cheacking a new one...')
 		port+=1
 
 
@@ -23,7 +23,7 @@ logging.info('listening')
 while True:
 	file=open('manual.txt', 'r')
 	conn,addr=sock.accept()
-	print(addr[0])
+	print('Now connected to {}'.format(addr[0]))
 	f=0
 	for line in file:
 		l=line.strip()
@@ -34,10 +34,8 @@ while True:
 			break
 	if f==0:
 		file=open('manual.txt', 'a+')
-		ask_name='create your name'
-		conn.send(ask_name.encode())
-		got_name=conn.recv(1024)
-		got_name.decode()
+		conn.send('Create your name'.encode())
+		got_name=conn.recv(1024).decode()
 		file=open('manual.txt', 'a')
 		file.write('\n{} - {}'.format(addr[0],got_name.decode()))
 		file.close()
@@ -47,13 +45,11 @@ while True:
 	msg = ''
 	while True:
 		data = conn.recv(1024)
+		logging.info('got a message')
 		if not data:
 			break
-		logging.info('got a message')
-		if 'exit' in input():
-			conn.close()
-		msg = data.decode()
-		print(msg)
+		print('The messages of {} are [ {} ]'.format(addr[0],data.decode()))
 
-logging,info('done')
+
+logging.info('done')
 conn.close()
