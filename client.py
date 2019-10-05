@@ -1,5 +1,31 @@
-
 import socket
+
+def new_user(sock):
+    print("Введите ваше имя: ")
+    name=input()
+    sock.send(name.encode())
+    sock.recv(1024)
+    while True:
+        print("Введите пароль")
+        password = input()
+        print("Повторите пароль")
+        password2 = input()
+        if password == password2:
+            break
+    sock.send(password.encode())
+
+#Это не безопасно, но мне лень делать что-то другое, ибо я тупенький)
+def old_user(sock, msg):
+    print(msg)
+    password = input()
+    sock.send(password.encode())
+    flag = sock.recv(1024).decode()
+    if flag == "0":
+        sock.send('1'.encode())
+        return
+    else:
+        old_user(sock, 'Введите правильный пароль')
+
 
 host=input('Введите имя хоста или нажмите Enter для использования значения по умолчанию ')
 port=input('Введите номер порта или нажмите Enter для использования значения по умолчанию ')
@@ -18,13 +44,10 @@ print('Соединение с сервером')
 
 #Получение приветствия или просьбы зарегестрироваться
 data = sock.recv(1024).decode()
-if int(data[0]):
-    print(data[1:])
-    name=input()
-    sock.send(name.encode())
+if int(data):
+    new_user(sock)    
 else:
-#Без этого не работает,логики нет, строчку почти наугад добавил...
-    sock.send('1'.encode())
+    old_user(sock, 'Введите пароль:')
 data = sock.recv(1024).decode()
 print(data)
 
