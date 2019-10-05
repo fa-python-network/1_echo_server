@@ -1,13 +1,14 @@
 Server runs
 Server is listening
-User ('127.0.0.1', 45628) connected
+User ('127.0.0.1', 45822) connected
+Known user connected
 Message recieved hello
-Message recieved hy
+Message recieved hi
 Message recieved by
 Disconnection
 Server is listening
-User ('127.0.0.1', 45630) connected
-Message recieved bu
-Message recieved by
+User ('127.0.0.1', 45824) connected
+Known user connected
+Message recieved hello
 Disconnection
 Server is listening

@@ -17,6 +17,18 @@ sock.connect((hostname, portnum))
 
 while True:
 
+    data = sock.recv(1024)
+    print(data.decode())
+
+    if data.decode() == "Who are you?":
+        name = raw_input()
+        sock.send(name.encode())
+
+    if "Welcome" in data.decode():
+        break
+
+while True:
+
     msg = raw_input("Write <exit> to quit\n")
 
     if msg == "exit":
