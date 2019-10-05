@@ -16,7 +16,8 @@ if "знаю" in txt:
     sock.send(name.encode())
     sendPassword(sock)
 elif "пароль" in txt:
-    sendPassword(sock)
+    passwd = input(txt)
+    sock.send(passwd.encode())
 msg = input()
 while msg != 'exit':
     sock.send(msg.encode())
