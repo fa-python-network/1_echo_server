@@ -1,4 +1,8 @@
 import socket
+def LogIn(sock):
+     txt = sock.recv(1024).decode()
+     passwd = input(txt)
+     sock.send(passwd.encode())
 
 try:
     port=int(input("ваш порт:"))
@@ -14,8 +18,10 @@ user = sock.recv(1024).decode()
 if "неизвестный" in user:
     name = input(user)
     sock.send(name.encode())
+    LogIn(sock)
 else:
-    print(f"Здравствуйте, {user}")
+    passwd = input(user)
+    sock.send(passwd.encode())
 msg = input()
 while msg != 'exit':
     sock.send(msg.encode())
@@ -23,4 +29,3 @@ while msg != 'exit':
     msg = input()
 
 sock.close()
-
