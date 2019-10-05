@@ -64,14 +64,17 @@ while True:
 
 while True:
 
-    msg = raw_input("Write <exit> to quit\n")
+    msg = raw_input("Write <exit> to quit\nNick: ")
 
     if msg == "exit":
         ask_send(msg)
         break
 
     ask_send(msg)
-    print("Message sent")
+    print("Wait for offer...")
+
+    msg = msg_recv()
+    print("Server: " + msg)
 
 sock.close()
 

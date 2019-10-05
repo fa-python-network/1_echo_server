@@ -78,6 +78,7 @@ while True:
                 
                 known = True
                 f.write("Known user connected\n")
+                name = line[1]
                 break
             
 
@@ -108,28 +109,31 @@ while True:
 
         ask_send(conn, "Welcome, " + name)
 
-
     while True:
     # Запись и вывод полученных сообщений.
         
-        try:
-            msg = msg_recv(conn)
-            if not msg:
-                print("No message recieved")
-                conn.close()
-                break
-
-            if msg == "exit":
-                print("Client exits")
-                f.write("Disconnection\n")
-                conn.close()
-                break
-
-            print(msg)
-            f.write("Message recieved " + msg + "\n")
-
-        except:
+    #try:
+        msg = msg_recv(conn)
+        if not msg:
+            print("No message recieved")
             conn.close()
             break
+
+        if msg == "exit":
+            print("Client exits")
+            f.write("Disconnection\n")
+            conn.close()
+            break
+
+        print("{}: {}".format(name, msg))
+        f.write("Message recieved " + msg + "\n")
+            
+
+        #except:
+        #    conn.close()
+         #   break
+
+        ask = raw_input("Server: ")
+        ask_send(conn, ask)
 
 
