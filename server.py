@@ -112,26 +112,26 @@ while True:
     while True:
     # Запись и вывод полученных сообщений.
         
-    #try:
-        msg = msg_recv(conn)
-        if not msg:
-            print("No message recieved")
-            conn.close()
-            break
+        try:
+            msg = msg_recv(conn)
+            if not msg:
+                print("No message recieved")
+                conn.close()
+                break
 
-        if msg == "exit":
-            print("Client exits")
-            f.write("Disconnection\n")
-            conn.close()
-            break
+            if msg == "exit":
+                print("Client exits")
+                f.write("Disconnection\n")
+                conn.close()
+                break
 
-        print("{}: {}".format(name, msg))
-        f.write("Message recieved " + msg + "\n")
-            
+            print("{}: {}".format(name, msg))
+            f.write("Message recieved " + msg + "\n")
+                
 
-        #except:
-        #    conn.close()
-         #   break
+            except:
+                conn.close()
+                break
 
         ask = raw_input("Server: ")
         ask_send(conn, ask)
