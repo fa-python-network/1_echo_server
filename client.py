@@ -20,11 +20,10 @@ while True:
     msg = raw_input("Write <exit> to quit\n")
 
     if msg == "exit":
-        sock.send("Client exit".encode())
+        sock.send(msg.encode())
         break
 
     sock.send(msg.encode())
-    data = sock.recv(1024)
     print("Message sent")
 
 sock.close()
