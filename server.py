@@ -1,4 +1,11 @@
 import socket
+import logging
+
+server_logger = logging.getLogger("server_logger")
+log_handler = logging.FileHandler(filename="server_log.log", encoding="UTF-8")
+log_handler.setLevel(logging.INFO)
+server_logger.addHandler(log_handler)
+server_logger.setLevel(logging.INFO)
 
 sock = socket.socket()
 default_port = 9090
@@ -24,10 +31,10 @@ except ConnectionError:
 
 sock.listen(0)
 
-
+server_logger.info("Сервер поднят!")
 while True:
     conn, addr = sock.accept()
-    print(addr)
+    server_logger.info(f"{addr} подключился к серверу!")
 
     msg = ''
 
@@ -36,7 +43,9 @@ while True:
         if not data:
             break
         msg += data.decode()
+        server_logger.info(f"{addr} прислал сообщение: {msg}")
         conn.send(data)
+        server_logger.info(f"Ответ клиенту {addr} отправлен")
 
-    print(msg)
     conn.close()
+    server_logger.info(f"{addr} отключился")
