@@ -1,6 +1,7 @@
 import logging as log
 import socket
 from re import match
+import json
 
 log.basicConfig(filename='server.txt', level=log.DEBUG)
 
@@ -15,6 +16,20 @@ def receive(conn):
     header = conn.recv(4).decode()
     message = conn.recv(int(header))
     return message.decode()
+
+
+def identify(conn, addr):
+    with open('identify.json', 'r') as f:
+        data = json.load(f)
+    if not addr[0] in data:
+        send(conn, 'What is your name?')
+        info = receive(conn)
+        data[addr[0]] = info
+    send(conn, f'Hello, {data[addr[0]]}')
+    with open('identify.json', 'w') as f:
+        json.dump(data, f, ensure_ascii=False)
+
+
 
 
 sock = socket.socket()
@@ -44,6 +59,7 @@ try:
     while 1:
         conn, addr = sock.accept()
         log.info('Подключен клиент {}:{}'.format(*addr))
+        identify(conn, addr)
         while 1:
             received_msg = receive(conn)
             send(conn, received_msg)

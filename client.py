@@ -1,7 +1,6 @@
 import socket
 import logging as log
 
-
 log.basicConfig(filename='client.txt', level=log.DEBUG)
 
 
@@ -16,10 +15,21 @@ def receive(conn):
     message = conn.recv(int(header))
     return message.decode()
 
+
+def identify(sock):
+    data = receive(sock)
+    if data == 'What is your name?':
+        name = input(data)
+        send(sock, name)
+        data = receive(sock)
+    print(data)
+
+
 sock = socket.socket()
 log.info('Клиент запущен')
-sock.connect(('localhost', 1427))
+sock.connect(('localhost', 9090))
 log.info('Подключено к серверу')
+identify(sock)
 msg = ''
 while msg != 'exit':
     msg = input()
