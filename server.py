@@ -2,6 +2,7 @@ import socket
 from datetime import datetime
 from contextlib import closing
 import os
+import hashlib
 import json
 class Server():
 	def __init__(self, log = "file.log", users = "users.json"):
@@ -53,14 +54,24 @@ class Server():
 				name = users[str(addr[0])]['name']
 				conn.send("Введите свой пароль: ".encode('utf-8'))
 				passwd = conn.recv(1024).decode()
-			except KeyError:
+				print("Currect!" if self.checkPasswrd(passwd,users[str(addr[0])]['password']) else "Incorrect")
+			except:
 				conn.send("Привет. Я тебя не знаю. Скажи мне свое имя: ".encode())
 				name = conn.recv(1024).decode()
 				conn.send("Введите свой пароль:".encode())
-				passwd = conn.recv(1024).decode()
+				passwd = self.generateHash(conn.recv(1024).decode())
 				with open(self.__users, "w", encoding="utf-8") as f:
 					json.dump({addr[0] : {'name': name, 'password': passwd} },f)
 		return f"Здравствуйте, {name}"
+
+	def checkPasswrd(self, passwd, userkey) -> bool:
+		key = hashlib.md5(passwd.encode() + b'salt').hexdigest()
+		return key == userkey
+
+	def generateHash(self, passwd) -> bytes:
+		key = hashlib.md5(passwd.encode() + b'salt').hexdigest()
+		return key
+
 	def serverStarted(self,ip):
 		with open(self.__log, "a", encoding="utf-8") as f:
 			print(f"{datetime.now().time()} Server Launched {ip}", file=f)
