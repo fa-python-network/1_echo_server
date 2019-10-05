@@ -1,10 +1,6 @@
 Server runs
 Server is listening
-User ('127.0.0.1', 45840) connected
-Known user connected
-Disconnection
-Server is listening
-User ('127.0.0.1', 45842) connected
-Known user connected
+User ('127.0.0.1', 45890) connected
+Wrong psswdWrong psswdSuccessed pswdKnown user connected
 Disconnection
 Server is listening

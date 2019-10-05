@@ -58,9 +58,24 @@ while True:
 
         for line in csv.reader(ls):
             if line[0] == addr[0]:
-                ask_send(conn, "Welcome, " + line[1])
+                ask_send(conn, "Enter password")
+                
+                while True:
+                    data = conn.recv(1024)
+                    pswd = data.decode()
+
+                    if line[2] == pswd:
+                        ask_send(conn, "Welcome, " + line[1])
+                        f.write("Successed pswd")
+                        break
+                    else:
+                        ask_send(conn, "Wrong password")
+                        f.write("Wrong psswd")
+                
                 known = True
                 f.write("Known user connected\n")
+                break
+            
 
         ls.close()
     
@@ -71,22 +86,24 @@ while True:
         try:
             data = conn.recv(1024)
             name = data.decode()
-
-            with open ("list.csv", "a") as inls:
-                csv.writer(inls).writerow([addr[0], name])
-                inls.close()
-
             f.write("User added as " + name + "\n")
+            ask_send(conn, "Choose password")
+            data = conn.recv(1024)
+            pswd = data.decode()
 
         except:
             name = "Guest"
             ask_send(conn,"Wrong format of name. You are a guest.")
-
-            with open ("list.csv", "a") as inls:
-                csv.writer(inls).writerow([addr[0], name])
-                inls.close()
-
             f.write("User added as Guest\n")
+            ask_send(conn, "Choose password")
+            data = conn.recv(1024)
+            pswd = data.decode()
+
+        with open ("list.csv", "a") as inls:
+            csv.writer(inls).writerow([addr[0], name, pswd])
+            inls.close()
+
+            
 
         ask_send(conn, "Welcome, " + name)
 

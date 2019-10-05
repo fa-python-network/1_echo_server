@@ -38,6 +38,15 @@ while True:
     if data.decode() == "Who are you?":
         name = raw_input()
         sock.send(name.encode())
+    
+    if data.decode() == "Choose password":
+        pswd = raw_input()
+        if pswd != "":
+            sock.send(pswd.encode())
+
+    if data.decode() == "Enter password" or data.decode() == "Wrong password":
+        pswd = raw_input()
+        sock.send(pswd.encode())
 
     if "Welcome" in data.decode():
         break
