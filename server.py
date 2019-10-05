@@ -4,6 +4,19 @@ from re import match
 
 log.basicConfig(filename='server.txt', level=log.DEBUG)
 
+
+def send(conn, message):
+    header = len(message)
+    full_message = f'{header:4}{message}'.encode()
+    conn.send(full_message)
+
+
+def receive(conn):
+    header = conn.recv(4).decode()
+    message = conn.recv(int(header))
+    return message.decode()
+
+
 sock = socket.socket()
 log.info('Запуск сервера')
 host = 'localhost'
@@ -32,8 +45,8 @@ try:
         conn, addr = sock.accept()
         log.info('Подключен клиент {}:{}'.format(*addr))
         while 1:
-            received_msg = conn.recv(1024).decode()
-            conn.send(received_msg.encode())
+            received_msg = receive(conn)
+            send(conn, received_msg)
             if not received_msg:
                 log.info('Разрыв соединения')
                 conn.close()

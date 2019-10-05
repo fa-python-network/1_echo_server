@@ -4,16 +4,28 @@ import logging as log
 
 log.basicConfig(filename='client.txt', level=log.DEBUG)
 
+
+def send(conn, message):
+    header = len(message)
+    full_message = f'{header:4}{message}'.encode()
+    conn.send(full_message)
+
+
+def receive(conn):
+    header = conn.recv(4).decode()
+    message = conn.recv(int(header))
+    return message.decode()
+
 sock = socket.socket()
 log.info('Клиент запущен')
-sock.connect(('localhost', 23))
+sock.connect(('localhost', 1427))
 log.info('Подключено к серверу')
 msg = ''
 while msg != 'exit':
     msg = input()
     log.info('Отправляю сообщение {}'.format(msg))
-    sock.send(msg.encode())
+    send(sock, msg)
     log.info('Получаю ответ сервера')
-    received_msg = sock.recv(1024)
-    print(received_msg.decode())
+    received_msg = receive(sock)
+    print(received_msg)
 sock.close()
