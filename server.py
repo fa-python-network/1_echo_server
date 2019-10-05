@@ -5,21 +5,33 @@ sock = socket.socket()
 print ("Select port number")
 portnum = int(input())
 
-sock.bind(('', portnum))
-sock.listen(1)
 while True:
-	conn, addr = sock.accept()
-	print(addr)
 
-	msg = ''
+    try:
+        sock.bind(('', portnum))
+        break
 
-	while True:
-		data = conn.recv(1024)
-		if not data:
-			break
-		msg += data.decode()
-		conn.send(data)
+    except:
+        portnum += 1
 
-	print(msg)
+while True:
 
-	conn.close()
+    sock.listen(1)
+    conn, addr = sock.accept()
+    print(addr)
+
+    while True:
+
+        msg = ''
+
+        try:
+            data = conn.recv(1024)
+            msg += data.decode()
+            conn.send(data)
+
+        except:
+            break
+
+        print(msg)
+
+    conn.close()

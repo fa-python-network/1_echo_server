@@ -1,27 +1,32 @@
 import socket
-from time import sleep
+
+try:
+    portnum = int(input("Write port number\n"))
+
+except:
+    print("Wrong format of port number")
+
+try:
+    hostname = raw_input("Write hostname\n")
+
+except:
+    print("Wrong format of hostname")
 
 sock = socket.socket()
-
-print("Write port number")
-portnum = int(input())
-print("Write host name")
-hostname = str(input())
-
-sock.setblocking(1)
 sock.connect((hostname, portnum))
 
-print("Write <exit> to quit")
-
 while True:
-	msg = input()
-	if msg == "exit":
-		sock.send("Client exit".encode())
-		break
-	sock.send(msg.encode())
 
-	data = sock.recv(1024)
+    msg = raw_input("Write <exit> to quit\n")
+
+    if msg == "exit":
+        sock.send("Client exit".encode())
+        break
+
+    sock.send(msg.encode())
+    data = sock.recv(1024)
+    print("Message sent")
 
 sock.close()
 
-print(data.decode())
+
