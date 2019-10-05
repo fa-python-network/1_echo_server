@@ -3,8 +3,10 @@ import sys
 from time import sleep
 
 while True:
-	client_host = input('enter your host: ' )
+	client_host = input('Enter your host: ')
 	if client_host=='localhost':
+		break
+	elif client_host=='':
 		break
 	else:
 		parts=client_host.split('.',4)
@@ -12,14 +14,14 @@ while True:
 			if 0<=int(i)<=255:
 				break
 			else:
-				print('mistake')
+				print('Wrong host. Try again.')
 
 while True:
-	client_port=int(input('enter your port: '))
+	client_port=int(input('Enter port: '))
 	if 1024<=client_port<=65525:
 		break
 	else:
-		print('wrong port... try again')
+		print('Wrong port. Try again.')
 
 sock = socket.socket()
 sock.setblocking(1)
@@ -29,20 +31,20 @@ name=sock.recv(1024)
 if 'hi' in name.decode():
 	print(name.decode())
 else:
-	print(name.decode())
-	client_name=input('enter: ')
-	sock.send(client_name.encode())
+	#print(name.decode())
+	#client_name=input('Enter: ')
+	sock.send(input('enter:').encode())
+
 
 msg = ''
 while True:
 	client_msg=input()
 	if 'exit' in client_msg:
-		sock.close()
+		sock.send(msg.encode())
 		break
-	msg+=client_msg+' '
-	sock.send(msg.encode())
+	msg+=client_msg+'  '
 
 #data = sock.recv(1024)
 #print(data.decode())
-
+sock.close()
 
