@@ -149,8 +149,9 @@ class Client(socket):
         self.console_clear()
 
         if self.token is not None:
+
             self.send(Data(type="authorization", data={"token": self.token}).to_json())
-            print("token)")
+
             while self.request_status is None:
                 time.sleep(0.05)
             if self.request_status == "OK":

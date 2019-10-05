@@ -95,16 +95,19 @@ class Peer(object):
         :return:
         """
 
+        data = list()
         while True:
-            data = await self.loop.sock_recv(self._sock, 4096)
-            if data == b"":
+            recv_data = await self.loop.sock_recv(self._sock, 1024)
+            if recv_data == b"":
                 break
+            data.append(recv_data.decode("utf-8"))
             try:
-                data = data.decode("utf-8")
-            except UnicodeDecodeError:
+                recv_data = "".join(data)
+                await self._message_handler(json.loads(recv_data))
+                self._server.loger.obtain_data(self.address, recv_data)
+                data = list()
+            except json.decoder.JSONDecodeError:
                 continue
-            self._server.loger.obtain_data(self.address, data)
-            await self._message_handler(data)
 
     async def _message_handler(self, data):
         """
@@ -114,23 +117,19 @@ class Peer(object):
         :return:
         """
 
-        try:
-            data = json.loads(data)
-        except json.decoder.JSONDecodeError:
-            data = None
-
         if data and "type" in data and "data" in data:
             if data["type"] == "message":
                 user_data = self.chat(data["data"])
                 await self.send(user_data.to_json())
                 if user_data.notice == "OK":
-                    data = ServerData(type="broadcast_message",
-                                      data=dict(login=user_data.data["login"],
-                                                message=data["data"]["message"]),
-                                      notice="OK").to_json()
-                    await self._server.broadcast(self, data)
+                    messages = data["data"]["message"]
+                    for message in [messages[x:x + 256] for x in range(0, len(messages), 256)]:
+                        data = ServerData(type="broadcast_message",
+                                          data=dict(login=user_data.data["login"],
+                                                    message=message),
+                                          notice="OK").to_json()
+                        await self._server.broadcast(self, data)
             elif data["type"] == "get_messages":
-                print(data)
                 if "token" in data["data"]:
                     user = User.search_user(token=data["data"]["token"])
                     if user is not None:
@@ -160,8 +159,10 @@ class Peer(object):
             user = User.search_user(token=data["token"], login=data["login"])
             if user is not None:
                 self.entered = True
-                if data["message"] is not None and data["message"] != "":
-                    user = user.add_new_message(data["message"])
+                message = data["message"]
+                if message is not None and message != "":
+                    for message in [message[x:x + 256] for x in range(0, len(message), 256)]:
+                        user = user.add_new_message(message)
                 return ServerData(type="message", data=dict(login=user.login, token=user.token), notice="OK")
         return ServerData(type="authorization", data=dict(token=None), notice="Wrong login or password")
 
