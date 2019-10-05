@@ -11,10 +11,11 @@ msg = ''
 while True:
 	data = conn.recv(1024)
 	if not data:
-		break
+		print(msg)
+		msg = ''
+		sock.listen(0)
+		conn, addr = sock.accept()
 	msg += data.decode()
-	conn.send(data)
-
+	conn.send(msg.encode())
 print(msg)
-
 conn.close()
