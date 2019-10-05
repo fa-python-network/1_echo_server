@@ -22,12 +22,14 @@ while True:
 try:
     sock.bind(('', port))
 except ConnectionError:
-    print("Похоже, к этому порту нельзя причалиться =( пробую стандартный . . .")
+    print("Похоже, к этому порту нельзя причалиться =( пробую поискать другой . . .")
     try:
-        sock.bind(('', default_port))
-    except Exception:
-        print("Случилось что-то сверхъестественное . . .")
-        exit(-1)
+        for i in range(8080, 65535):
+            print(f"Пробуем забиндить порт {i}")
+            sock.bind(('', i))
+            break
+    except ConnectionError:
+        print("Занято...")
 
 sock.listen(0)
 
