@@ -129,9 +129,9 @@ while True:
             f.write("Message recieved " + msg + "\n")
                 
 
-            except:
-                conn.close()
-                break
+        except:
+            conn.close()
+            break
 
         ask = raw_input("Server: ")
         ask_send(conn, ask)
