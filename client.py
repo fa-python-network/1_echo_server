@@ -25,7 +25,11 @@ except OSError:
         print("Похоже, сервер забыли поднять =(")
         exit(0)
 
+data = sock.recv(1024)
+print(data.decode())
+
 while True:
+
     msg = input()
     if msg == "exit":
         break
