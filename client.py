@@ -1,4 +1,15 @@
+# -*- coding: utf-8 -
 import socket
+
+def ask_send(ask):
+    '''Функция отправки сообщения. Принимает само сообщение'''
+    sock.send(ask.encode())
+
+
+def msg_recv():
+    '''Функция принятия сообщения.'''
+    data = sock.recv(1024)
+    return data.decode()
 
 while True:
 
@@ -32,23 +43,23 @@ sock.connect((hostname, portnum))
 
 while True:
 
-    data = sock.recv(1024)
-    print(data.decode())
+    data = msg_recv()
+    print(data)
 
-    if data.decode() == "Who are you?":
+    if data == "Who are you?":
         name = raw_input()
-        sock.send(name.encode())
+        ask_send(name)
     
-    if data.decode() == "Choose password":
+    if data == "Choose password":
         pswd = raw_input()
         if pswd != "":
-            sock.send(pswd.encode())
+            ask_send(pswd)
 
-    if data.decode() == "Enter password" or data.decode() == "Wrong password":
+    if data == "Enter password" or data == "Wrong password":
         pswd = raw_input()
-        sock.send(pswd.encode())
+        ask_send(pswd)
 
-    if "Welcome" in data.decode():
+    if "Welcome" in data:
         break
 
 while True:
@@ -56,10 +67,10 @@ while True:
     msg = raw_input("Write <exit> to quit\n")
 
     if msg == "exit":
-        sock.send(msg.encode())
+        ask_send(msg)
         break
 
-    sock.send(msg.encode())
+    ask_send(msg)
     print("Message sent")
 
 sock.close()
