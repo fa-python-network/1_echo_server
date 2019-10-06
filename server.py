@@ -1,59 +1,56 @@
 import socket, errno
 import sys
 
-class Server(socket):
+class Server(socket.socket):
     """Сервер"""
 
     def __init__(self):
         """Создание сокета"""
         super().__init__()
-        self.sock=soket.soket
+        self.sock=socket.socket()
 
 
-    def send_msg(msg, sock):
+    def send_msg(self, msg, sock):
         """Отправка сообщения с добавлением длины сообщения"""
         length_msg = str(len(msg))
         length_msg = '0'*(10-len(length_msg)) + length_msg
         msg = length_msg + msg
         sock.send(msg.encode())
 
-    def recv_msg(sock):
+    def recv_msg(self, sock):
         """Получение сообщения с учётом его длины"""
         length_msg = int(sock.recv(10).decode())
         msg = sock.recv(length_msg).decode()
         return msg
 
 
-    def close_server():
-        """Закрытие сервера, используется для добавления соответствующей
-        записи в лог файл при закрытии сервера через Ctrl+C"""
-	    with open ('log.txt', 'a') as file:
-		    print('Остановка сервера', file=file)
-	    global sock
-	    sock.close()
-	    sys.exit()
+    def close_server(self):
+        """Закрытие сервера, используется для добавления соответствующей записи в лог файл при закрытии сервера через Ctrl+C"""
+        with open ('log.txt', 'a') as file:
+            print('Остановка сервера', file=file)
+        self.sock.close()
+        sys.exit()
 
-    def new_user(conn, addr, d):
+    def new_user(self, conn, addr, d):
         """Добавление нового пользователя в файл users.txt"""
-        name = recv_msg(conn)
-        send_msg('1', conn)
-        password = recv_msg(conn)
+        name = self.recv_msg(conn)
+        password = self.recv_msg(conn)
         d[addr[0]] = d.get(addr[0], [name, password])
         with open ('users.txt', 'w') as users:
             print(d, file=users)
 
 
-    def old_user(conn, addr, d):
+    def old_user(self, conn, addr, d):
         """Проверка пароля при входе старого пользователя"""
         passwd = d[addr[0]][1]
-        password = recv_msg(conn)
+        password = self.recv_msg(conn)
         if passwd == password:
-            send_msg('0', conn)
-            recv_msg(conn)
+            self.send_msg('0', conn)
+            self.recv_msg(conn)
             return
         else:
-            send_msg('1', conn)
-            old_user(conn, addr, d)
+            self.send_msg('1', conn)
+            self.old_user(conn, addr, d)
         
             
 
@@ -110,53 +107,53 @@ class Server(socket):
                 print('Подключение клиента', file=file)		
             
         #Считывание имени клиеента и пароля
-            if addr[0] not in d.keys():
+            if addr[0] not in self.d.keys():
                 flag = str(1)
-                send_msg(flag, conn)
-                new_user(conn, addr, d)
+                self.send_msg(flag, conn)
+                self.new_user(conn, addr, self.d)
             else:
                 flag = str(0)
-                send_msg(flag, conn)
-                old_user(conn, addr, d) 
+                self.send_msg(flag, conn)
+                self.old_user(conn, addr, self.d) 
 
-            msg = 'Hello ' + d[addr[0]][0]
-            send_msg(msg, conn)
+            msg = 'Hello ' + self.d[addr[0]][0]
+            self.send_msg(msg, conn)
         
-            chatting(conn)
+            self.chatting(conn)
 
     def chatting(self, conn):
         """Обмен сообщениями с клиентом"""            
-            while True:
-                data = recv_msg(conn)
+        while True:
+                data = self.recv_msg(conn)
                 with open ('log.txt', 'a') as file:
                     print('Приём данных от клиента', file=file)
                 if not data:
                     conn.close()
                     break
                 
-                send_msg(data.upper(), conn)
+                self.send_msg(data.upper(), conn)
                 with open ('log.txt', 'a') as file:
                     print('Отправка данных клиенту', file=file)
 
 
-            with open ('log.txt', 'a') as file:
+        with open ('log.txt', 'a') as file:
                 print('Отключение клиента', file=file)
 
 
 
-    def main(self):
+    def work(self):
         """то, что нужно запустить для работы сервера"""
-        sha_poodklyuchimsya()
-        get_users()
-        proslushka_poshla()
-        connecting()
+        self.sha_podklyuchimsya()
+        self.get_users()
+        self.proslushka_poshla()
+        self.connecting()
 
     
 
     def run(self):
         """Запускаем сервер"""
         try:
-            main()
+            self.work()
         except KeyboardInterrupt:
             close_server()
 
