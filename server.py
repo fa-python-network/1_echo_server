@@ -1,55 +1,54 @@
 import socket
-import logging
-logging.basicConfig(filename='sample.log', level=logging.INFO)
-
+import json
 
 sock = socket.socket()
 
-port = 9090
-
-while port !=65525:
+port = 9090      		# проверка порта на занятость
+while port!=65525:
 	try:
 		sock.bind(('',port))
-		print('The port is: {}'.format(port))
+		print('The port is {}'.format(port))
 		break
 	except:
-		print('The port is not available. Cheacking a new one...')
+		print('The port {} is not available. Checking new one...')
 		port+=1
 
+sock.listen(0)			
+sock.setblocking(1)
 
-sock.listen(1)
-logging.info('listening')
+
 
 while True:
-	file=open('manual.txt', 'r')
 	conn,addr=sock.accept()
 	print('Now connected to {}'.format(addr[0]))
-	f=0
-	for line in file:
-		l=line.strip()
-		if str(addr[0]) in l:
-			name=l.split('-')[1]
-			conn.send('hi,{}'.format(name).encode())
-			f=1
-			break
-	if f==0:
-		file=open('manual.txt', 'a+')
-		conn.send('Create your name'.encode())
-		got_name=conn.recv(1024).decode()
-		file=open('manual.txt', 'a')
-		file.write('\n{} - {}'.format(addr[0],got_name.decode()))
-		file.close()
-			
+	with open('data.json', 'r+') as f:				#проверка Ip клиента (сохранен ли он в файле)
+		data=json.loads(f.read())
+		for i in data['Clients']:
+			if addr[0]==i['IP']:
+				conn.send('Hello, {}!'.format(i['Name']).encode())
+				while True:
+					conn.send('\nEnter your password, please.'.encode())
+					pswd=conn.recv(1024).decode()
+					if pswd==i['Password']:
+						conn.send('Correct password. Well done!'.encode())
+						break
+					else:
+						conn.send('Wrong password. Try again!'.encode())
+				break
+		else:										# создание нового клиента
+			conn.send('Create an account'.encode())
+			new_name=conn.recv(1024).decode()
+			conn.send('Create a password'.encode())
+			new_pswd=conn.recv(1024).decode()
+			new_client={'IP': addr[0], 'Name': new_name, 'Password': new_pswd} 	# запись новые данные в файл
+			data['Clients'].append(new_client)
+			f.write(json.dumps(data))
 
-
-	msg = ''
+	msg=''							# чтение сообщений от клиента
 	while True:
 		data = conn.recv(1024)
-		logging.info('got a message')
 		if not data:
 			break
-		print('The messages of {} are [ {} ]'.format(addr[0],data.decode()))
-
-
-logging.info('done')
+		msg+=data.decode()+' '
+		print('The IP {} send message: [{}]'.format(addr[0], msg))
 conn.close()
