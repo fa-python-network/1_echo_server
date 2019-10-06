@@ -1,6 +1,19 @@
 import socket, errno
 import sys
 
+
+def send_msg(msg, sock):
+    length_msg = str(len(msg))
+    length_msg = '0'*(10-len(length_msg)) + length_msg
+    msg = length_msg + msg
+    sock.send(msg.encode())
+
+def recv_msg(sock):
+    length_msg = int(sock.recv(10).decode())
+    msg = sock.recv(length_msg).decode()
+    return msg
+
+
 def close_server():
 	with open ('log.txt', 'a') as file:
 		print('Остановка сервера', file=file)
@@ -9,9 +22,9 @@ def close_server():
 	sys.exit()
 
 def new_user(conn, addr, d):
-    name = conn.recv(1024).decode()
-    conn.send('1'.encode())
-    password = conn.recv(1024).decode()
+    name = recv_msg(conn)
+    send_msg('1', conn)
+    password = recv_msg(conn)
     d[addr[0]] = d.get(addr[0], [name, password])
     with open ('users.txt', 'w') as users:
         print(d, file=users)
@@ -19,13 +32,13 @@ def new_user(conn, addr, d):
 
 def old_user(conn, addr, d):
     passwd = d[addr[0]][1]
-    password = conn.recv(1024).decode()
+    password = recv_msg(conn)
     if passwd == password:
-        conn.send(str(0).encode())
-        conn.recv(1024)
+        send_msg('0', conn)
+        recv_msg(conn)
         return
     else:
-        conn.send(str(1).encode())
+        send_msg('1', conn)
         old_user(conn, addr, d)
     
         
@@ -78,25 +91,25 @@ def main():
     #Считывание имени клиеента и пароля
         if addr[0] not in d.keys():
             flag = str(1)
-            conn.send(flag.encode())
+            send_msg(flag, conn)
             new_user(conn, addr, d)
         else:
             flag = str(0)
-            conn.send(flag.encode())
+            send_msg(flag, conn)
             old_user(conn, addr, d) 
 
         msg = 'Hello ' + d[addr[0]][0]
-        conn.send(msg.encode())
+        send_msg(msg, conn)
         
         while True:
-            data = conn.recv(1024).decode()
+            data = recv_msg(conn)
             with open ('log.txt', 'a') as file:
                 print('Приём данных от клиента', file=file)
             if not data:
                 conn.close()
                 break
             
-            conn.send(data.upper().encode())
+            send_msg(data.upper(), conn)
             with open ('log.txt', 'a') as file:
                 print('Отправка данных клиенту', file=file)
 

@@ -1,10 +1,21 @@
 import socket
 
+def send_msg(msg, sock):
+    length_msg = str(len(msg))
+    length_msg = '0'*(10-len(length_msg)) + length_msg
+    msg = length_msg + msg
+    sock.send(msg.encode())
+
+def recv_msg(sock):
+    length_msg = int(sock.recv(10).decode())
+    msg = sock.recv(length_msg).decode()
+    return msg
+
 def new_user(sock):
     print("Введите ваше имя: ")
     name=input()
-    sock.send(name.encode())
-    sock.recv(1024)
+    send_msg(name, sock)
+    recv_msg(sock)
     while True:
         print("Введите пароль")
         password = input()
@@ -12,16 +23,16 @@ def new_user(sock):
         password2 = input()
         if password == password2:
             break
-    sock.send(password.encode())
+    send_msg(password, sock)
 
 #Это не безопасно, но мне лень делать что-то другое, ибо я тупенький)
 def old_user(sock, msg):
     print(msg)
     password = input()
-    sock.send(password.encode())
-    flag = sock.recv(1024).decode()
+    send_msg(password, sock)
+    flag = recv_msg(sock)
     if flag == "0":
-        sock.send('1'.encode())
+        send_msg('1', sock)
         return
     else:
         old_user(sock, 'Введите правильный пароль')
@@ -43,23 +54,23 @@ sock.connect((host, port))
 print('Соединение с сервером')
 
 #Получение приветствия или просьбы зарегестрироваться
-data = sock.recv(1024).decode()
+data = recv_msg(sock)
 if int(data):
     new_user(sock)    
 else:
     old_user(sock, 'Введите пароль:')
-data = sock.recv(1024).decode()
+data = recv_msg(sock)
 print(data)
 
 msg = input('Для окончания работы с сервером введите exit ')
 
 while msg != 'exit':
-	sock.send(msg.encode())
+	send_msg(msg, sock)
 	print('Отправка данных серверу')
 
-	data = sock.recv(1024)
+	data = recv_msg(sock)
 	print('Приём данных от сервера')
-	print(data.decode())
+	print(data)
 	
 	msg = input('Для окончания работы с сервером введите exit ')
 
