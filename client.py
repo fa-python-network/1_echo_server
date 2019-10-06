@@ -18,8 +18,10 @@ except (AssertionError, TypeError, ValueError) as e:
 	num_port = 9091
 
 sock.connect((name_port, num_port))
-print("Успешно! Можете писать сообщения")
+print("Успешно!")
 msg = 0 
+inf = sock.recv(1024)
+print(inf.decode())
 while msg!= "exit":
 	msg = input()
 	sock.send(msg.encode())
