@@ -20,8 +20,17 @@ while True:
 sock.setblocking(1)
 print(f'Идет подключение к хосту {host_name} и порту {port} ')
 print('Идет подлючение к порту..')
-sock.connect((host_name,port)) #Подключаемся к порту
+sock.connect((host_name,port)) 
 
+while True:
+    data = sock.recv(1024)
+    print(data.decode())
+
+    if data.decode() == 'Как вас зовут?':
+        username = input()
+        sock.send(username.encode())
+    if "Добро пожаловать" in data.decode():
+        break
 while True:
         msg = input('Введите свое сообщение, если вы хотите окончить работу, то вводите exit: ')
         sock.send(msg.encode())
@@ -29,7 +38,9 @@ while True:
             break
 print('Сообщение отправлено ')
 sock.close()
-
+#Подключаемся к порту
+#U_name = sock.recv(1024)
+#print(U_name.decode())
 
 
 

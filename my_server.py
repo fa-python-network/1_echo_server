@@ -1,4 +1,6 @@
 import socket
+import json
+import csv
 sock = socket.socket()
 while True:
        file = open('serv.log','a')
@@ -48,13 +50,41 @@ file.write(f'Слушаю ваш порт  {port} \n')
 
 sock.listen(1)
 conn, addr = sock.accept()
-
 print('Подключаюсь и вывожу адрес..',addr)
 file.write(f'Подключаюсь и вывожу адрес..{addr} \n')
 file.close()
-
+u_s=False
+usernames = open('username.csv','r')
+for line in csv.reader(usernames):
+    if line[0] == addr[0]:
+        answ ='Добро пожаловать в систему,' + line[1] + '!'
+        conn.send(answ.encode())
+        user = True
+        file = open('serv.log','a')
+        file.write('Подключился известный пользователь \n')
+    file.close()
+if u_s == False:
+    file = open('serv.log','a')
+    conn.send('Как вас зовут?'.encode())
+    try:
+        data = conn.recv(1024)
+        name = data.decode()
+        with open ('username.csv','a') as usernames:
+            csv.writer(usernames).writerow([addr[0],name])
+            usernames.close()
+        file.write('Я добавил пользователя'+ name +'\n')
+        file.close()
+    except:
+        name='Новый пользователь'
+        conn.send('Возникла ошибка при вводе ваших данных.Вход произведен новым пользователем! \n'.encode())
+        with open ('username.csv','a') as usernames:
+            csv.writer(names).writerow([addr[0],name])
+            usernames.close()
+        file.write('Новый пользователеь в системе!')
+    answ='Добро пожаловать,' + name 
+    conn.send(answ.encode())
 while True:
-        file=open('serv.log','a')
+        file = open('serv.log','a')
         msg = conn.recv(1024)
         print(msg.decode())
         if msg.decode() == 'exit':
@@ -65,3 +95,18 @@ while True:
         file.close()
 conn.close()
 print('Соединение с клиентом закрыто')
+#def username(conn, addr):
+#def username(conn, addr):
+    #""" Функция идентификации """
+    #with open('username.json', 'r') as us:
+        #data = json.load(us)
+    #if data.get(addr[0]):
+        #conn.send(f'Привет, {data[addr[0]]}'.encode())
+    #else:
+        #conn.send('Добро пожаловать в систему.Введите ваше имя '.encode())
+        #n_u = conn.recv(1024).decode()
+        #data[addr[0]]= n_u
+        #conn.send(f'Привет, {data[addr[0]]}'.encode())
+    #print(data)
+    #with open('username.json','w') as us:
+        #json.dump(data, us)
