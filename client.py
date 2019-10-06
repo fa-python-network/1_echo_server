@@ -1,48 +1,57 @@
 import socket
-import sys
-from time import sleep
 
-while True:
-	client_host = input('Enter your host: ')
-	if client_host=='localhost':
+while True:									# ввод IP клиента		
+	client_host=input('Enter your IP: ')
+	if client_host=='':
 		break
-	elif client_host=='':
+	elif client_host=='localhost':
 		break
 	else:
-		parts=client_host.split('.',4)
+		parts=client_host.strip('.',4)
 		for i in parts:
 			if 0<=int(i)<=255:
 				break
 			else:
-				print('Wrong host. Try again.')
+				print('You made a mistake. Try again!')
 
-while True:
+while True:									# проверка порта 
 	client_port=int(input('Enter port: '))
 	if 1024<=client_port<=65525:
 		break
 	else:
-		print('Wrong port. Try again.')
+		print('You made a mistake. Try again!')
+
 
 sock = socket.socket()
 sock.setblocking(1)
-sock.connect((client_host, client_port))
+sock.connect((client_host,int(client_port)))
 
-name=sock.recv(1024)
-if 'hi' in name.decode():
-	print(name.decode())
+auten=sock.recv(1024).decode()				# аутентификация
+if 'Create' in auten:
+	print(auten)
+	sock.send(input('Name: ').encode())			# создание имени нового клиента
+	sock.send(input('Password: ').encode())		# создание пароля нового клиента
 else:
-	sock.send(input('Enter: ').encode())
+	print(auten)
+	while True:
+		sock.send(input('Password: ').encode())  # введение пароля известного клиента
+		anw = sock.recv(1024).decode()
+		if 'C' == anw[0]:						# проверка введенного пароля
+			print(anw)
+			break
+		print(anw)
+		print(sock.recv(1024).decode())
 
 
-msg = ''
+msg=''											# отправка сообщений серверу
 while True:
-	client_msg=input()
-	if 'exit' in client_msg:
+	print('Message:')
+	msg=input()
+	if 'exit' in msg:
 		sock.send(msg.encode())
 		break
-	msg+=client_msg+'  '
+	sock.send(msg.encode())
+#print(sock.recv(1024).decode())
 
-#data = sock.recv(1024)
-#print(data.decode())
 sock.close()
 
