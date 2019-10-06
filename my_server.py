@@ -83,6 +83,22 @@ if u_s == False:
         file.write('Новый пользователеь в системе!')
     answ='Добро пожаловать,' + name 
     conn.send(answ.encode())
+    while True:
+    data=conn.recv(1024)
+    password=data.decode()
+    if line[2]==password:
+        answ="Добро пожаловать, " + line[1] + "!"
+        conn.send(answ.encode())
+        file=open('serv.log','a')
+        file.write("Вход выполнен успешно: пароль верный.\n")
+        file.close()
+					        break
+    else:
+		conn.send("Неверный пароль. Попробуйте еще раз.")
+		file=open('serv.log','a')
+		file.write("неверный пароль.\n")
+		file.close()
+
 while True:
         file = open('serv.log','a')
         msg = conn.recv(1024)

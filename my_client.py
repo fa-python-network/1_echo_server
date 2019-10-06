@@ -31,6 +31,11 @@ while True:
         sock.send(username.encode())
     if "Добро пожаловать" in data.decode():
         break
+    if data.decode() == 'Создайте свой пароль'
+        password=input()
+        if password != '':
+            sock.send(password.encode())
+        if data.decode() == 'Введите пароль: ' or data.decode()== 'Ошибка в пароле'
 while True:
         msg = input('Введите свое сообщение, если вы хотите окончить работу, то вводите exit: ')
         sock.send(msg.encode())
