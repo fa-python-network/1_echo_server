@@ -23,6 +23,7 @@ while True:
 	except OSError:
 		num_port += 1
 
+print ("Слушает порт"," ", num_port)
 print("Ожидайте подключения...")
 sock.listen(1)
 file  = open("log.txt", "a")
@@ -36,7 +37,6 @@ while True:
 		file.write("Подключение удачно \nИспользуется порт {}".format(num_port))
 
 	conn, addr = sock.accept()
-	print(addr)
 	file.write("Адрес хоста: {}\n".format(addr))
 
 	msg = ''
