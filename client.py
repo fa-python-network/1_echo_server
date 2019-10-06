@@ -9,7 +9,7 @@ sock.connect((input("Your host:"), p))
 usr = sock.recv(1024).decode()
 print(usr)
 if "Who" in usr:
-    name = input(user)
+    name = input()
     sock.send(name.encode())
 msg = input()
 #msg = "Hi!"
