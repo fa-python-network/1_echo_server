@@ -1,5 +1,8 @@
 import socket
 import random
+
+k = open('log.txt', 'w')
+
 sock = socket.socket()
 
 port = 9090
@@ -17,7 +20,7 @@ try:
 
 except:
     port = 9090
-    print('некорректные данные')
+    k.write('некорректные данные')
 
 f=0
 while f!=1:
@@ -28,7 +31,7 @@ while f!=1:
         port=random.randint(1024,65535)
 print('слушаю порт: ', port)
 
-sock.listen(0)
+sock.listen(1)
 conn, addr = sock.accept()
 print(addr)
 
@@ -39,7 +42,7 @@ while True:
 	if not data:
 		print(msg)
 		msg = ''
-		sock.listen(0)
+		sock.listen(1)
 		conn, addr = sock.accept()
 	msg += data.decode()
 	conn.send(msg.encode())
