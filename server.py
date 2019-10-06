@@ -1,14 +1,28 @@
 import socket
-
+try:
+	pass
+except Exception as e:
+	raise
+else:
+	pass
+finally:
+	pass
 sock = socket.socket()
 try:
 	num_port = int(input("Введите номер порта:"))
 	assert 1024 < num_port < 65535, "Введенный порт рекомендуется не использовать или он занят."
+
 except (AssertionError, TypeError, ValueError) as e:
 	print("Будет введен порт по умолчанию 9091")
 	num_port = 9091
 
-sock.bind(('', num_port))
+while True:
+	try:
+	    sock.bind(('', num_port))
+	    break
+	except OSError:
+		num_port += 1
+
 print("Ожидайте подключения...")
 sock.listen(1)
 file  = open("log.txt", "a")
