@@ -19,8 +19,13 @@ class Server(socket.socket):
 
     def recv_msg(self, sock):
         """Получение сообщения с учётом его длины"""
-        length_msg = int(sock.recv(10).decode())
-        msg = sock.recv(length_msg).decode()
+        #При получении пустого сообщения (отключение клиента) сервер не должен крашиться
+        try:
+            length_msg = int(sock.recv(10).decode())
+        except ValueError:
+            msg = None
+        else:
+            msg = sock.recv(length_msg).decode()
         return msg
 
 
@@ -155,7 +160,7 @@ class Server(socket.socket):
         try:
             self.work()
         except KeyboardInterrupt:
-            close_server()
+            self.close_server()
 
 
 
