@@ -22,12 +22,12 @@ print("Успешно!")
 msg = 0 
 inf = sock.recv(1024)
 print(inf.decode())
-while msg!= "exit":
+while msg!= "exit" and "Мы с тобой не знакомы" not in inf.decode():
 	msg = input()
 	sock.send(msg.encode())
 
-	data = sock.recv(1024)
-	print(data.decode())
+	inf = sock.recv(1024)
+	print(inf.decode())
 
 sock.close()
 
