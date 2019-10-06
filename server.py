@@ -9,12 +9,21 @@ except (AssertionError, TypeError, ValueError) as e:
 	num_port = 9091
 
 sock.bind(('', num_port))
-sock.listen(1)
 print("Ожидайте подключения...")
+sock.listen(1)
+file  = open("log.txt", "a")
+
 while True:
-	pass
+	try:
+	
+		file.write("Подключение удачно \nИспользуется порт {}\t".format(num_port))
+	except ValueError:
+		file  = open("log.txt", "a")
+		file.write("Подключение удачно \nИспользуется порт {}".format(num_port))
+
 	conn, addr = sock.accept()
 	print(addr)
+	file.write("Адрес хоста: {}\n".format(addr))
 
 	msg = ''
 
@@ -23,8 +32,9 @@ while True:
 		if not data:
 			break
 		msg += data.decode()
+		if data.decode() == "exit":
+			file.write("Соединение разорвано!")
+			file.close()
 		conn.send(data.decode().upper().encode())
 
-	print(msg)
-
-	conn.close()
+conn.close()
