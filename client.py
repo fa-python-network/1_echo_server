@@ -1,16 +1,19 @@
 import socket
-from time import sleep
 
 sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+HOST = 'localhost'
+PORT = 8086
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+sock.connect((HOST, PORT))
 
-data = sock.recv(1024)
+msg = ''
 
-sock.close()
+while msg != 'exit':
+	msg = input('Напишите >>> exit для закрытия соединения: ')
+	sock.send(msg.encode())
+	data = sock.recv(1024)
+	print(data.decode(), sep=' ')
 
-print(data.decode())
+else:
+	sock.close()
+	print('Связь с сервером успешно разорвана! ')

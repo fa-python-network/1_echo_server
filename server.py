@@ -1,20 +1,26 @@
 import socket
 
 sock = socket.socket()
-sock.bind(('', 9090))
-sock.listen(0)
+HOST = ''
+PORT = 8086
+
+sock.bind((HOST, PORT))
+
+print('Сервер запускается, немного терпения!')
+print('Начинаем слушать порт...')
+
+sock.listen(1)
 conn, addr = sock.accept()
-print(addr)
+print('Готов к обмену данными с клиентом')
 
 msg = ''
-
 while True:
 	data = conn.recv(1024)
 	if not data:
 		break
-	msg += data.decode()
-	conn.send(data)
+	else:
+		msg += data.decode()
+		conn.send(data.decode().upper().encode())
 
-print(msg)
-
+print(msg, sep=' ') #хотел через sep сделать разделитель, но почему то не пошло!
 conn.close()
