@@ -35,7 +35,7 @@ class Client:
                elif self.status == "success":
                    self.success()
                else:
-                   msg = input()
+                   msg = input(f"{self.name} > ")
                    if msg == "exit": 
                        self.status = "finish"
                        break

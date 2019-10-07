@@ -23,36 +23,25 @@ class Server():
 
 	def startServer(self):
 		self.sock = socket.socket()
-		#self.port = self.check_port()
-		self.sock.bind(('', self.port))
+		while True:	
+ 			try:	
+ 				self.sock.bind(('',self.port))	
+ 				break
+ 			except:
+ 				self.port+=1		
+		print(f'Занял порт {self.port}')
 		self.sock.listen(5)
 		while True:
 			conn, addr = self.sock.accept()
 			self.serverStarted(addr)
 			Thread(target = self.listenToClient,args = (conn,addr)).start()
 			self.clients.append(conn)
-			#self.checkUser(addr,conn)
-			# Thread(target=self.recv).start()
-	# def check_port(self):
-	# 	self.port = self.port if (self.port >= 0 and self.port <= 65535)  else  9090
-	# 	for port in range(self.port, 65536):
-	# 		try:
-	# 			sock = socket.socket()
-	# 			sock.bind(('',port))
-	# 			sock.close
-	# 			print(f"Ваш порт {self.port}")
-	# 			return port
-	# 		except:
-	# 			pass
-	# 	raise("Something went wrong")
-		
-			#Thread(target=self.recv).start()
-			# print(self.checkUser(addr, conn))
-			# self.serverStarted(addr)
-	def broadcast(self,msg): 
+
+	def broadcast(self,msg, conn): 
 		for sock in self.clients:
-			data = pickle.dumps(["message",msg])
-			sock.send(data)
+			if sock != conn:
+				data = pickle.dumps(["message",msg])
+				sock.send(data)
 	'''
 	Проверка порта, который мы будем использовать на нашем
 	сервере!
@@ -73,10 +62,11 @@ class Server():
 				if data:
 					status , data = pickle.loads(data)
 					if status == "message":
-						print(data)
-						self.broadcast(data)
+						self.broadcast(data, conn)
 				else:
 					conn.close()
+					self.clients.remove(conn)
+					self.serverStopped(address)
 					break
 
 	def serverStarted(self,ip):
@@ -107,28 +97,4 @@ class Server():
 				with open(self.__users, "w", encoding="utf-8") as f:
 					json.dump({addr[0] : {'name': name, 'password': passwd} },f)
 
-
-	'''
-	успешное подключение
-	'''
-	# def success(self,userName, conn):
-	# 	self.clients.append((userName, conn))
-
-
-	'''
-	отправка сообщений от пользователя к пользователю
-	'''
-	# def sendMessage(self,fromUser,toUser, message):
-	# 	conn = None
-	# 	for user in self.clients:
-	# 		if user[0] == toUser:
-	# 			conn = user[1]
-	# 			break
-	# 	if conn:
-	# 		data = pickle.dumps(["message", fromUser, message])
-	# 		self.sock.send(data)
-
-	'''
-	Принятие сообщений
-	'''
 server = Server()
