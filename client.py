@@ -1,10 +1,15 @@
 import socket
 
 sock = socket.socket()
-HOST = 'localhost'
-PORT = 8086
 
-sock.connect((HOST, PORT))
+try:
+	host_name = input('Напишите наименование хоста! Например, localhost: ')
+	port_number = int(input('Введите номер порта от 0 до 65535! Например, 8083: '))
+
+except:
+	print('Проверьте данные и попробуйте снова! ')
+
+sock.connect((host_name, port_number))
 
 msg = ''
 
