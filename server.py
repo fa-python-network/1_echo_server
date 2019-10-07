@@ -2,8 +2,21 @@ import socket
 import socket
 import json
 import hashlib
+import pickle
 from loger import Logfile
 from random import randint
+
+def msgreciever(conn) ->str: #получения текстового сообщения с фиксированным заголовком
+	msg_len = int(conn.recv(2), 10)
+    return conn.recv(msg_len).decode()
+
+def msgsending(conn, msg: str):   #отправкa сообщения с заголовком фиксированной длины
+	msg = f"{len(msg):<{self.size}}" + msg
+    conn.send(bytes(msg),"utf-8")
+
+
+
+
 
 def identification(c,ad):
 	try:
