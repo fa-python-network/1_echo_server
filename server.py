@@ -1,4 +1,6 @@
 import socket
+import random
+
 
 sock = socket.socket()
 HOST = ''
@@ -6,16 +8,30 @@ HOST = ''
 log = open('log.txt', 'w')
 log.write('Начало работы, подключаемся к клиенту...\n')
 
+
+safe_port = random.randint(1025, 65535)
+
 try:
-	port_number = int(input('Введите номер порта от 0 до 65535! Например, 8083: '))
-	sock.bind((HOST, port_number))
-	log.write(f'Номер порта = {port_number}\n')
-
+	port_number = int(input('Введите номер порта от 1024 до 65535! Например, 8083: '))
+	assert 1024 < port_number < 65535, 'Ну я тебя просил, а ты не слушал!'
+#попробовал сделать рандомный порт, если ручной ввод не подходит
 except:
-	print('Введите корректный номер порта, он должен совпадать с портом клиента!! ')
+	port_number = safe_port
 
-# print('Сервер запускается, немного терпения!')
-# print('Начинаем слушать порт...')
+
+while True:
+	try:
+		sock.bind((HOST, port_number))
+		break
+	except:
+		port_number = safe_port
+
+
+
+print(f'Номер порта = {port_number}')
+
+
+log.write(f'Номер порта = {port_number}\n')
 log.write('Сервер запущен, начинаем слушать порт!!\n')
 
 while True:
