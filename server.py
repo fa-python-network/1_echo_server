@@ -35,6 +35,21 @@ sock.listen(1)
 conn, addr = sock.accept()
 print(addr)
 
+ad = addr[0]
+f = open('f7.txt', 'r+')
+l = [line.strip() for line in f]
+
+if l.count(ad)==0:
+	conn.send('введите ваше имя'.encode())
+	name = conn.recv(1024).decode()
+	l.append(ad),l.append(name)
+	conn.send("привет {na}".format(na=name).encode())
+	for index in l:
+		f.write(index + '\n')
+else:
+	conn.send("привет {na}".format(na=l[l.index(ad)+1]).encode())
+
+f.close()
 msg = ''
 
 while True:
@@ -46,5 +61,6 @@ while True:
 		conn, addr = sock.accept()
 	msg += data.decode()
 	conn.send(msg.encode())
-print(msg)
 conn.close()
+
+

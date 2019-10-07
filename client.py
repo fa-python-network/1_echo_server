@@ -40,14 +40,20 @@ except:
 
 
 sock.connect((host,port))
+pr = sock.recv(1024)
+print(pr.decode())
 
 msg = input()
 while msg!="exit":
     
     sock.send(msg.encode())
     data = sock.recv(1024)
+    print(data.decode())
     msg = input()
-
+	
 sock.close()
 
 print(data.decode())
+
+
+
