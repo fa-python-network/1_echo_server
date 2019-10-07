@@ -1,9 +1,12 @@
 import socket
 
+port  = 9090
+file = open("log.txt", "a")
 sock = socket.socket()
-sock.bind(('',9090))
+sock.bind(('',port))
+file.write((f'port {port}\n'))
 sock.listen(1)
-
+file.write("server is running\n")
 
 
 while True:
@@ -22,3 +25,5 @@ while True:
 
 conn.close()
 sock.close()
+file.write("server shutdown\n")
+file.close()
