@@ -1,64 +1,35 @@
-import socket, threading, time
+ import socket
 
-key = 8194
+ sock = socket.socket()
+ sock.setblocking(1)
+ sock.connect(('10.38.165.12', 9090))
 
-shutdown = False
-join = False
+ #msg = input()
+ msg = "Hi!"
+ sock.send(msg.encode())
 
-def receving (name, sock):
-	while not shutdown:
-		try:
-			while True:
-				data, addr = sock.recvfrom(1024)
+ data = sock.recv(1024)
+ print('Put hostname:')
+  hostname = input()
+  print('Put Port:')
+  port = input()
 
-				decrypt = ""; k = False
-				for i in data.decode("utf-8"):
-					if i == ":":
-						k = True
-						decrypt += i
-					elif k == False or i == " ":
-						decrypt += i
-					else:
-						decrypt += chr(ord(i)^key)
-				print(decrypt)
+ sock.close()
+ if int(port) > 1024 and int(port) < 65000:
+              port1 = int(user_port)
+          else:
+              port1 = 9094
 
-				time.sleep(0.2)
-		except:
-			pass
-host = socket.gethostbyname(socket.gethostname())
-port = 0
-
-server = ("127.0.0.1",9090)
-
-s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-s.bind((host,port))
-s.setblocking(0)
-
-alias = raw_input("Name: ")
-
-rT = threading.Thread(target = receving, args = ("RecvThread",s))
-rT.start()
-
-while shutdown == False:
-	if join == False:
-		s.sendto(("["+ alias + "] => join chat ").encode("utf-8"),server)
-		join = True
-	else:
-		try:
-			message = input()
-
-			crypt = ""
-			for i in message:
-				crypt += chr(ord(i)^key)
-			message = crypt
-
-			if message != "":
-				s.sendto(("["+alias + "] :: "+message).encode("utf-8"),server)
-			
-			time.sleep(0.2)
-		except:
-			s.sendto(("["+alias + "] <= left chat ").encode("utf-8"),server)
-			shutdown = True
-
-rT.join()
-s.close()
+ print(data.decode())
+ sock.connect((hostname, port1))
+ msg = "Hi!"
+ while True:
+     mess = input()
+     print(f'Your message: {mess}')
+     sock.send(mess.encode())
+     data = sock.recv(1024)
+     print(data.decode())
+     if mess == 'exit':
+         print('exit')
+         sock.close()
+         break

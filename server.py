@@ -1,33 +1,37 @@
-import socket, time
+import socket
 
-host = socket.gethostbyname(socket.gethostname())
-port = 9090
+ sock = socket.socket()
+ sock.bind(('', 9090))
+ sock.listen(0)
+ conn, addr = sock.accept()
+ print(addr)
 
-clients = []
+ msg = ''
+ logf = open("ser.log", "_")
 
-s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-s.bind((host,port))
+ sock = socket.socket()
+ sock.bind(("",9094))
+ sock.listen(5)
+ while True:
+ 	data = conn.recv(1024)
+ 	if not data:
+ 		break
+ 	msg += data.decode()
+ 	conn.send(data)
 
-quit = False
-print("[ Server Started ]")
+ print(msg)
 
-while not quit:
-	try:
-		data, addr = s.recvfrom(1024)
-
-		if addr not in clients:
-			clients.append(addr)
-
-		itsatime = time.strftime("%Y-%m-%d-%H.%M.%S", time.localtime())
-
-		print("["+addr[0]+"]=["+str(addr[1])+"]=["+itsatime+"]/")
-		print(data.decode("utf-8"))
-
-		for client in clients:
-			if addr != client:
-				s.sendto(data,client)
-	except:	
-		print("\n[ Server Stopped ]")
-		quit = True
-		
-s.close()
+ conn.close()
+     conn, addr = sock.accept()
+     print(addr)
+     msg =''
+     while True:
+     	data = conn.recv(1024)
+     	if not data:
+     		break
+     	logf.write(f'Data: {data.decode()}')
+     	msg = data.decode()
+     	logf.write((f'MSG: {msg}')
+     	conn.send(msg.encode())
+     conn.close()
+     logf.close()
