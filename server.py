@@ -2,19 +2,17 @@ import socket
 
 sock = socket.socket()
 sock.bind(('', 9090))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
-
-msg = ''
+sock.listen(1)
 
 while True:
+    conn, addr = sock.accept()
 	data = conn.recv(1024)
     
-	if data.decode() == 'exit':
-		break
-    
-	msg += data.decode()
+    while True:
+    	if data.decode() == 'exit':
+    		break
+   
 	conn.send(data)
+    print(msg.decode())
 
 conn.close()
