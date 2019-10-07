@@ -1,9 +1,24 @@
 import socket
-from time import sleep
+import re
 
 sock = socket.socket()
 sock.setblocking(1)
-sock.connect(('localhost', 9090))
+
+host = input('Введите имя хоста:')
+
+if host != 'localhost':
+    cond = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", host)
+    
+while (cond == False):
+    host = input('Имя хоста введено неверно. Введите имя хоста:')
+    cond = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", host)
+
+port = int(input('Введите номер порта:'))
+
+if (1023 > port) and (port > 49152):
+    port = 9090
+    
+sock.connect((host, port))
 
 print('Для выхода введите команду "exit".')
 
