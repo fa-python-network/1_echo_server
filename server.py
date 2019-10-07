@@ -15,23 +15,23 @@ sock.listen(5)
 while True:
        data = conn.recv(1024)
        if not data:
-       	break
+              break
        msg += data.decode()
        conn.send(data)
 
 print(msg)
 
 conn.close()
-conn, addr = sock.accept()
-print(addr)
-msg =''
-while True:
-       data = conn.recv(1024)
-       if not data:
-              break
-       logf.write('Data: {data.decode()}')
-       msg = data.decode()
-       logf.write(('MSG: {msg}')
-       conn.send(msg.encode())
-conn.close()
-logf.close()
+       conn, addr = sock.accept()
+       print(addr)
+       msg =''
+       while True:
+              data = conn.recv(1024)
+              if not data:
+                     break
+              logf.write('Data: {data.decode()}')
+              msg = data.decode()
+              logf.write(('MSG: {msg}')
+              conn.send(msg.encode())
+       conn.close()
+       logf.close()
