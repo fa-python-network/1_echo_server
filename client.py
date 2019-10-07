@@ -8,6 +8,8 @@ host = input('Введите имя хоста:')
 
 if host != 'localhost':
     cond = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", host)
+else:
+    host = '127.0.0.1'
     
 while (cond == False):
     host = input('Имя хоста введено неверно. Введите имя хоста:')
