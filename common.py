@@ -1,6 +1,7 @@
 import hashlib
 import random
 import re
+import socket
 
 ENCODING = 'utf-8'
 SALT = '//no_system_is_safe'.encode('utf-8')
@@ -29,12 +30,12 @@ class Security:
 
 class SocketMethods:
     @staticmethod
-    def receive_text(conn) -> str:
+    def receive_text(conn: socket.socket) -> str:
         msg_len = int(conn.recv(4), 16)
         return conn.recv(msg_len).decode(ENCODING)
 
     @staticmethod
-    def send_text(conn, message: str):
+    def send_text(conn: socket.socket, message: str):
         message = message.encode(ENCODING)
         msg_len = hex(len(message))[2:]
         msg_len = '0' * (4 - len(msg_len)) + msg_len
