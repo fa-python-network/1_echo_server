@@ -11,8 +11,18 @@ else:
     port = 9090
     f.write('Клиент ввел неверный номера порта. Порту автоматически присвоен номер {port}')
 
-sock.bind(('', port))
+while True:
+	try:
+		sock.bind(('', port))
+		break
+	except:
+		if port > 49151:
+			port = 9090
+		else:
+			port += 1
+            
 sock.listen(1)
+print('Слушаю порт с номером {port}')
 f.write('\nСлушаю порт..\n')
 
 while True:
@@ -29,5 +39,7 @@ while True:
 	conn.send(data)
     f.write('Отправляю данные {addr}\n')
     print(msg.decode())
+    f.close()
 
 conn.close()
+f.close()
