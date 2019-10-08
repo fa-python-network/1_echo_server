@@ -30,7 +30,7 @@ while True:
         name = input()
         sock.send(name.encode())
 
-    if data.decode()=="Придумайте пароль":
+    if data.decode()=="Придумайте пароль:":
     	password=input()
     	if password!="":
     		sock.send(password.encode())
