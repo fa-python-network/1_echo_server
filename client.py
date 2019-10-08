@@ -20,6 +20,19 @@ while True:
 		print('Неверный номер порта.')
 		break
 sock.connect((host, int(port)))
+
+while True:
+
+    data = sock.recv(1024)
+    print(data.decode())
+
+    if data.decode() == "Как Вас зовут?":
+        name = input()
+        sock.send(name.encode())
+
+    if "Добро пожаловать" in data.decode():
+        break
+
 msg = ""
 while msg != 'exit':
 	msg=input('Enter your message: ')
