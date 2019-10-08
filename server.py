@@ -3,8 +3,13 @@ import socket
 port = 9089
 file = open("logfile.txt", "a")
 sock = socket.socket()
-sock.bind(('', port))
-file.write(f'Сервер использует порт{port}\n')
+try:
+	sock.bind(('', port))
+except OSError: 
+	sock.bind(('',0))
+	port = sock.getsockname()[1]
+	print(f"use port {port}")
+	file.write(f'Сервер использует порт{port}\n')
 sock.listen(1)
 file.write(f'Сервер слушает клиента{port}\n')
 while True:
