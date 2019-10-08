@@ -30,6 +30,15 @@ while True:
         name = input()
         sock.send(name.encode())
 
+    if data.decode()=="Придумайте пароль":
+    	password=input()
+    	if password!="":
+    		sock.send(password.encode())
+
+    if data.decode()=="Введите пароль: " or data.decode()=="Неверный пароль. Попробуйте еще раз.":
+    	password=input()
+    	sock.send(password.encode())
+    	
     if "Добро пожаловать" in data.decode():
         break
 

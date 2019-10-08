@@ -60,34 +60,56 @@ while True:
 	file.write(f"Подключение к  {addr} \n")
 	file.close()
 	user=False
+	names=open("data_names.csv", "w")
+	names.close()
 	names=open("data_names.csv", "r")
 	for line in csv.reader(names):
 		if line[0] == addr[0]:
-			answer="Добро пожаловать, " + line[1] + "!"
+			answer="Введите пароль: "
 			conn.send(answer.encode())
+			while True:
+				data=conn.recv(1024)
+				password=data.decode()
+				if line[2]==password:
+					answer="Добро пожаловать, " + line[1] + "!"
+					conn.send(answer.encode())
+					file=open('server.log','a')
+					file.write("Вход выполнен успешно: пароль верный.\n")
+					file.close()
+					break
+				else:
+					conn.send("Неверный пароль. Попробуйте еще раз.")
+					file=open('server.log','a')
+					file.write("неверный пароль.\n")
+					file.close()
 			user = True
 			file=open('server.log','a')
 			file.write("Подключился известный пользователь\n")
-		file.close()
+			file.close()
+			names.close()
+			break
 	if user== False:
 		file=open('server.log','a')
 		conn.send("Как Вас зовут?".encode())
 		try:
 			data = conn.recv(1024)
 			name = data.decode()
-			with open ("data_names.csv", "a") as names:
-				csv.writer(names).writerow([addr[0], name])
-				names.close()
 			file.write("Добавлен пользователь " + name + "\n")
+			conn.send("Придумайте пароль:".encode())
+			data=conn.recv(1024)
+			password=data.decode()
 			file.close()
 		except:
 			name = "Гость"
 			conn.send("Некорректный ввод данных! \nВыполнен вход как гостя.".encode())
-			with open ("data_names.csv", "a") as names:
-				csv.writer(names).writerow([addr[0], name])
-				names.close()
 			file.write("Пользователь выполнил вход как Гость\n")
+			conn.send("Придумайте пароль:".encode())
+			data=conn.recv(1024)
+			password=data.decode()
 			file.close()
+		names=open("data_names.csv", "a")
+		csv.writer(names).writerow([addr[0], name, password])
+		names.close()
 		answer="Добро пожаловать, " + name + '!'
 		conn.send(answer.encode())
 
