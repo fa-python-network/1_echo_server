@@ -1,28 +1,46 @@
 import socket
-from time import sleep
+import threading
+import time
 
-sock = socket.socket()
-sock.setblocking(1)
+tLock = threading.Lock()
+shutdown = False
+join = False
 
-print('Put hostname:')
- hostname = input()
- print('Put Port:')
- port = input()
+def receving (name, sock):
+    while not shutdown:
+        try:
+            tLock.acquire()
+            while True:
+                data, addr = sock.recvfrom(1024)
+                print str(data)
+        except:
+            pass
+        finally:
+            tLock.release()
 
-if int(port) > 1024 and int(port) < 65000:
-             port1 = int(user_port)
-         else:
-             port1 = 9094
 
-sock.connect((hostname, port1))
-msg = "Hi!"
-while True:
-    mess = input()
-    print(f'Your message: {mess}')
-    sock.send(mess.encode())
-    data = sock.recv(1024)
-    print(data.decode())
-    if mess == 'exit':
-        print('exit')
-        sock.close()
-        break
+host = "127.0.0.1"
+port = 0
+
+server = (host,5000)
+
+s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+s.bind((host,port))
+s.setblocking(0)
+
+rT = threading.Thread(target=receving, args=("RecvThread", s))
+rT.start()
+
+alies = raw_input("Your name: ")
+message = raw_input(alies + " send to")
+while  message != 'q':
+    if message != '':
+        s.sendto(alies + ": " + message, server)
+    tLock.acquire()
+    message = raw_input(alies + " send to")
+    tLock.release()
+    time.sleep(0.2)
+
+shutdown = True
+rT.join()
+s.close()
