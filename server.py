@@ -83,17 +83,17 @@ class Server():
 			open(self.__users, 'a').close()
 		with open(self.__users, "r") as f:
 			try:
-				print("Here")
 				users = json.load(f)
 				name = users[str(addr[0])]['name']
 				conn.send(pickle.dumps(["passwd","Введите свой пароль: "]))
-				passwd = conn.recv(1024).decode()
-				conn.send(pickle.dumps(["success",f"Здравствуйте, {name}"])) if self.checkPasswrd(passwd,users[str(addr[0])]['password']) else print("Incorrect")
+				passwd = pickle.loads(conn.recv(1024))[1]
+				conn.send(pickle.dumps(["success",f"Здравствуйте, {name}"])) if self.checkPasswrd(passwd,users[str(addr[0])]['password']) else self.checkUser(addr,conn)
 			except:
-				conn.send("Привет. Я тебя не знаю. Скажи мне свое имя: ".encode())
-				name = conn.recv(1024).decode()
-				conn.send("Введите свой пароль:".encode())
-				passwd = self.generateHash(conn.recv(1024).decode())
+				conn.send(pickle.dumps(["auth",f"Привет. Я тебя не знаю. Скажи мне свое имя: "]))
+				name = pickle.loads(conn.recv(1024))[1]
+				conn.send(pickle.dumps(["passwd","Введите свой пароль: "]))
+				passwd = self.generateHash(pickle.loads(conn.recv(1024))[1])
+				conn.send(pickle.dumps(["success",f"Здравствуйте, {name}"]))
 				with open(self.__users, "w", encoding="utf-8") as f:
 					json.dump({addr[0] : {'name': name, 'password': passwd} },f)
 

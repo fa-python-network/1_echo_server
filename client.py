@@ -51,13 +51,13 @@ class Client:
     '''
     def sendPasswd(self):
         passwd = getpass(self.data)
-        self.sock.send(passwd.encode())
+        self.sock.send(pickle.dumps(["passwd",passwd]))
         sleep(1.5)
 
 
     def auth(self):
-        passwd = getpass(self.data)
-        self.sock.send(passwd.encode())
+        name = input(self.data)
+        self.sock.send(pickle.dumps(["auth",name]))
         sleep(1.5)
 
 
