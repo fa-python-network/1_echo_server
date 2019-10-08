@@ -46,7 +46,11 @@ class Server:
         log.debug(f'Sended msg: {msg}')
 
     def recv(self, conn):
-        header = int(conn.recv(4).decode().strip())
+        try:
+            header = int(conn.recv(4).decode().strip())
+        except ValueError:
+            conn.close()
+            return 'Connection closed'
         data = conn.recv(header).decode()
         log.debug(f'Received msg: {data}')
         return data
@@ -86,7 +90,11 @@ class Server:
 
     def handle_client(self, conn):
         self.auth(conn)
-        self.send('Login of person to start messaging: ')
+        while 1:
+            data = self.recv(conn)
+            if data == 'Connection closed':
+                break
+            self.send(conn, data)
 
 
 Server()
