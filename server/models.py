@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey, Integer, String, Column, DateTime, func
 from sqlalchemy.orm import relationship
 from datetime import datetime, timedelta
-from app import db, session
+from server import db, session
 
 
 class User(db):
