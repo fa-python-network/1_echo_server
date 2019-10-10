@@ -4,7 +4,6 @@ from contextlib import closing
 import os
 import hashlib
 import json
-from sc import SocketMethods
 import pickle
 from threading import Thread
 import sys
@@ -77,7 +76,8 @@ class Server():
 			print(f"{datetime.now().time()} Server Stopped {ip}", file = f)
 
 	def checkUser(self, addr, conn):
-		try:
+		try:		екнЖ
+
 			open(self.__users).close()
 		except FileNotFoundError:
 			open(self.__users, 'a').close()
