@@ -76,8 +76,7 @@ class Server():
 			print(f"{datetime.now().time()} Server Stopped {ip}", file = f)
 
 	def checkUser(self, addr, conn):
-		try:		екнЖ
-
+		try:
 			open(self.__users).close()
 		except FileNotFoundError:
 			open(self.__users, 'a').close()
