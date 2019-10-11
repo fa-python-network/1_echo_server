@@ -5,7 +5,7 @@ sock = socket.socket()
 sock.setblocking(1)
 
 host = input('Введите имя хоста:')
-cond = ''
+cond = False
 
 if host != 'localhost':
     cond = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", host)
