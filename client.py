@@ -1,36 +1,38 @@
-import socket
+import socket, threading
+import sys
 
-sock = socket.socket()
+def send(uname):
+    while True:
+        msg = input('\nI said: ')
+        if msg == "exit":
+            cli_sock.close()
+            sys.exit()
+            data = uname + ' has left'
+        else:
+            data = uname + ' said: ' + msg
+            cli_sock.send(data.encode())
 
-host = input("Input host adress: " )
-host1 = host.split('.')
-for char in host1:
-	if 0<=int(char)<=255:
-		pass
-	else:
-		print("Incorrect IP")
-		host = 'localhost'
+def receive():
+    while True:
+        data = cli_sock.recv(1024)
+        print('\t'+ str(data.decode()))
 
-port = int(input("Input host number: "))
-if 1024<=port<=65535:
-	pass
-else:
-	print("Incorrect port")
-	port = 8080
+if __name__ == "__main__":   
+
+    cli_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
+    HOST = 'localhost'
+    PORT = 7777
 
-sock.connect((host, port))
-print(f'Client is connected to {port}')
+    uname = input('Enter your name to enter the chat > ')
 
-while True:
-	print('Input your message')
-	data = input()
-	if data == 'exit':
-		break
-	print('Message is sending')
-	sock.send(data.encode())
-	ans=sock.recv(1024) 
-sock.close()
-print("Server's answer is ")
-print(ans.decode())
+    cli_sock.connect((HOST, PORT))     
+    print('Connected to remote host...')
+
+
+    thread_send = threading.Thread(target = send,args=[uname])
+    thread_send.start()
+
+    thread_receive = threading.Thread(target = receive)
+    thread_receive.start()

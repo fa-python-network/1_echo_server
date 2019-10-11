@@ -1,21 +1,39 @@
-import socket
-sock = socket.socket()
-port = 8080
-sock.bind(('', port))
-print(f'Server connected to port {port}')
-count_of_clients = 1
-sock.listen(count_of_clients)
-print(f'Server is listening')
+import socket, threading
+import sys
 
+def accept_client():
+    while True:   
+        cli_sock, cli_add = ser_sock.accept()
+        CONNECTION_LIST.append(cli_sock)
+        thread_client = threading.Thread(target = broadcast_usr, args=[cli_sock])
+        thread_client.start()
 
-while True:
-	conn, addr = sock.accept()
-	print(f'Server connected to a client {addr}')
-	while True:
-		data = conn.recv(1024)
-		if not data:
-			break
-		conn.send(data)
-		print('Sending message')
-	conn.close()
-	print('Connection is finnished')
+def broadcast_usr(cli_sock):
+    while True:
+        try:
+            data = cli_sock.recv(1024)
+            if data:
+               b_usr(cli_sock, data)
+        except Exception as x:
+            print(x.message)
+            break
+
+def b_usr(cs_sock, msg):
+    for client in CONNECTION_LIST:
+        if client != cs_sock:
+            client.send(msg)
+
+if __name__ == "__main__":    
+    CONNECTION_LIST = []
+
+    ser_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    HOST = 'localhost'
+    PORT = 7777
+    ser_sock.bind((HOST, PORT))
+   
+    ser_sock.listen(1)
+    print('Chat server started on port : ' + str(PORT))
+
+    thread_ac = threading.Thread(target = accept_client)
+    thread_ac.start()
