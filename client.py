@@ -24,12 +24,12 @@ sock.connect((host, port))
 
 print('Для выхода введите команду "exit".')
 
-msg = ''
+msg = input("Введите сообщение: ")
 
 while msg != 'exit':
-    msg = input('Введите сообщение:')
     sock.send(msg.encode())
     data = sock.recv(1024)
     print(data.decode())
-
+    msg = input('Введите сообщение:')
+    
 sock.close()
