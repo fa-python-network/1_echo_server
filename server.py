@@ -60,7 +60,7 @@ while True:
 	file.write(f"Подключение к  {addr} \n")
 	file.close()
 	user=False
-	names=open("data_names.csv", "w")
+	names=open("data_names.csv", "a")
 	names.close()
 	names=open("data_names.csv", "r")
 	for line in csv.reader(names):
@@ -78,7 +78,7 @@ while True:
 					file.close()
 					break
 				else:
-					conn.send("Неверный пароль. Попробуйте еще раз.")
+					conn.send("Неверный пароль. Попробуйте еще раз.".encode())
 					file=open('server.log','a')
 					file.write("неверный пароль.\n")
 					file.close()
@@ -107,8 +107,8 @@ while True:
 			data=conn.recv(1024)
 			password=data.decode()
 			file.close()
-		names=open("data_names.csv", "a")
-		csv.writer(names).writerow([addr[0], name, password])
+		names=open("data_names.csv", "wt")
+		csv.writer(names,delimiter=',').writerow([addr[0], name, password])
 		names.close()
 		answer="Добро пожаловать, " + name + '!'
 		conn.send(answer.encode())

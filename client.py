@@ -22,7 +22,7 @@ while True:
 sock.connect((host, int(port)))
 
 while True:
-
+#кря
     data = sock.recv(1024)
     print(data.decode())
 
