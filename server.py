@@ -6,6 +6,8 @@ from json import load, dump
 from hashlib import md5
 from strings import *
 
+ENCODING = 'cp1251'
+
 log.basicConfig(
                 format='%(filename)s [LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level=log.DEBUG)
 
@@ -42,16 +44,16 @@ class Server:
     def send(self, conn, msg):
         assert len(msg) <= 1020
         header = f'{len(msg):<4}'
-        conn.send(f'{header}{msg}'.encode())
+        conn.send(f'{header}{msg}'.encode(ENCODING))
         log.debug(f'Sended msg: {msg}')
 
     def recv(self, conn):
         try:
-            header = int(conn.recv(4).decode().strip())
+            header = int(conn.recv(4).decode(ENCODING).strip())
         except ValueError:
             conn.close()
             return 'Connection closed'
-        data = conn.recv(header).decode()
+        data = conn.recv(header).decode(ENCODING)
         log.debug(f'Received msg: {data}')
         return data
 
@@ -86,15 +88,50 @@ class Server:
                 log.debug(f'Incorrect login: {uname}')
                 self.send(conn, incorrect_password)
                 self.send(conn, incorrect_password)
+        return uname
+
+
+    def send_messages(self, conn, uname):
+        with open('messages.json') as f:
+            data = load(f)
+        if not uname in data:
+            self.send(conn, end_of_messages)
+            return
+        for msg in data[uname]:
+            self.send(conn, f"{msg[0]:16}{msg[1]}")
+        data[uname] = []
+        with open('messages.json', 'w') as f:
+            dump(data, f, ensure_ascii=False)
+        self.send(conn, end_of_messages)
 
 
     def handle_client(self, conn):
-        self.auth(conn)
+        uname = self.auth(conn)
+        self.send_messages(conn, uname)
         while 1:
             data = self.recv(conn)
-            if data == 'Connection closed':
-                break
-            self.send(conn, data)
+            if data.startswith('sendto'):
+                data = data.split()
+                if not len(data) >= 3:
+                    self.send(conn, unresolved_command)
+                    continue
+                to = data[1]
+                msg = ' '.join(data[2:])
+                with open('users.json') as f:
+                    users = load(f).keys()
+                if not to in users:
+                    self.send(conn, no_user)
+                    continue
+                with open('messages.json', 'r') as f:
+                    msgs = load(f)
+                msgs.setdefault(to, []).append([uname, msg])
+                with open('messages.json', 'w') as f:
+                    dump(msgs, f, ensure_ascii=False)
+                self.send(conn, 'Success')
+            else:
+                if data == 'Connection closed':
+                    break
+                self.send(conn, data)
 
 
 Server()
