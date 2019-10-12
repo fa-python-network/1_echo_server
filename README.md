@@ -10,13 +10,11 @@
 
 ## Данные для тестового входа
 
-Login:      vladik
-
+Login:      vladik  
 Password:   12345
 
 
-Login:      vladik1
-
+Login:      vladik1  
 Password:   12345
 
 ## Отправка и прием сообщений
