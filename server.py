@@ -1,7 +1,7 @@
 import json
 import socket
 from myserver import Myserver
-f = open ('log.txt', 'w')
+f = open('log.txt', 'w')
 sock = Myserver()
 freeHost = 1025
 while True:
@@ -27,14 +27,13 @@ while True:
         data = json.loads(d.read())
         for i in data['clients']: #цикл на проверку пользователя
             if i['ip'] == addr[0]:
-                conn.sendmessage('Hello, enter the password: ')
-                if conn.newmessage() != i['password']:
-                    conn.sendmessage('It\'s Not Correct')
-                    conn.close()
-                    cor = False
-                else:
-                    conn.sendmessage((f'Hello {i["name"]}'))
-                    cor = True
+                conn.sendmessage(f'Hello, {i["name"]} , enter the password:')
+                while True:
+                    passw = conn.newmessage()
+                    if passw == i['password']:
+                        conn.sendmessage('Password is Correct')
+                        break
+                    conn.sendmessage('It\'s Not Correct, try again')
                 break
         else: #добавление нового
             conn.sendmessage('Hello, You\'re new, please enter you name ')
@@ -45,18 +44,17 @@ while True:
             data['clients'].append(newclient)
             d.seek(0)
             d.write(json.dumps(data))
-            d.truncate()
             conn.sendmessage('congratulation')
             cor = True
 
     msg = ''
     e = ''
     data = ''
-    while cor:
+    while True:
 
         data = conn.newmessage()
-        print("new data from cliqent", file = f)
-        if not data:
+        print("new data from client", file = f)
+        if data == "exit":
             break
         msg += data
         conn.sendmessage(data)

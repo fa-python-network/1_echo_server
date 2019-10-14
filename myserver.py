@@ -1,15 +1,17 @@
 import socket
 class Myserver(socket.socket):
-    def newmessage(self):
-        length = self.recv(1020).decode()
-        if length != '':
-            message = self.recv(int(length)).decode()
-            return message
-
+    def newmessage(self, lenght=None):
+        length1 = int(self.recv(1).decode())
+        length = self.recv(length1).decode()
+        if lenght == '' or length == None:
+            return ''
+        length = int(length)
+        message = self.recv(length).decode()
+        return message
 
     def sendmessage(self, message):
-        length0 = str(len(message))
-        self.send(length0.encode())
+        self.send(str(len(str(len(message)))).encode())
+        self.send(str(len(message)).encode())
         self.send(message.encode())
 
     def newclient(self):

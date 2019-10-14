@@ -5,9 +5,8 @@ import re
 
 
 while True:
-    inputPort = input('Vvedite port nomber or \'ok\' if you want port 9090: ')
-    if inputPort == 'ok':
-        print('ok')
+    inputPort = input('Vvedite port nomber or press Enter if you want port 9090: ')
+    if inputPort == '':
         inputPort = 9090
         break
     elif not inputPort.isnumeric():
@@ -16,12 +15,10 @@ while True:
         print('try again')
     else:
         inputPort = int(inputPort)
-        print('great')
         break
 while True:
-    inputHost = input('Vvedite host or \'ok\' if you want localhost: ')
-    if inputHost == 'ok':
-        print('ok')
+    inputHost = input('Vvedite host or press Enter if you want localhost: ')
+    if inputHost == '':
         inputHost = 'localhost'
         break
     elif re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', inputHost) == None:
@@ -39,20 +36,20 @@ if aut == 'Hello, You\'re new, please enter you name ': #регистрация 
     print(sock.newmessage())
     sock.sendmessage(input())
 else: #ввод пароля
-    sock.sendmessage(input())
-aut = sock.newmessage()
-print(aut)
-data = ''
-while aut != 'It\'s Not Correct':
+    while True:
+        sock.sendmessage(input())
+        aut = sock.newmessage()
+        if aut[0] != 'I':
+            print(aut)
+            break
+        print(aut)
+
+while True:
     msg = input("Vvedite: ")
+    sock.sendmessage(msg)
     if msg == "exit":
         sock.close()
         print('stop connection')
         break
-    sock.sendmessage(msg)
-    print('send data to server')
-    data += sock.newmessage()
-    print('new data from server')
 
-if data:
-    print(data)
+
