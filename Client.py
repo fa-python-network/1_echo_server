@@ -1,14 +1,18 @@
 import socket
 
 sock = socket.socket()
-sock.connect(('localhost',9093))
+
+cod=int(input("Введите номер порта:"))
+
+sock.connect(('localhost',cod))
 sock.send(b"Hello,dear!")
 msg="hello"
 sock.send(msg.encode())
 
 response = sock.recv(1024).decode()
 print(response)
-
-s = str(input('Tell somethink:'))
-if s = 'exit':
-  sock.close()
+while True:
+  s = str(input('Tell somethink:'))
+  if s == 'exit':
+    sock.close()
+    break
