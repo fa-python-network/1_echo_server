@@ -1,16 +1,25 @@
 import socket
 
+print("Открываем сервер")
 sock = socket.socket()
-sock.bind(("", 9093))
-sock.listen(1)
+  while True:
+  sock.bind(("", 9093))
+  print("Прослушиваем порт")
+  sock.listen(1)
 
-conn, addr = sock.accept()
-print(addr)
+  print("Подключаем клиента")
+  conn, addr = sock.accept()
+  print(addr)
 
-data=conn.recv(1024)
-print(data.decode())
-
-conn.send(b"hi")
-conn.send(('\nIP {}'.format(addr[0])).encode())
-
-sock.close()
+  print("Принемаем данные от клиента")
+  data=conn.recv(1024)
+  print(data.decode())
+  if (data.decode() == "Exit"0):
+    print("Отключаем клиента. Пока-пока")
+    conn.close
+  
+  print("Отправляем данные клиенту");
+  conn.send(b"hi")
+  conn.send(('\nIP {}'.format(addr[0])).encode())
+print("Стопаем сервак")
+sock.close
