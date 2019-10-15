@@ -1,19 +1,41 @@
 import socket
+import logging as log
 
+log.basicConfig(filename='log.txt', level=log.DEBUG)
+
+
+def send(conn, message):
+    header = str(len(message))
+    full_message = f'{header:4}{message}'.encode()
+    conn.send(full_message.encode())
+
+
+def receive(conn):
+    header = conn.recv(4).decode()
+    message = conn.recv(int(header))
+    return message.decode()
+
+
+def identify(sock):
+    data = receive(sock)
+    if data == 'What is your name?':
+        name = input(data)
+        send(sock, name)
+        data = receive(sock)
+    print(data)
 
 
 sock = socket.socket()
-print('Клиент запущен')
-port = 8564
-sock.bind(('', port)) 
-print('Подключено к серверу')
-msg = ''
+log.info('Клиент запущен')
+sock.connect(('localhost', 33881))
+log.info('Подключено к серверу')
+identify(sock)
+msg=''
 while msg != 'exit':
     msg = input()
-    print('Отправляю сообщение {}'.format(msg))
-    sock.send(msg.encode())
-    print('Получаю ответ сервера')
-    received_msg = sock.recv(1024)
-    print(received_msg.decode())
+    log.info('Отправляю сообщение {}'.format(msg))
+    send(sock, msg)
+    log.info('Получаю ответ сервера')
+    received_msg = receive(sock)
+    print(received_msg)
 sock.close()
-

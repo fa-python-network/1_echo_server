@@ -1,8 +1,48 @@
+import logging as log
 import socket
 from re import match
+import json
+
+log.basicConfig(filename='log1.txt', level=log.DEBUG)
+
+
+def send(conn, message):
+    header = len(message)
+    full_message = f'{header:4}{message}'.encode()
+    conn.send(full_message)
+
+
+def receive(conn):
+    header = conn.recv(4).decode()
+    message = conn.recv(int(header))
+    return message.decode()
+
+
+def identify(conn, addr):
+    with open('clients.json', 'r') as f:
+        data = json.load(f)
+    if not addr[0] in data:
+        send(conn, 'What is your name?')
+        info = receive(conn)
+        data[addr[0]] = info
+    send(conn, f'Hello, {data[addr[0]]}')
+    with open('clients.json', 'w') as f:
+        json.dump(data, f, ensure_ascii=False)
+
+
+def auth(conn):
+    with open('auth.json', 'r') as f:
+        data = json.load(f)
+    if not addr[0] in data:
+        send(conn, 'What is your login?')
+        info = receive(conn)
+        data[addr[0]] = info
+    send(conn, f'Hello, {data[addr[0]]}')
+    with open('auth.json', 'w') as f:
+        json.dump(data, f, ensure_ascii=False)
 
 sock = socket.socket()
-print('Запуск сервера')
+log.info('Запуск сервера')
 host = 'localhost'
 port = 135  # 9090
 host_ = input('Host: ')
@@ -20,22 +60,23 @@ except OSError:
     sock.bind(('', 0))
     port = sock.getsockname()[1]
 
-print('Сервер слушает порт {}'.format(port))
+log.debug('Сервер слушает порт {}'.format(port))
 print(f'current port: {port}')
 sock.listen(5)
 
 try:
     while 1:
         conn, addr = sock.accept()
-        print('Подключен клиент {}:{}'.format(*addr))
+        log.info('Подключен клиент {}:{}'.format(*addr))
+        identify(conn, addr)
         while 1:
-            received_msg = conn.recv(1024).decode()
-            conn.send(received_msg.encode())
+            received_msg = receive(conn)
+            send(conn, received_msg)
             if not received_msg:
-                print('Разрыв соединения')
+                log.info('Разрыв соединения')
                 conn.close()
                 break
 
 finally:
-    print('Сервер завершает работу')
+    log.info('Сервер завершает работу')
     sock.close()
