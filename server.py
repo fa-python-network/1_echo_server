@@ -33,13 +33,18 @@ def identify(conn, addr):
 def auth(conn):
     with open('auth.json', 'r') as f:
         data = json.load(f)
-    if not addr[0] in data:
-        send(conn, 'What is your login?')
-        info = receive(conn)
-        data[addr[0]] = info
-    send(conn, f'Hello, {data[addr[0]]}')
-    with open('auth.json', 'w') as f:
-        json.dump(data, f, ensure_ascii=False)
+    send(conn, 'What is your login?')
+    login = receive(conn)
+    if login in data:
+        send(conn, "*****WhAt iS YoUr PASSw0rD, DETKA?*****")
+        passw=receive(conn)
+        if data[login]==passw:
+            send(conn, f"dobriy vecher, {login}")
+            return True
+        else:
+            send(conn, "rogatka zakrita")
+            conn.close()
+            return False
 
 sock = socket.socket()
 log.info('Запуск сервера')
@@ -68,8 +73,8 @@ try:
     while 1:
         conn, addr = sock.accept()
         log.info('Подключен клиент {}:{}'.format(*addr))
-        identify(conn, addr)
-        while 1:
+        a=auth(conn)
+        while a:
             received_msg = receive(conn)
             send(conn, received_msg)
             if not received_msg:

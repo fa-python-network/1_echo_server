@@ -7,7 +7,7 @@ log.basicConfig(filename='log.txt', level=log.DEBUG)
 def send(conn, message):
     header = str(len(message))
     full_message = f'{header:4}{message}'.encode()
-    conn.send(full_message.encode())
+    conn.send(full_message)
 
 
 def receive(conn):
@@ -27,7 +27,7 @@ def identify(sock):
 
 sock = socket.socket()
 log.info('Клиент запущен')
-sock.connect(('localhost', 33881))
+sock.connect(('localhost', int(input("vvedite port: "))))
 log.info('Подключено к серверу')
 identify(sock)
 msg=''
