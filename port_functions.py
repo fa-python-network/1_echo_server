@@ -40,13 +40,41 @@ def change_port(port,server_socket):
             print("{} - номер порта".format(port))
             break
 
-def check_user(ip):
+def check_user(ip,file="users.txt"):
     """Проверка наличия пользователя в системе по данному IP-адресу"""
-    pass
+    try:
+        user_list=create_user_list(file)
+    except IOError as e:
+        print("Данного файла не существует!")
+        f=open(file,"w")
+        f.close()
+    else:
+        user_exists=False
+        for user in user_list:
+            if ip==user[1]:
+                log_in_user(user[0])
+                user_exists=True
+                break
+        if not(user_exists):
+            name=input("Введите имя пользователя: ")
+            add_user(ip,name,file)
     
-def add_user(ip,name):
+def add_user(ip,name,file="users.txt"):
     """Добавить пользователя с данным именем и IP-адресом"""
-    pass
-            
+    users_file=open(file,"a") 
+    name.strip()
+    users_file.write("{};{}".format(name,ip))
+    users_file.close()
     
+def create_user_list(file="users.txt"):
+    """Создаёт список с именами и ip-адресами пользователей"""
+    users_file=open(file,"r")
+    user_list=list()
+    for line in users_file:
+        user=line.split(";")
+        user_list.append(user)
+    return user_list
+    users_file.close()
             
+def log_in_user(name):
+    print("Пользователь {} вошёл в систему".format(name))

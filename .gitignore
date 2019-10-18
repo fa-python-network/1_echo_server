@@ -38,6 +38,9 @@ pip-delete-this-directory.txt
 # Client log
 log.txt
 
+# Client data base
+users.txt
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
