@@ -1,126 +1,74 @@
 import socket
-import json
 import threading
 
 
-def read_data():
-    with open('data.json', "r") as f:
-        data = json.load(f)
-    return data
-
-
-def write_data(data):
-    with open('data.json', "w") as f:
-        json.dump(data, f)
-
-
-def login():
-    global login_inp
-    login_inp = input('Login > ')
-    data = read_data()
-
-    try:
-        data[login_inp]
-
-        password_inp = input('Password > ')
-        if password_inp == data[login_inp]["password"]:
-            print(f'{data[login_inp]["nickname"]}, успешно выполнен вход!')
-            connect_to_server()
-        else:
-            print('Неверный пароль!')
-            login()
-    except KeyError:
-        print('Такого логина нет!')
-        login()
-
-
-def registration():
-    data = read_data()
-    ur_login = input("Введите логин > ")
-    if ur_login in data:
-        print("Пользователь с таким логином уже существует!")
-        registration()
-    ur_password = input('Введите пароль > ')
-    ur_nick = input('Имя пользователя > ')
-
-    data[ur_login] = {'password': ur_password, 'nickname': ur_nick}
-    write_data(data)
-
-    print('Пользователь успешно добавлен в базу данных!\nАвторизуйтесь!')
-    login()
-
-
-def ur_choice():
-    choice = input('1 - Авторизоваться\n'
-                   '2 - Зарегистрироваться\n\n'
-                   '0 - Закрыть программу\n')
-    if choice == '1':
-        login()
-    elif choice == '2':
-        registration()
-    elif choice == '0':
-        print('Работа программы успешно завершена!')
-    else:
-        ur_choice()
-
-
 def Choose_hostname():
-    choose_hostname = input('Host name > ')
+    choose_hostname = input('Host name / Press "Enter" for default value > ')
     if choose_hostname == '':
         choose_hostname = 'localhost'
     return choose_hostname
 
 
 def Choose_port():
-    try:
-        choose_port = input('Port > ')
-        if choose_port == '':
-            choose_port = 9090
-        else:
-            choose_port = int(choose_port)
-        return choose_port
-    except ValueError:
-        print('Need integer value!')
-        Choose_port()
+    choose_port = input('Port / Press "Enter" for default value > ')
+    if choose_port == '':
+        choose_port = 9090
+    return choose_port
 
 
 def connect_to_server():
-    sock = socket.socket()
     hostname = Choose_hostname()
-    port = Choose_port()
-
+    port = int(Choose_port())
     try:
         sock.connect((hostname, port))
         print(f'Connected to host: {hostname}\n{" "* 13}port: {port}')
-        
+        # Авторизация
+        while True:
+                msg = sock.recv(1024).decode()
+                print(msg)
+                if 'successfully logged in!' in msg:
+                    break
+                response = input()
+                sock.send(response.encode())
+
         t = threading.Thread(target=listen, args=(sock,))
         t.setDaemon(True) 
         t.start()
         
         isWorking = True
         while isWorking:
-            msg = input('Message > ')
+            msg = input()
             if msg.lower() == '/exit':
+                sock.send(msg.encode())
                 isWorking = False
             else:
                 sock.send(msg.encode())
-                #msg_from_server = sock.recv(1024)
-                #msg = msg_from_server.decode()
-                #print(msg)
         print('Closed')
         sock.close()
-		
+
     except ValueError:
-        print('wow')
-        #print('Incorrect hostname or port')
-        #connect_to_server()
+        print('Port must be integer value!')
+        connect_to_server()
+
+    except TypeError:
+        print('Port must be integer value!')
+        connect_to_server()
+
+    except socket.gaierror:
+        print('Incorrect host')
+        connect_to_server()
+
+    except ConnectionRefusedError:
+        # На случай, если введен не верный адрес и подключение невозможно
+        print('Incorrect address! Try again!')
+        connect_to_server()
 
 
 def listen(sock):
-	while True:
-		msg = sock.recv(1024).decode()
-		print(msg)
+    while True:
+        msg = sock.recv(1024).decode()
+        print(msg)
 
 
-ur_choice()
-
+sock = socket.socket()
+connect_to_server()
