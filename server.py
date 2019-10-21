@@ -8,10 +8,11 @@ port_functions.change_port(port,s)
 s.listen(1)
 
 while True:
-	msg=''
-	conn,address=s.accept()
-	data=conn.recv(1024)
-	msg=data.decode()
-	print(msg)
-conn.close()
+	#msg=''
+	#conn,address=s.accept()
+	#data=conn.recv(10)
+	#msg=data.decode()
+	#print(msg)
+	port_functions.receive_message(s)
+	#conn.close()
 	
