@@ -1,9 +1,10 @@
 import socket
+import hashlib
 
-def check_port(port, default):
+def check_port(port, default=9090, lower_bound=1024,upper_bound=65536):
     """ Проверяет порт на соответствие диапазону и при несоответствии назначает порт по умолчанию."""
     port=int(port)
-    if 1024<port<65536:
+    if lower_bound<port<upper_bound:
         pass
     else:
         port=default
@@ -42,28 +43,36 @@ def change_port(port,server_socket):
 
 def check_user(ip,file="users.txt"):
     """Проверка наличия пользователя в системе по данному IP-адресу"""
+    log_in_successful=bool()
     try:
         user_list=create_user_list(file)
     except IOError as e:
         print("Данного файла не существует!")
         f=open(file,"w")
         f.close()
+        log_in_successful=False
     else:
         user_exists=False
         for user in user_list:
             if ip==user[1]:
-                log_in_user(user[0])
+                entered_password=input("Введите пароль: ")
+                log_in_successful=log_in_user(user, entered_password)
                 user_exists=True
                 break
         if not(user_exists):
             name=input("Введите имя пользователя: ")
-            add_user(ip,name,file)
+            password=input("Введите пароль: ")
+            add_user(ip,name, password, file)
+            log_in_successful=False
+    return log_in_successful
     
-def add_user(ip,name,file="users.txt"):
+def add_user(ip,name,password,file="users.txt"):
     """Добавить пользователя с данным именем и IP-адресом"""
     users_file=open(file,"a") 
     name.strip()
-    users_file.write("{};{}".format(name,ip))
+    password.strip()
+    users_file.write("{};{};{}\n".format(name,ip,encode(password)))
+    print("Пользователь {} добавлен в систему".format(name))
     users_file.close()
     
 def create_user_list(file="users.txt"):
@@ -76,5 +85,13 @@ def create_user_list(file="users.txt"):
     return user_list
     users_file.close()
             
-def log_in_user(name):
-    print("Пользователь {} вошёл в систему".format(name))
+def log_in_user(user,entered_password):
+    if(encode(entered_password)==user[2].strip()):
+        print("Пользователь {} вошёл в систему".format(user[0]))
+        return True
+    else:
+        print("Неверный пароль!")
+        return False
+
+def encode(password):
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
