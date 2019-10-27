@@ -15,11 +15,12 @@ with open('users.json','r') as f:
 
 try:
 	sock.bind(('', port))
-except OSError: 
-	sock.bind(('',0))
+except OSError:
+	sock.bind(('', 0))
 	port = sock.getsockname()[1]
 	print(f"use port {port}")
-	file.write(f'Сервер использует порт{port}\n')
+
+file.write(f'Сервер использует порт{port}\n')
 sock.listen(1)
 file.write(f'Сервер слушает клиента{port}\n')
 
@@ -30,12 +31,15 @@ while True:
 		c = users[addr[0]]
 	except KeyError:
  		conn.send(b"What is your name?")
- 		users[addr[0]] = (conn.recv(1024)).decode()
- 		print(users[addr[0]])
- 	msg_to_client = 'Hi,'+{users[addr[0]]}+'!'
- 	msg_to_client = f'Hi,{users[addr[0]]}!'
- 	conn.send(msg_to_client.encode())
- 	write_into_json(users)
+ 		users[addr[0]] = []
+        users[addr[0]].append(conn.recv(1024).decode())
+
+        conn.send(b"Write new password")
+        users[addr[0]].append(conn.recv(1024).decode())
+
+    msg_to_client = f'Hi,{users[addr[0]][0]}!'
+    conn.send(msg_to_client.encode())
+    write_into_json(users)
 
 	msg = ''
 
@@ -48,5 +52,6 @@ while True:
 		conn.send(data)
 		print(msg)
 	file.write(f'Сервер отвечает\n')
+
 file.close()
 conn.close()
