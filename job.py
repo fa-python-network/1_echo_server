@@ -11,7 +11,7 @@ sock = socket.socket()
   i=9093
   sock.bind(("",i))
   f.write("Прослушиваем порт")
-  try:
+  while thutry:
     sock.listen(1)
   exept:
     while true:
