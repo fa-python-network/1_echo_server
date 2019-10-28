@@ -16,6 +16,6 @@ data = sock.recv(1024)
 
 print("закрытие")
 sock.close()
-print("Вывод данных")
+print("Вывод данных и закрытие соединения")
 print(data.decode())
 print("Завершение программы")
