@@ -1,26 +1,38 @@
-print("Запуск сервера")
+f = open('Log.txt', 'a')
+f.write("Запуск сервера")
 import socket
 
+i = 1024
 sock = socket.socket()
-sock.bind(('', 9089))
-print("Начало прослушивание порта")
-sock.listen(1)
-conn, addr = sock.accept()
-print(addr)
+while true:
+	while i < 2 ** 16:
+		try:
+			i = i+1;
+			sock.bind(('', i))
+			break
+		except:
+			pass
+			
+	sock.bind(('', i))
+	f.write("порт = ", i)
+	f.write("Начало прослушивание порта")
+	sock.listen(1)
+	conn, addr = sock.accept()
+	print(addr)
 
-msg = ''
+	msg = ''
 
-print("Прием данных от клиент")
-while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	print("Отправка данных клиенту")
-	conn.send(data)
+	f.write("Прием данных от клиент")
+	while True:
+		data = conn.recv(1024)
+		if not data:
+			break
+		msg += data.decode()
+		f.write("Отправка данных клиенту")
+		conn.send(data)
 
-print("Отключение клиента")
-print(msg)
+	f.write("Отключение клиента")
+	print(msg)
 
-print("отключение сервера")
+f.write("отключение сервера")
 conn.close()
