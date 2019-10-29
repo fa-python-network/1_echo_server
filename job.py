@@ -3,7 +3,7 @@ def sendstxt(): #Функция для принятия сообщений
   data=conn.recv(1024)
   print(data.decode())   
 f=open('t.txt','w') #Фаил со служебными сообщениями 
-names=open('names.txt','w') #Фаил с именами
+names=open('names.txt','w') #Фаил с именами. 1ый столбик - IP, 2ой - Имена, 3ий - пароли
 f.write("Открываем сервер")
 sock = socket.socket()
  
@@ -25,19 +25,20 @@ while True:
   while true: #многопользовательский чат
     conn, addr = sock.accept()
     for lines in names: #моя странная реализация кукки
-      if lines[1]==conn:
+      if lines[1]==conn: #если IP знакомый
         print('Hello', lines[2])
-        password=str(input(lines[2]," Enter your password:")
-        While (password<>lines[3]):
+        password=str(input("Enter your password:")
+        while (password <> lines[3]):
           password=str(input(lines[2]," Your password is wrong. Enter it again:")
-      i=1
-   if i=0:
-      name.write(input("Enter your name:")
+        i=1
+    if i=0:
+     name.write(conn,' ') 
+     name.write(input("Enter your name:",' ')
      password=str(input("Enter your password:")
      password2=str(input("Enter your password again:")
       while (password1<>password2):
         password2=str(input("Error. Passwords in not shodatsya! Enter your password again:")
-      names.write(password)
+      names.write(password,"/n")
   
 
     f.write("Принемаем данные от клиента")
