@@ -30,9 +30,9 @@ while true:
 		msg += data.decode()
 		f.write("Отправка данных клиенту")
 		conn.send(data)
+		msg = ''
 
 	f.write("Отключение клиента")
-	print(msg)
 
 f.write("отключение сервера")
 conn.close()
