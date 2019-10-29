@@ -14,7 +14,7 @@ while true:
 			pass
 			
 
-	f.write("порт = ", i)
+	f.write("порт = " + str(i))
 	f.write("Начало прослушивание порта")
 	sock.listen(1)
 	conn, addr = sock.accept()
