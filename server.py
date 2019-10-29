@@ -13,7 +13,7 @@ while true:
 		except:
 			pass
 			
-	sock.bind(('', i))
+
 	f.write("порт = ", i)
 	f.write("Начало прослушивание порта")
 	sock.listen(1)
