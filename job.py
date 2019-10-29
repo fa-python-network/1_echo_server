@@ -1,19 +1,19 @@
 import socket
-def sendstxt: #Функция для принятия сообщений
+def sendstxt(): #Функция для принятия сообщений
   data=conn.recv(1024)
   print(data.decode())   
 f=open('t.txt','w') #Фаил со служебными сообщениями 
 names=open('names.txt','w') #Фаил с именами
 f.write("Открываем сервер")
-b=false
 sock = socket.socket()
-  while True:
+ 
+while True:
   i=9093
   sock.bind(("",i))
   f.write("Прослушиваем порт")
-  while thutry:
-    sock.listen(1)
-  exept:
+  try:
+     sock.listen(1)
+  except:
     while true:
       i=i+1
       sock.bind(("",i))
@@ -53,4 +53,6 @@ sock = socket.socket()
     conn.send(b"hi")
     conn.send(('\nIP {}'.format(addr[0])).encode())
   f.write("Стопаем сервак")
+f.close()
+name.close()
 sock.close
