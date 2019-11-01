@@ -1,29 +1,26 @@
 import socket
 
-port  = 9090
-file = open("log.txt", "a")
+file = open('log.txt', "a")
+port  = 9097
 sock = socket.socket()
-sock.bind(('',port))
-file.write((f'port {port}\n'))
-sock.listen(1)
-file.write("server is running\n")
-
+sock.bind(('',int(port))
+file.write(f'server uses port {port}\n')
+sock.listen()
 
 while True:
-
-	msg = ""
 	conn,addr = sock.accept()
 	print(addr)
-
+	msg = ""
 
 	while True:
-		
+		file.write(f'server receives data from client {addr}\n')
 		data = conn.recv(1024)
 		if not data:
 			break
-		msg += data.decode()
+		print(data.decode())
+
+		conn.send(data)
+		file(f'server responds to a client\n')
 
 conn.close()
-sock.close()
-file.write("server shutdown\n")
 file.close()

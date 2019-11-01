@@ -12,18 +12,17 @@ while ggg==False:
 		print("entered port: ")
 		port = input()
 		if port == "":
-			port = 9090
+			port = 9097
 
 		sock.connect((host, int(port)))
 
 		msg = input()
 		while msg!='exit':
 			sock.send(msg.encode())
-			data = sock.recv(1024)
 			msg = input()
 		ggg = True
 	except:
-		print("you entered incorrect data")
+		print("you entered incorrect host or port")
 
-print(data.decode())
-sock.close()
+
+
