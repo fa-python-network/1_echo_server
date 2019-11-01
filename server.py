@@ -33,11 +33,11 @@ while True:
 					passwd = conn.recv(1024).decode()
 					if i['password'] == passwd:
 						conn.send(b'Correct password!')
-				break
+						break
 					else:
 						conn.send(b'Wrong password! Try another')
-		break
-			else:
+				break
+		else:
 			conn.send(b'Input your name:')
 			name = conn.recv(1024).decode()
 			conn.send(b'Input your password:')
@@ -53,7 +53,7 @@ while True:
 		data = conn.recv(1024)
 		print("new data from client", file = f)
 		if not data:
-		break
+			break
 		msg = msg + data.decode() + ' '
 		conn.send(data)
 
