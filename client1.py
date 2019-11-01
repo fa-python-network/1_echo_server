@@ -24,5 +24,4 @@ while ggg==False:
 	except:
 		print("you entered incorrect host or port")
 
-
-
+sock.close()

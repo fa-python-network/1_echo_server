@@ -3,9 +3,14 @@ import socket
 file = open('log.txt', "a")
 port  = 9097
 sock = socket.socket()
-sock.bind(('',int(port))
+try:
+	sock.bind(('',int(port))
+except OSError:
+	sock.bind(('',0))
+	port = sock.getsockname()[1]
 file.write(f'server uses port {port}\n')
 sock.listen()
+file.write(f'server starts listen client\n')
 
 while True:
 	conn,addr = sock.accept()
