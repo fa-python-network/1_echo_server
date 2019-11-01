@@ -27,6 +27,7 @@ print(sock.recv(1024).decode())
 aut = sock.recv(1024).decode()
 print(aut)
 if (aut == 'Input your name:'):
+    print(1)
     sock.send(input().encode())
     print(sock.recv(1024).decode())
     sock.send(input().encode())
