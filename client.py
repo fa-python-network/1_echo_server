@@ -1,16 +1,30 @@
-import socket
-from time import sleep
+from socket import socket
 
-sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+sock = socket()
 
-data = sock.recv(1024)
+try:
+    sock.connect(('localhost', 8888))
+except ConnectionError:
+    print("Server is not available")
+else:
+    print("Connected to server")
 
-sock.close()
+    try:
+        sock.send(input('Enter message to server: ').encode())
+    except ConnectionError:
+        print('Error while sending data')
+    else:
+        print('Message sent')
 
-print(data.decode())
+        answer = b''
+        while True:
+            chunk = sock.recv(1024)
+            answer += chunk
+            if not chunk:
+                break
+
+        print(f'Received from server: {answer.decode()}')
+        sock.close()
+
+input('Press Enter to exit...')
