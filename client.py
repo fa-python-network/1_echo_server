@@ -1,16 +1,24 @@
 import socket
-from time import sleep
+
+def host_port(sock, host = 'localhost', port = 9090):
+    if 0>port>65535:
+        print("Неправильный номер порта")
+        port=int(input("Введите другой номер"))
+        host_port(host, port, sock)
+    else:
+        sock.connect(('localhost', 9090))
+    
 
 sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+sock.send(b'helloo, world!')
 
-data = sock.recv(1024)
-
+while True:
+    data = sock.recv(1024)
+    flag=input("Введите exit для остановки, нажмите enter для продолжения")
+    if flag == "exit":
+        break
+    
 sock.close()
 
-print(data.decode())
+print (data)
