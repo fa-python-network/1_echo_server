@@ -1,6 +1,7 @@
 import socket
 
-log = open('log.txt', 'w')
+with open('log.txt', 'a') as f:
+    pass
 
 sock = socket.socket()
 
@@ -18,24 +19,21 @@ print("Your port is: \n", port)
 sock.listen(1)
 
 while True:
+    
     conn, addr = sock.accept()
-    log.write(str(addr[0])+'\n')
+    with open('log.txt', 'a') as f:
+        f.write(str(addr[0])+'\n')
 
     msg = ''
+    data = conn.recv(1024)
+    msg = data.decode()
+    with open('log.txt', 'a') as f:
+        f.write(msg+ '\n')
+    if not data:
+        break
 
-    while True:
-        
-        for i in range (1,5):
-            
-            data = conn.recv(1024)
-            msg = data.decode()
-            log.write(msg+ '\n')
-            
-            
-        if not data:
-            break
+with open('log.txt', 'a') as f:
+    f.write('\n')
 
-log.write('\n')
 conn.send(data)
-
 print (msg)
