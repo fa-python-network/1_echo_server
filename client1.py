@@ -1,27 +1,31 @@
 import socket
 from time import sleep
-
 sock = socket.socket()
 ggg = False
 while ggg==False:
 	try:
-		print("entered host: ")
+		print("host:")
 		host = input()
 		if host == "":
 			host = 'localhost'
-		print("entered port: ")
+		print("port:")
 		port = input()
 		if port == "":
-			port = 9097
+			port = 9090
 
 		sock.connect((host, int(port)))
-
+		c = sock.recv(1024)
+		if c == "What is your name?":
+			msg = input()
+			sock.send(msg.encode())
+			c = sock.recv(1024)
+		print(c.decode())
 		msg = input()
 		while msg!='exit':
-			sock.send(msg.encode())
-			msg = input()
-		ggg = True
+		break
 	except:
-		print("you entered incorrect host or port")
+		print("wrong host or port")
+	data = sock.recv(1024)
+
 
 sock.close()
