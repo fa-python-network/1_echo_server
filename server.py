@@ -1,20 +1,41 @@
 import socket
 
-sock = socket.socket()
-sock.bind(('', 9090))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
+log = open('log.txt', 'w')
 
-msg = ''
+sock = socket.socket()
+
+port = 1024
+
+while port != 65536:
+	try:
+		sock.bind(('', port))
+		break
+	except:
+		port+=1
+
+print("Your port is: \n", port)
+
+sock.listen(1)
 
 while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
+    conn, addr = sock.accept()
+    log.write(str(addr[0])+'\n')
 
-print(msg)
+    msg = ''
 
-conn.close()
+    while True:
+        
+        for i in range (1,5):
+            
+            data = conn.recv(1024)
+            msg = data.decode()
+            log.write(msg+ '\n')
+            
+            
+        if not data:
+            break
+
+log.write('\n')
+conn.send(data)
+
+print (msg)

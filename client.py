@@ -1,16 +1,33 @@
 import socket
-from time import sleep
 
 sock = socket.socket()
 sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+host = input('Enter address of host: \n' )
+if host == '' or host == 'localhost':
+	host = 'localhost'
+else:
+	lhost=host.split('.',4)
+	for i in lhost:
+		if 0 <= int(i) <= 255:
+			pass
+		else:
+			host = 'localhost'	
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+port=int(input('Enter address of port: \n' ))
+if 1024 <= int(port) <= 65535:
+	pass
+else:
+	port = 9089	
 
-data = sock.recv(1024)
+sock.connect((host, port))
 
-sock.close()
+print("For exit enter 'exit' or enter the message")
+ 
 
-print(data.decode())
+while True:
+	msg = input()
+	if msg == 'exit':
+		sock.close()
+		break
+	else:
+		sock.send(msg.encode())	
