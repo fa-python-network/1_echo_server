@@ -1,16 +1,15 @@
 import socket
-from time import sleep
 
 sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+sock.connect(('localhost', 9090))
+print('Соединение с сервером')
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+msg = '1'
 
-data = sock.recv(1024)
-
+while msg != 'exit':
+	print('Введите сообщение:')
+	msg = input()
+	sock.send(msg.encode("utf-8"))
+	data = sock.recv(1024)
+	print("Ответ: ", data.decode("utf-8"),"\n")
 sock.close()
-
-print(data.decode())
