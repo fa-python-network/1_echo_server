@@ -2,15 +2,58 @@ import socket
 from time import sleep
 
 sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
+host = input('Write host name: ')
+if host == 'localhost':
+    pass
+else:
+    if any(c.isalpha() for c in host) == True:
+        print('Host name is incorrect. Local host selected by default')
+        host = 'localhost'
+    else:
+        host_lst = host.split('.')           
+        for i in host_lst:
+            if 0 <= int(i) <= 255:
+                pass
+            else:
+                host = 'localhost'
+                print('Host name is incorrect. Local host selected by default')
 
-data = sock.recv(1024)
+try:
+    port = int(input('Write port number: '))
+    if 0 <= port <= 65535:
+        pass
+    else:
+        print('Port number is incorrect. Port number is 9090 by default')
+        port = 9090
+        
+except ValueError:
+    print("Port number is incorrect. Port number is 9090 by default")
+    port = 9090  
 
+sock.connect((host, port))
+
+print('Write exit to stop working with server')
+msg = ''
+
+answer = sock.recv(1024)
+answer = answer.decode()
+print(answer)
+if "Please, write your name:" in answer:
+    name = input()
+    sock.send(name.encode())
+    answer = sock.recv(1024)
+    answer = answer.decode()
+    print(answer)
+    
+while True:
+    if msg != 'exit':
+        print('Write message:')
+        msg = input()
+        sock.send(msg.encode())
+        data = sock.recv(1024)
+    else:
+        break
+    
 sock.close()
-
-print(data.decode())
+print('Work with server is over.') 
