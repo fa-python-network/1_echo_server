@@ -1,16 +1,20 @@
 import socket
-from time import sleep
-
+import random
 sock = socket.socket()
-sock.setblocking(1)
-sock.connect(('10.38.165.12', 9090))
+sock.connect(('localhost', 8080))
+while True:
+	print('Ожидайте ответа: ')
+	msg = sock.recv(1024).decode()
+	if msg != 'exit':
+		print('Server: ' + msg)
+	else:
+		print('Сервер отключился ')
+		break
 
-#msg = input()
-msg = "Hi!"
-sock.send(msg.encode())
-
-data = sock.recv(1024)
-
+	msg = input('Client: ')
+	if msg != 'exit':
+		sock.send(msg.encode('utf-8'))
+	else:
+		sock.send(msg.encode('utf-8'))
+		break
 sock.close()
-
-print(data.decode())
