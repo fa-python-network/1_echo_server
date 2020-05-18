@@ -1,0 +1,18 @@
+INFO:root:Current message: Hello world!
+ You can continue write messages, or write 'exit' for sending message
+INFO:root:Your message was sent successfully
+INFO:root:
+You have receive new message: 
+Hello world!
+INFO:root:Current message: Hello server!
+ You can continue write messages, or write 'exit' for sending message
+INFO:root:Your message was sent successfully
+INFO:root:
+You have receive new message: 
+Hello server!
+INFO:root:Current message: hello!
+ You can continue write messages, or write 'exit' for sending message
+INFO:root:Your message was sent successfully
+INFO:root:
+You have receive new message: 
+You do not have access to use this server
