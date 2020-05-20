@@ -1,12 +1,15 @@
 import socket
 
+sock = socket.socket()
+sock.bind(('', 9090))
+log_track = open('file.log', 'a')
+log_track.write("Server started working\n")
 while True:
-    sock = socket.socket()
-    sock.bind(('', 9090))
     sock.listen(0)
-    print()
+    log_track = open('file.log', 'a')
+    log_track.write("Server is waiting for connections...\n")
     conn, addr = sock.accept()
-    print(addr)
+    log_track.write("User has been connected\n")
 
     msg = ''
 
@@ -16,7 +19,10 @@ while True:
 		    break
 	    msg += data.decode()
 	    conn.send(data)
-
-    print(msg)
+        
+    log_track.write("Recieved message from user\n")
+    log_track.write("Message has been sent to user\n")
 
     conn.close()
+    log_track.write("User has been disconnected from the server\n")
+    log_track.close()

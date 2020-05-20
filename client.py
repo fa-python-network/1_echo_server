@@ -16,10 +16,8 @@ while True:
     if msg.lower() == "exit":
         break
     sock.send(msg.encode())
-    print("This was sent to ", HOST, ":", msg)
 
 data = sock.recv(1024)
-print("This was recieved from server: ")
 print(data.decode())
 
 sock.close()
