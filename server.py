@@ -4,6 +4,7 @@ while True:
     sock = socket.socket()
     sock.bind(('', 9090))
     sock.listen(0)
+    print()
     conn, addr = sock.accept()
     print(addr)
 
