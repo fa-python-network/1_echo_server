@@ -1,0 +1,35 @@
+Index: client.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import socket\nfrom time import sleep\n\nsock = socket.socket()\nsock.setblocking(1)\nsock.connect(('10.38.165.12', 9090))\n\n#msg = input()\nmsg = \"Hi!\"\nsock.send(msg.encode())\n\ndata = sock.recv(1024)\n\nsock.close()\n\nprint(data.decode())\n\n\nprint('Hi!')
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- client.py	(revision 8dbf6c974a710263b494a40913914e712b68f74a)
++++ client.py	(date 1589827528243)
+@@ -3,11 +3,14 @@
+ 
+ sock = socket.socket()
+ sock.setblocking(1)
+-sock.connect(('10.38.165.12', 9090))
++sock.connect(('localhost', 9090))
+ 
+-#msg = input()
+-msg = "Hi!"
+-sock.send(msg.encode())
++while True:
++	msg = input()
++	if msg == "exit":
++		sock.close()
++		break
++	sock.send(msg.encode())
+ 
+ data = sock.recv(1024)
+ 
+@@ -15,5 +18,3 @@
+ 
+ print(data.decode())
+ 
+-
+-print('Hi!')
+\ No newline at end of file
