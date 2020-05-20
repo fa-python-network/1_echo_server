@@ -1,14 +1,14 @@
 import socket
 import logging as l
 
-format = '%(levelname)s %(asctime)s - %(message)s'
-l.basicConfig(filename='logs.log', format=log_format, datefmt='%d.%m.%Y %H:%M:%S', level=l.INFO)
+log_format = '%(levelname)s %(asctime)s - %(message)s'
+l.basicConfig(filename='server.log', format=log_format, datefmt='%d.%m.%Y %H:%M:%S', level=l.INFO)
 
-l.info('Start logging INFO')
+l.info('Откладка')
 
 sock = socket.socket()
-sock.bind(('', 9090))
-l.info('порт сервера: 9090')
+sock.bind(('', 9020))
+l.info('Сервер подключился к порту: 9020')
 sock.listen(0)
 l.info('Сервер сейчас тоже работает')
 

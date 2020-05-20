@@ -3,35 +3,35 @@ from time import sleep
 
 sock = socket.socket()
 
-host = input('Введите имя хоста: ')
-if host == 'localhost':
+client_host = input('Введите имя хоста: ')
+if client_host == 'localhost':
     pass
 else:
-    if any(c.isalpha() for c in host) == True:
-        print('некорректное имя хоста.По умолчанию локальный хост')
-        host = 'localhost'
+    if any(c.isalpha() for c in client_host) == True:
+        print('некорректный хост. По умолчанию локальный хост')
+        client_host = 'localhost'
     else:
-        host_lst = host.split('.')
+        host_lst = client_host.split('.')
         for i in host_lst:
             if 0 <= int(i) <= 255:
                 pass
             else:
-                host = 'localhost'
-                print('Введено некорректное имя хоста.По умолчанию выбран локальный хост')
+                client_host = 'localhost'
+                print('Введено некорректный хост. По умолчанию локальный хост')
 
 try:
     port = int(input('номер порта: '))
     if 0 <= port <= 65535:
         pass
     else:
-        print('некорректный номер порта. порт по умолчанию 9090')
-        port = 9090
+        print('некорректный порта. порт по умолчанию 9020')
+        port = 9020
 
 except ValueError:
-    print("Некорректный номер порта. по умолчанию 9090")
-    port = 9090
+    print("Некорректный порта. по умолчанию 9020")
+    port = 9020
 
-sock.connect((host, port))
+sock.connect((client_host, port))
 
 print('exit для завершения работы с сервером')
 msg = ''
