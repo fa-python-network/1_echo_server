@@ -1,4 +1,4 @@
-import socket
+﻿import socket
 import logging as l
 
 format = '%(levelname)s %(asctime)s - %(message)s'
@@ -14,7 +14,7 @@ l.info('Сервер работает')
 
 while True:
     conn, addr = sock.accept()
-    l.info(f'Пользователь {addr} подключился к серверу')
+    l.info(f'Пользователь {addr} подключен к серверу')
 msg = ''
 
 while True:
