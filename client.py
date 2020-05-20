@@ -88,4 +88,5 @@ while True:
         logging.info('Клиент завершил работу')
         break
     sock.close()
+
 logging.info('Клиент остановлен')

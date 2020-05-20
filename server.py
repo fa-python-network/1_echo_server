@@ -91,4 +91,6 @@ while True:
     logging.info('Получено сообщение '+name+text)
     print(name, text)
     conn.close()
+
+
 logging.info('Сервер остановлен')
