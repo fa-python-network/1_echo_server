@@ -15,8 +15,10 @@ def main():
 
         msg = input("-> ")
         #Если сообщение exit
-        if msg == "exit":
-            break
+        if msg == "exit": break
+        #Если ничего не ввели
+        if msg == "": msg = "None"
+    
 
         #Отправляем сообщение
         sock.send(msg.encode())
