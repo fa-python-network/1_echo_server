@@ -1,20 +1,30 @@
 import socket
 
-sock = socket.socket()
-sock.bind(('', 9090))
-sock.listen(0)
-conn, addr = sock.accept()
-print(addr)
+PORT_NUMBER = 9090
 
-msg = ''
+def main():
+	print(f"Запустили сервер, слушаем порт {PORT_NUMBER}")
+	sock = socket.socket()
+	sock.bind(('', PORT_NUMBER))
+	sock.listen(0)
+	conn, addr = sock.accept()
+	print(f"Новое соединение от {addr}")
 
-while True:
-	data = conn.recv(1024)
-	if not data:
-		break
-	msg += data.decode()
-	conn.send(data)
+	msg = ''
 
-print(msg)
+	while True:
+		data = conn.recv(1024)
+		if not data:
+			break
+		msg += data.decode()
+		conn.send(data)
 
-conn.close()
+		data_str = str(data, 'utf-8')
+		print(f"Получили сообщение от клиента: '{data_str}'")
+
+
+
+	conn.close()
+
+if __name__ == "__main__":
+	main()
