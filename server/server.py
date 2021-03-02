@@ -10,9 +10,11 @@ DEFAULT_PORT = 9090
 
 # Настройки логирования
 logging.basicConfig(
-    filename="./logs/server.log",
-    filemode="w",
     format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s",
+        handlers=[
+        logging.FileHandler("./logs/server.log"),
+        logging.StreamHandler()
+    ],
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
@@ -31,30 +33,33 @@ class Server:
         # Текущее соединение
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
         # Ожидаем новое подключение
+        
         while True:
+            #Новое соединение
             conn, addr = self.sock.accept()
-            self.new_connection(conn, addr)
+            #self.login_logic
+            logging.info(f"Новое соединение от {addr}")
+            self.message_logic(conn, addr)
 
-    def new_connection(self, conn, addr):
+    #def login_logic
+    def message_logic(self, conn, addr):
         """
-        Обработчик нового соединения
+        Обмен сообщениями (когда уже успешно авторизовались)
         """
-        logging.info(f"Новое соединение от {addr}")
-        msg = ""
 
+        data = ""
         while True:
             # Получаем данные
-            data = conn.recv(1024)
-
-            # Если нет данных - больше ничего не ожидаем от клиента
-            if not data:
+            chunk = conn.recv(1024).decode()
+            data += chunk
+            if len(chunk) < 1024:
                 break
 
-            msg += data.decode()
-            conn.send(data)
+        logging.info(f"Получили сообщение {data} от клиента: '{addr}'")
 
-            data_str = str(data, "utf-8")
-            logging.info(f"Получили сообщение от клиента: '{data_str}'")
+        conn.send(data.encode())
+        print(f'{data.encode()} было отправлено обратно клиенту')
+
 
 def main():
 

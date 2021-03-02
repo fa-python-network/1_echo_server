@@ -16,6 +16,25 @@ class Client:
         # Закрываем сокет
         self.sock.close()
 
+    def send_message(self, message : str):
+        """Отправка сообщения"""
+        message = message*10000000
+        print("Длина исходного сообщения = ",len(message))
+      
+        # Отправляем сообщение
+        self.sock.send(message.encode())
+        # Получаем ответ
+        data = ""
+        while True:
+            # Получаем данные
+            chunk = self.sock.recv(1024).decode()
+            data += chunk
+            if len(chunk) < 1024:
+                break
+
+
+        print("Длина полученного сообщения = ",len(data))
+
     def user_processing(self):
 
         while True:
@@ -27,12 +46,7 @@ class Client:
             if msg == "":
                 msg = "None"
 
-            # Отправляем сообщение
-            self.sock.send(msg.encode())
-            # Получаем ответ
-            data = self.sock.recv(1024)
-
-            print(f"Ответ от сервера: {data.decode()}")
+            self.send_message(msg)
 
 
 def main():
