@@ -1,12 +1,19 @@
 import socket
 import logging
-from validator import port_validation
+import random
+from validator import port_validation, check_port_open
 
 DEFAULT_PORT = 9090
 
 # Настройки логирования
-logging.basicConfig(filename='server.log',filemode='w', format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s", level=logging.INFO)
+logging.basicConfig(
+    filename="server.log",
+    filemode="w",
+    format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s",
+    level=logging.INFO,
+)
 logger = logging.getLogger(__name__)
+
 
 class Server:
     def __init__(self, port_number: int) -> None:
@@ -47,9 +54,25 @@ class Server:
 def main():
 
     port_input = input("Введите номер порта для сервера -> ")
+    # Тут проверка на то, занят ли порт
     port_flag = port_validation(port_input, check_open=True)
+
     if not port_flag:
-        port_input = DEFAULT_PORT
+
+        # Если порт по-умолчанию уже занят, то перебираем свободные порты
+        if not check_port_open(DEFAULT_PORT):
+            print(
+                f"Порт по умолчанию {DEFAULT_PORT} уже занят! Подбираем рандомный порт.."
+            )
+            stop_flag = False
+            while not stop_flag:
+                current_port = random.randint(49152, 65535)
+                print(f"Сгенерировали рандомный порт {current_port}")
+                stop_flag = check_port_open(current_port)
+
+            port_input = current_port
+        else:
+            port_input = DEFAULT_PORT
         print(f"Выставили порт {port_input} по умолчанию")
 
     server = Server(int(port_input))
