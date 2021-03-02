@@ -19,10 +19,6 @@ class Client:
 
     def send_message(self, message : str):
         """Отправка сообщения"""
-
-        message = message*2000
-
-        print("Длина исходного сообщения = ",len(message))
       
         #Добавляем флаг конца сообщения (по-другому я не знаю как передавать больше 1024 и не разрывать соединение)
         message += END_MESSAGE_FLAG
@@ -30,15 +26,19 @@ class Client:
         # Отправляем сообщение
         self.sock.send(message.encode())
         # Получаем ответ
+
         data = ""
         while True:
-            # Получаем данные
-            chunk = self.sock.recv(1024).decode()
-            data += chunk
-            if len(chunk) < 1024:
-                break
+            # Получаем данные и собираем их по кусочкам
+            chunk = self.sock.recv(1024)
+            data += chunk.decode()
 
-        print("Длина полученного сообщения = ",len(data))
+            #Если это конец сообщения, то значит, что мы все собрали и можем обратно отдавать клиенту
+            if END_MESSAGE_FLAG in data:
+                data = data.replace(END_MESSAGE_FLAG,"")
+                
+                print(f"Получили сообщение -> {data}")
+                break
 
     def user_processing(self):
 

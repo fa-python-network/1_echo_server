@@ -45,7 +45,7 @@ class Server:
     #def login_logic
     def message_logic(self, conn, addr):
         """
-        Обмен сообщениями (когда уже успешно авторизовались)
+        Получение сообщения
         """
 
         data = ""
@@ -54,13 +54,13 @@ class Server:
             chunk = conn.recv(1024)
             data += chunk.decode()
 
-            print(data)
             #Если это конец сообщения, то значит, что мы все собрали и можем обратно отдавать клиенту
             if END_MESSAGE_FLAG in data:
-                data = data.replace(END_MESSAGE_FLAG,"")
+
                 logging.info(f"Получили сообщение {data} от клиента: '{addr}'")
+
                 conn.send(data.encode())
-                print(f'{data.encode()} было отправлено обратно клиенту')
+                logging.info(f'{data.encode()} было отправлено обратно клиенту')
                 data = ""
 
             #Если вообще ничего не пришло - это конец всего соединения
