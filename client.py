@@ -1,14 +1,14 @@
 import socket
-from time import sleep
+from validator import port_validation, ip_validation
 
-SERVER_IP = "127.0.0.1"
-PORT_NUMBER = 9090
+DEFAULT_PORT = 9090
+DEFAULT_IP = "127.0.0.1"
 
 class Client:
-    def __init__(self) -> None:
+    def __init__(self, server_ip : str, port_number : int) -> None:
         sock = socket.socket()
         sock.setblocking(1)
-        sock.connect((SERVER_IP, PORT_NUMBER))
+        sock.connect((server_ip, port_number))
         self.sock = sock
         #Работа с данными, поступающими от пользователя
         self.user_processing()
@@ -32,7 +32,22 @@ class Client:
             print(f"Ответ от сервера: {data.decode()}")
 
 def main():
-    client = Client()
+
+    port_input = input("Введите номер порта сервера -> ")
+    port_flag = port_validation(port_input)
+    #Если некорректный ввод
+    if not port_flag:
+        port_input = DEFAULT_PORT
+        print(f"Выставили порт {port_input} по умолчанию")
+
+    ip_input = input("Введите ip-адрес сервера -> ")
+    ip_flag = ip_validation(ip_input)
+    #Если некорректный ввод
+    if not ip_flag:
+        ip_input = DEFAULT_IP
+        print(f"Выставили ip-адрес {ip_input} по умолчанию")
+
+    client = Client(ip_input, int(port_input))
 
 if __name__ == "__main__":
 	main()
