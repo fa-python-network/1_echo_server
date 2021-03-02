@@ -1,14 +1,15 @@
 import socket
 from typing import Any
 
-def port_validation(value : Any, check_open: bool = False) -> bool:
+
+def port_validation(value: Any, check_open: bool = False) -> bool:
     """Проверка на корректность порта"""
     try:
-        #Проверка на число
+        # Проверка на число
         value = int(value)
-        #Проверка на диапазон
-        if (1 <= value <= 65535):
-            #Проверка то, занят ли порт
+        # Проверка на диапазон
+        if 1 <= value <= 65535:
+            # Проверка то, занят ли порт
             if check_open:
                 return check_port_open(value)
             print(f"Корректный порт {value}")
@@ -21,14 +22,15 @@ def port_validation(value : Any, check_open: bool = False) -> bool:
         print(f"Значение {value} не является числом!")
         return False
 
+
 def check_port_open(port: int) -> bool:
     """
     Проверка на свободный порт port
-    
+
     Является частью логики port_validation
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    result = sock.connect_ex(('127.0.0.1',port))
+    result = sock.connect_ex(("127.0.0.1", port))
     sock.close()
     if result == 0:
         print(f"Порт {port} уже занят")
@@ -37,7 +39,8 @@ def check_port_open(port: int) -> bool:
         print(f"Порт {port} свободен")
         return True
 
-def ip_validation(address : str) -> bool:
+
+def ip_validation(address: str) -> bool:
     """Проверка на корректность ip-адреса (v4)"""
     error_message = f"Некорректный ip-адрес {address}"
     ok_message = f"Корректный ip-адрес {address}"
@@ -49,7 +52,7 @@ def ip_validation(address : str) -> bool:
         except socket.error:
             print(error_message)
             return False
-        return address.count('.') == 3
+        return address.count(".") == 3
     except socket.error:  # not a valid address
         print(error_message)
         return False
