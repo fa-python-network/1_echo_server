@@ -4,6 +4,7 @@ import random
 from server_validator import port_validation, check_port_open
 import yaml
 from typing import Dict
+from data_processing import DataProcessing
 
 DEFAULT_PORT = 9090
 
@@ -19,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 class Server:
     def __init__(self, port_number: int) -> None:
+
+        self.database = DataProcessing()
+
         sock = socket.socket()
         sock.bind(("", port_number))
         sock.listen(0)
@@ -51,11 +55,6 @@ class Server:
 
             data_str = str(data, "utf-8")
             logging.info(f"Получили сообщение от клиента: '{data_str}'")
-
-
-def get_data() -> Dict[str,str]:
-    with open("./users.yml", "r") as stream:
-        return yaml.safe_load(stream)
 
 def main():
 
