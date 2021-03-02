@@ -1,13 +1,15 @@
 import socket
 import logging
 import random
-from validator import port_validation, check_port_open
+from server_validator import port_validation, check_port_open
+import yaml
+from typing import Dict
 
 DEFAULT_PORT = 9090
 
 # Настройки логирования
 logging.basicConfig(
-    filename="server.log",
+    filename="./logs/server.log",
     filemode="w",
     format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s",
     level=logging.INFO,
@@ -50,6 +52,10 @@ class Server:
             data_str = str(data, "utf-8")
             logging.info(f"Получили сообщение от клиента: '{data_str}'")
 
+
+def get_data() -> Dict[str,str]:
+    with open("./users.yml", "r") as stream:
+        return yaml.safe_load(stream)
 
 def main():
 

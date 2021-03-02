@@ -1,0 +1,9 @@
+- ip_addr: 127.0.0.1
+  password: '123'
+  username: georgiydemo
+- ip_addr: 127.0.0.1
+  password: lupa
+  username: pupa
+- ip_addr: 127.0.0.1
+  password: pupa
+  username: lupa

@@ -1,5 +1,5 @@
 import socket
-from validator import port_validation, ip_validation
+from cli_validator import port_validation, ip_validation
 
 DEFAULT_PORT = 9090
 DEFAULT_IP = "127.0.0.1"
