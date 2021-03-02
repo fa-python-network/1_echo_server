@@ -3,6 +3,7 @@ from cli_validator import port_validation, ip_validation
 
 DEFAULT_PORT = 9090
 DEFAULT_IP = "127.0.0.1"
+END_MESSAGE_FLAG = "END_MESSAGE_FLAG"
 
 
 class Client:
@@ -18,9 +19,14 @@ class Client:
 
     def send_message(self, message : str):
         """Отправка сообщения"""
-        message = message*10000000
+
+        message = message*2000
+
         print("Длина исходного сообщения = ",len(message))
       
+        #Добавляем флаг конца сообщения (по-другому я не знаю как передавать больше 1024 и не разрывать соединение)
+        message += END_MESSAGE_FLAG
+
         # Отправляем сообщение
         self.sock.send(message.encode())
         # Получаем ответ
@@ -32,7 +38,6 @@ class Client:
             if len(chunk) < 1024:
                 break
 
-
         print("Длина полученного сообщения = ",len(data))
 
     def user_processing(self):
@@ -42,9 +47,6 @@ class Client:
             # Если сообщение exit
             if msg == "exit":
                 break
-            # Если ничего не ввели
-            if msg == "":
-                msg = "None"
 
             self.send_message(msg)
 
