@@ -3,7 +3,7 @@ from cli_validator import port_validation, ip_validation
 
 DEFAULT_PORT = 9090
 DEFAULT_IP = "127.0.0.1"
-END_MESSAGE_FLAG = "END_MESSAGE_FLAG"
+END_MESSAGE_FLAG = "CRLF"
 
 
 class Client:

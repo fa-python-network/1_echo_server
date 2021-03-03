@@ -6,7 +6,7 @@ import yaml
 from typing import Dict
 from data_processing import DataProcessing
 
-END_MESSAGE_FLAG = "END_MESSAGE_FLAG"
+END_MESSAGE_FLAG = "CRLF"
 DEFAULT_PORT = 9090
 
 # Настройки логирования
