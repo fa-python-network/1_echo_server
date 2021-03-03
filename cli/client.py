@@ -18,49 +18,56 @@ logger = logging.getLogger(__name__)
 
 class Client:
     def __init__(self, server_ip: str, port_number: int) -> None:
-        sock = socket.socket()
-        sock.setblocking(1)
-        sock.connect((server_ip, port_number))
-        self.sock = sock
-        logging.info(f"Успешное соединение с сервером {server_ip}:{port_number}")
-        
-        #Авторизуемся
+        self.server_ip = server_ip
+        self.port_number = port_number
+        self.sock = None
+        self.new_connection()
+
+        # Авторизуемся
         self.send_auth()
         # Работа с данными, поступающими от пользователя
         self.user_processing()
-        # Закрываем сокет
-        self.sock.close()
+
+    def new_connection(self):
+        """Осуществляет новое соединение по сокету"""
+        ip, port = self.server_ip, self.port_number
+        sock = socket.socket()
+        sock.setblocking(1)
+        sock.connect((ip, port))
+        self.sock = sock
+        logging.info(f"Успешное соединение с сервером {ip}:{port}")
 
     def send_auth(self):
         """
         Логика авторизации клиента
         """
 
-        exit_flag = True
-        while exit_flag:
+        while True:
             user_password = input("Введите пароль авторизации -> ")
             if user_password != "":
 
-                data = json.dumps({"password" : user_password}, ensure_ascii=False)
+                data = json.dumps({"password": user_password}, ensure_ascii=False)
                 # Отправляем сообщение
                 self.sock.send(data.encode())
                 logger.info(f"Отправка данных серверу: '{data}'")
-                #Получаем данные с сервера
+
+                # Получаем данные с сервера
                 result = json.loads(self.sock.recv(1024).decode())["result"]
+
+                # Если успешно авторизовались
                 if result:
                     print("Авторизация прошла успешно")
                     break
 
-                print("Неверный пароль!")
+                # Если авторизация не удалась
+                else:
+                    print("Неверный пароль!")
+                    # Делаем новое соединение
+                    # т.к. сервер рвет соединение, если авторизация не удалась
+                    self.new_connection()
 
             else:
                 print("Пароль не может быть пустым")
-
-
-        #Если нет такого пользователя - надо зарегаться
-        #if result == False:
-
-        
 
     def send_message(self, message: str):
         """Отправка сообщения"""
@@ -100,6 +107,8 @@ class Client:
             self.send_message(msg)
 
     def __del__(self):
+        if self.sock:
+            self.sock.close()
         logger.info("Разрыв соединения с сервером")
 
 

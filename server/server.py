@@ -66,7 +66,7 @@ class Server:
             # Значит пришла только часть большого сообщения
             else:
                 logger.info(f"Приняли часть данных от клиента {client_ip}: '{data}'")
-                
+
             # Если вообще ничего не пришло - это конец всего соединения
             if not chunk:
                 break
@@ -78,24 +78,31 @@ class Server:
         Запрос авторизации у нас априори меньше 1024, так что никакой цикл не запускаем
         """
         user_password = json.loads(conn.recv(1024).decode())["password"]
-        user_ip = addr[0]
-        
-        #Проверяем на существование данных
-        auth_result, username = self.database.user_auth(user_ip, user_password)
+        client_ip = addr[0]
 
-        #Если авторизация прошла успешно
+        # Проверяем на существование данных
+        auth_result, username = self.database.user_auth(client_ip, user_password)
+
+        # Если авторизация прошла успешно
         if auth_result:
-            logger.info(f"Клиент {user_ip} -> авторизация прошла успешно")
-            data = json.dumps({"result" : True, "body" : {"username" : username}}, ensure_ascii=False)
-            self.authenticated_list.append(user_ip)
+            logger.info(f"Клиент {client_ip} -> авторизация прошла успешно")
+            data = json.dumps(
+                {"result": True, "body": {"username": username}}, ensure_ascii=False
+            )
+            self.authenticated_list.append(client_ip)
+            logging.info(f"Добавили клиента {client_ip} в список авторизации")
 
-        #Если авторизация не удалась
+        # Если авторизация не удалась
         else:
-            logger.info(f"Клиент {user_ip} -> авторизация не удалась")
-            data = json.dumps({"result" : False}, ensure_ascii=False)
-        
+            logger.info(f"Клиент {client_ip} -> авторизация не удалась")
+            data = json.dumps({"result": False}, ensure_ascii=False)
+
         conn.send(data.encode())
-        logger.info(f"Клиент {user_ip}. Отправили данные о результате авторизации")
+        logger.info(f"Клиент {client_ip}. Отправили данные о результате авторизации")
+
+        # Если была авторизация - принимаем последующие сообщения от пользователя
+        if auth_result:
+            self.message_logic(conn, client_ip)
 
     # def login_logic
     def client_router(self, conn, addr):
@@ -104,16 +111,21 @@ class Server:
         """
         client_ip = addr[0]
 
-        #Если ip не авторизован - надо авторизовать
-        #if client_ip not in self.authenticated_list:
+        # Если ip не авторизован - надо авторизовать
+        # if client_ip not in self.authenticated_list:
         if client_ip not in self.authenticated_list:
             self.auth_logic(conn, addr)
-        
-        #Если уже был авторизован
+
+        # Если уже был авторизован
         else:
             self.message_logic(conn, client_ip)
 
         logging.info(f"Отключение клиента {client_ip}")
+
+        # Если клиент был в списке авторизации - удаляем его
+        if client_ip in self.authenticated_list:
+            self.authenticated_list.remove(client_ip)
+            logging.info(f"Удалили клиента {client_ip} из списка авторизации")
 
     def __del__(self):
         logging.info(f"Остановка сервера")
