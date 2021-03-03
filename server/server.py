@@ -12,10 +12,7 @@ DEFAULT_PORT = 9090
 # Настройки логирования
 logging.basicConfig(
     format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s",
-        handlers=[
-        logging.FileHandler("./logs/server.log"),
-        logging.StreamHandler()
-    ],
+    handlers=[logging.FileHandler("./logs/server.log"), logging.StreamHandler()],
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
@@ -23,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 class Server:
     def __init__(self, port_number: int) -> None:
+
+        logging.info(f"Запуск сервера..")
 
         self.database = DataProcessing()
 
@@ -34,19 +33,20 @@ class Server:
         # Текущее соединение
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
         # Ожидаем новое подключение
-        
+
         while True:
-            #Новое соединение
+            # Новое соединение
             conn, addr = self.sock.accept()
-            #self.login_logic
-            logging.info(f"Новое соединение от {addr}")
+            # self.login_logic
+            logging.info(f"Новое соединение от {addr[0]}")
             self.message_logic(conn, addr)
 
-    #def login_logic
+    # def login_logic
     def message_logic(self, conn, addr):
         """
         Получение сообщения
         """
+        client_ip = addr[0]
 
         data = ""
         while True:
@@ -54,18 +54,30 @@ class Server:
             chunk = conn.recv(1024)
             data += chunk.decode()
 
-            #Если это конец сообщения, то значит, что мы все собрали и можем обратно отдавать клиенту
+            # Если это конец сообщения, то значит, что мы все собрали и можем обратно отдавать клиенту
             if END_MESSAGE_FLAG in data:
 
-                logging.info(f"Получили сообщение {data} от клиента: '{addr}'")
+                logging.info(f"Получили сообщение {data} от клиента {client_ip}")
 
                 conn.send(data.encode())
-                logging.info(f'{data.encode()} было отправлено обратно клиенту')
+                logging.info(
+                    f"Сообщение {data} было отправлено обратно клиенту {client_ip}"
+                )
                 data = ""
 
-            #Если вообще ничего не пришло - это конец всего соединения
-            if not chunk:
+            # Если вообще ничего не пришло - это конец всего соединения
+            elif not chunk:
                 break
+
+            # Значит пришла только часть большого сообщения
+            else:
+                logger.info(f"Приняли часть данных от клиента {client_ip}: '{data}'")
+
+        logging.info(f"Отключение клиента {client_ip}")
+
+    def __del__(self):
+        logging.info(f"Остановка сервера")
+
 
 def main():
 
