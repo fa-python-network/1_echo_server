@@ -1,4 +1,5 @@
 import socket
+import json
 import logging
 from cli_validator import port_validation, ip_validation
 
@@ -22,10 +23,44 @@ class Client:
         sock.connect((server_ip, port_number))
         self.sock = sock
         logging.info(f"Успешное соединение с сервером {server_ip}:{port_number}")
+        
+        #Авторизуемся
+        self.send_auth()
         # Работа с данными, поступающими от пользователя
         self.user_processing()
         # Закрываем сокет
         self.sock.close()
+
+    def send_auth(self):
+        """
+        Логика авторизации клиента
+        """
+
+        exit_flag = True
+        while exit_flag:
+            user_password = input("Введите пароль авторизации -> ")
+            if user_password != "":
+
+                data = json.dumps({"password" : user_password}, ensure_ascii=False)
+                # Отправляем сообщение
+                self.sock.send(data.encode())
+                logger.info(f"Отправка данных серверу: '{data}'")
+                #Получаем данные с сервера
+                result = json.loads(self.sock.recv(1024).decode())["result"]
+                if result:
+                    print("Авторизация прошла успешно")
+                    break
+
+                print("Неверный пароль!")
+
+            else:
+                print("Пароль не может быть пустым")
+
+
+        #Если нет такого пользователя - надо зарегаться
+        #if result == False:
+
+        
 
     def send_message(self, message: str):
         """Отправка сообщения"""

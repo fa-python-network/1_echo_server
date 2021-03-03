@@ -3,6 +3,7 @@ import logging
 import random
 from server_validator import port_validation, check_port_open
 import yaml
+import json
 from typing import Dict
 from data_processing import DataProcessing
 
@@ -30,24 +31,21 @@ class Server:
         sock.listen(0)
         # Наш сокет
         self.sock = sock
-        # Текущее соединение
+        # Список авторизации
+        self.authenticated_list = []
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
         # Ожидаем новое подключение
 
         while True:
             # Новое соединение
             conn, addr = self.sock.accept()
-            # self.login_logic
             logging.info(f"Новое соединение от {addr[0]}")
-            self.message_logic(conn, addr)
+            self.client_router(conn, addr)
 
-    # def login_logic
-    def message_logic(self, conn, addr):
+    def message_logic(self, conn, client_ip):
         """
-        Получение сообщения
+        Получение сообщений
         """
-        client_ip = addr[0]
-
         data = ""
         while True:
             # Получаем данные и собираем их по кусочкам
@@ -65,13 +63,55 @@ class Server:
                 )
                 data = ""
 
-            # Если вообще ничего не пришло - это конец всего соединения
-            elif not chunk:
-                break
-
             # Значит пришла только часть большого сообщения
             else:
                 logger.info(f"Приняли часть данных от клиента {client_ip}: '{data}'")
+                
+            # Если вообще ничего не пришло - это конец всего соединения
+            if not chunk:
+                break
+
+    def auth_logic(self, conn, addr):
+        """
+        Логика авторизации клиента
+
+        Запрос авторизации у нас априори меньше 1024, так что никакой цикл не запускаем
+        """
+        user_password = json.loads(conn.recv(1024).decode())["password"]
+        user_ip = addr[0]
+        
+        #Проверяем на существование данных
+        auth_result, username = self.database.user_auth(user_ip, user_password)
+
+        #Если авторизация прошла успешно
+        if auth_result:
+            logger.info(f"Клиент {user_ip} -> авторизация прошла успешно")
+            data = json.dumps({"result" : True, "body" : {"username" : username}}, ensure_ascii=False)
+            self.authenticated_list.append(user_ip)
+
+        #Если авторизация не удалась
+        else:
+            logger.info(f"Клиент {user_ip} -> авторизация не удалась")
+            data = json.dumps({"result" : False}, ensure_ascii=False)
+        
+        conn.send(data.encode())
+        logger.info(f"Клиент {user_ip}. Отправили данные о результате авторизации")
+
+    # def login_logic
+    def client_router(self, conn, addr):
+        """
+        Роутинг пользователя в зависимости от его авторизации
+        """
+        client_ip = addr[0]
+
+        #Если ip не авторизован - надо авторизовать
+        #if client_ip not in self.authenticated_list:
+        if client_ip not in self.authenticated_list:
+            self.auth_logic(conn, addr)
+        
+        #Если уже был авторизован
+        else:
+            self.message_logic(conn, client_ip)
 
         logging.info(f"Отключение клиента {client_ip}")
 
