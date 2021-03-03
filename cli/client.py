@@ -30,6 +30,7 @@ class Client:
 
     def new_connection(self):
         """Осуществляет новое соединение по сокету"""
+
         ip, port = self.server_ip, self.port_number
         sock = socket.socket()
         sock.setblocking(1)
@@ -38,9 +39,7 @@ class Client:
         logging.info(f"Успешное соединение с сервером {ip}:{port}")
 
     def send_auth(self):
-        """
-        Логика авторизации клиента
-        """
+        """Логика авторизации клиента"""
 
         while True:
             user_password = input("Введите пароль авторизации -> ")
@@ -97,6 +96,7 @@ class Client:
                 logger.info(f"Приняли часть данных от сервера: '{data}'")
 
     def user_processing(self):
+        """Обработка ввода сообщений пользователя"""
 
         while True:
             msg = input("-> ")
