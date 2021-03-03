@@ -6,13 +6,13 @@ import yaml
 from typing import Dict
 from data_processing import DataProcessing
 
+END_MESSAGE_FLAG = "CRLF"
 DEFAULT_PORT = 9090
 
 # Настройки логирования
 logging.basicConfig(
-    filename="./logs/server.log",
-    filemode="w",
     format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s",
+    handlers=[logging.FileHandler("./logs/server.log"), logging.StreamHandler()],
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 class Server:
     def __init__(self, port_number: int) -> None:
+
+        logging.info(f"Запуск сервера..")
 
         self.database = DataProcessing()
 
@@ -31,30 +33,51 @@ class Server:
         # Текущее соединение
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
         # Ожидаем новое подключение
+
         while True:
+            # Новое соединение
             conn, addr = self.sock.accept()
-            self.new_connection(conn, addr)
+            # self.login_logic
+            logging.info(f"Новое соединение от {addr[0]}")
+            self.message_logic(conn, addr)
 
-    def new_connection(self, conn, addr):
+    # def login_logic
+    def message_logic(self, conn, addr):
         """
-        Обработчик нового соединения
+        Получение сообщения
         """
-        logging.info(f"Новое соединение от {addr}")
-        msg = ""
+        client_ip = addr[0]
 
+        data = ""
         while True:
-            # Получаем данные
-            data = conn.recv(1024)
+            # Получаем данные и собираем их по кусочкам
+            chunk = conn.recv(1024)
+            data += chunk.decode()
 
-            # Если нет данных - больше ничего не ожидаем от клиента
-            if not data:
+            # Если это конец сообщения, то значит, что мы все собрали и можем обратно отдавать клиенту
+            if END_MESSAGE_FLAG in data:
+
+                logging.info(f"Получили сообщение {data} от клиента {client_ip}")
+
+                conn.send(data.encode())
+                logging.info(
+                    f"Сообщение {data} было отправлено обратно клиенту {client_ip}"
+                )
+                data = ""
+
+            # Если вообще ничего не пришло - это конец всего соединения
+            elif not chunk:
                 break
 
-            msg += data.decode()
-            conn.send(data)
+            # Значит пришла только часть большого сообщения
+            else:
+                logger.info(f"Приняли часть данных от клиента {client_ip}: '{data}'")
 
-            data_str = str(data, "utf-8")
-            logging.info(f"Получили сообщение от клиента: '{data_str}'")
+        logging.info(f"Отключение клиента {client_ip}")
+
+    def __del__(self):
+        logging.info(f"Остановка сервера")
+
 
 def main():
 

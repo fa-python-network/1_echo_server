@@ -29,15 +29,15 @@ def check_port_open(port: int) -> bool:
 
     Является частью логики port_validation
     """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    result = sock.connect_ex(("127.0.0.1", port))
-    sock.close()
-    if result == 0:
-        print(f"Порт {port} уже занят")
-        return False
-    else:
+    try:
+        sock = socket.socket()
+        sock.bind(("", port))
+        sock.close()
         print(f"Порт {port} свободен")
         return True
+    except OSError:
+        print(f"Порт {port} занят")
+        return False
 
 
 def ip_validation(address: str) -> bool:
