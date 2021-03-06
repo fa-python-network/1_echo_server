@@ -96,12 +96,14 @@ class Server:
                 data = {"username": username, "text": data}
 
                 # Рассылка по каждому соединению
-                logger.info(f"Текущее кол-во подключений к серверу: {len(self.connections_list)}")
+                logger.info(
+                    f"Текущее кол-во подключений к серверу: {len(self.connections_list)}"
+                )
                 for connection in self.connections_list:
                     current_conn, current_ip = connection
                     try:
                         self.send_message(current_conn, data, current_ip)
-                    #Если вдруг у нас появилсоь соедиение, которое уже неактивно
+                    # Если вдруг у нас появилсоь соедиение, которое уже неактивно
                     except BrokenPipeError:
                         continue
 
