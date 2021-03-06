@@ -1,12 +1,14 @@
-import socket
+import json
 import logging
 import random
-import json
-import sha3
+import socket
 import threading
 from typing import Dict, Union, Any
-from server_validator import port_validation, check_port_open
+
+import sha3
+
 from data_processing import DataProcessing
+from server_validator import port_validation, check_port_open
 
 END_MESSAGE_FLAG = "CRLF"
 DEFAULT_PORT = 9090
@@ -198,7 +200,6 @@ class Server:
 
 
 def main():
-
     port_input = input("Введите номер порта для сервера -> ")
     # Тут проверка на то, занят ли порт
     port_flag = port_validation(port_input, check_open=True)

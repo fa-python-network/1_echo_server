@@ -1,5 +1,6 @@
+from typing import Tuple, Union
+
 import yaml
-from typing import Dict, Tuple, Union
 
 
 class DataProcessing:

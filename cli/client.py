@@ -1,7 +1,8 @@
-import socket
 import json
 import logging
+import socket
 import threading
+
 from cli_validator import port_validation, ip_validation
 
 DEFAULT_PORT = 9090
@@ -174,7 +175,6 @@ class Client:
 
 
 def main():
-
     port_input = input("Введите номер порта сервера -> ")
     port_flag = port_validation(port_input)
     # Если некорректный ввод
