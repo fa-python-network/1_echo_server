@@ -3,6 +3,7 @@ import logging
 import random
 import json
 import sha3
+import threading
 from typing import Dict, Union, Any
 from server_validator import port_validation, check_port_open
 from data_processing import DataProcessing
@@ -42,8 +43,11 @@ class Server:
         while True:
             # Новое соединение
             conn, addr = self.sock.accept()
+
             logging.info(f"Новое соединение от {addr[0]}")
-            self.router(conn, addr)
+            t = threading.Thread(target=self.router, args=(conn, addr))
+            t.daemon = True
+            t.start()
 
     def send_message(self, conn, data: Union[str, Dict[str, Any]], ip: str) -> None:
         """Отправка данных"""
@@ -147,6 +151,7 @@ class Server:
         """
         Роутинг в зависимости от авторизации клиента
         """
+        logger.info("Router работает в отдельном потоке!")
         client_ip = addr[0]
 
         # Если клиенту нужна авторизация
