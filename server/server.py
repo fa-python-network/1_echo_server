@@ -1,12 +1,10 @@
-# TODO Регистрация
-# TODO AES для хеширования паролей
 import socket
 import logging
 import random
-from server_validator import port_validation, check_port_open
-import yaml
 import json
+import sha3
 from typing import Dict, Union, Any
+from server_validator import port_validation, check_port_open
 from data_processing import DataProcessing
 
 END_MESSAGE_FLAG = "CRLF"
@@ -19,6 +17,10 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
+
+
+def hash(password: str) -> str:
+    return sha3.sha3_224(password.encode("utf-8")).hexdigest()
 
 
 class Server:
@@ -90,7 +92,7 @@ class Server:
         Логика регистрации пользователя
         """
         data = json.loads(conn.recv(1024).decode())
-        newuser_password, newuser_username = data["password"], data["username"]
+        newuser_password, newuser_username = hash(data["password"]), data["username"]
         newuser_ip = addr[0]
         self.database.user_reg(newuser_ip, newuser_password, newuser_username)
         logger.info(f"Клиент {newuser_ip} -> регистрация прошла успешно")
@@ -107,7 +109,7 @@ class Server:
         Логика авторизации клиента
         Запрос авторизации у нас априори меньше 1024, так что никакой цикл не запускаем
         """
-        user_password = json.loads(conn.recv(1024).decode())["password"]
+        user_password = hash(json.loads(conn.recv(1024).decode())["password"])
         client_ip = addr[0]
 
         # Проверяем на существование данных
