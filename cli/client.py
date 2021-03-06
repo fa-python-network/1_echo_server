@@ -38,11 +38,37 @@ class Client:
         self.sock = sock
         logging.info(f"Успешное соединение с сервером {ip}:{port}")
 
+    def send_reg(self, password):
+        """Логика регистрации пользователя в системе"""
+        print("*Новая регистрация в системе*")
+        while True:
+            input_username = input("Введите ваше имя пользователя (ник) -> ")
+            if input_username == "":
+                print("Имя пользователя не может быть пустым!")
+            else:
+                data = json.dumps({"password": password, "username" : input_username}, ensure_ascii=False)
+                self.sock.send(data.encode())
+                logger.info(f"Отправка данных серверу: '{data}'")
+
+                # Получаем данные с сервера
+                response = json.loads(self.sock.recv(1024).decode())
+                if not response["result"]:
+                    raise ValueError(f"Не удалось осуществить регистрацию, ответ сервера {response}, более подробно см логи сервера")
+                logger.info("Успешно зарегистрировались")
+                break
+
+
     def send_auth(self):
         """Логика авторизации клиента"""
-
+        login_iter = 1
         while True:
-            user_password = input("Введите пароль авторизации -> ")
+            
+            #Отдельные строки для объяснения механизма авторизации при первом входе
+            req_password_str = "Введите пароль авторизации"
+            req_password_str +="\nЕсли это ваш первый вход в систему, то он будет использоваться для последующей авторизации в системе -> " if login_iter == 1 else " -> "
+
+
+            user_password = input(req_password_str)
             if user_password != "":
 
                 data = json.dumps({"password": user_password}, ensure_ascii=False)
@@ -51,22 +77,34 @@ class Client:
                 logger.info(f"Отправка данных серверу: '{data}'")
 
                 # Получаем данные с сервера
-                result = json.loads(self.sock.recv(1024).decode())["result"]
+                response = json.loads(self.sock.recv(1024).decode())
 
                 # Если успешно авторизовались
-                if result:
+                if response["result"]:
                     print("Авторизация прошла успешно")
                     break
 
                 # Если авторизация не удалась
-                else:
+                elif response["description"] == "wrong auth":
                     print("Неверный пароль!")
                     # Делаем новое соединение
                     # т.к. сервер рвет соединение, если авторизация не удалась
                     self.new_connection()
+                
+                #Если это первый вход с таким ip-адресом, то необходима регистрация
+                elif response["description"] == "registration required":
+                    self.new_connection()
+                    self.send_reg(user_password)
+                    self.new_connection()
+
+                else:
+                    raise ValueError(f"Получили неожиданный ответ от сервера: {response}")
+
 
             else:
                 print("Пароль не может быть пустым")
+
+            login_iter += 1
 
     def send_message(self, message: str):
         """Отправка сообщения"""

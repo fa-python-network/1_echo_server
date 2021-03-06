@@ -32,6 +32,8 @@ class Server:
 
         # Список авторизации
         self.authenticated_list = []
+        # Список ip, которым надо пройти регистрацию
+        self.reg_list = []
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
 
         # Ожидаем новое соединение
@@ -83,6 +85,23 @@ class Server:
             if not chunk:
                 break
 
+    def reg_logic(self, conn, addr):
+        """
+        Логика регистрации пользователя
+        """
+        data = json.loads(conn.recv(1024).decode())
+        newuser_password, newuser_username = data["password"], data["username"]
+        newuser_ip = addr[0]
+        self.database.user_reg(newuser_ip, newuser_password, newuser_username)
+        logger.info(f"Клиент {newuser_ip} -> регистрация прошла успешно")
+        data = {"result": True}
+        if newuser_ip in self.reg_list:
+            self.reg_list.remove(newuser_ip)
+            logging.info(f"Удалили клиента {newuser_ip} из списка регистрации")
+
+        self.send_message(conn, data, newuser_ip)
+        logger.info(f"Клиент {newuser_ip}. Отправили данные о результате регистрации")
+
     def auth_logic(self, conn, addr):
         """
         Логика авторизации клиента
@@ -95,22 +114,31 @@ class Server:
         auth_result, username = self.database.user_auth(client_ip, user_password)
 
         # Если авторизация прошла успешно
-        if auth_result:
+        if auth_result == 1:
             logger.info(f"Клиент {client_ip} -> авторизация прошла успешно")
             data = {"result": True, "body": {"username": username}}
-            self.authenticated_list.append(client_ip)
-            logging.info(f"Добавили клиента {client_ip} в список авторизации")
-
-        # Если авторизация не удалась
-        else:
+            if client_ip not in self.authenticated_list:
+                self.authenticated_list.append(client_ip)
+                logging.info(f"Добавили клиента {client_ip} в список авторизации")
+        # Если авторизация не удалась, но пользователь с таким ip существует
+        elif auth_result == 0:
             logger.info(f"Клиент {client_ip} -> авторизация не удалась")
-            data = {"result": False}
+            data = {"result": False, "description": "wrong auth"}
+        # Если пользователя с таким ip не существует, то необходима регистрация
+        else:
+            logger.info(
+                f"Клиент {client_ip} -> необходима предварительная регистрация в системе"
+            )
+            data = {"result": False, "description": "registration required"}
+            if client_ip not in self.reg_list:
+                self.reg_list.append(client_ip)
+                logging.info(f"Добавили клиента {client_ip} в список регистрации")
 
         self.send_message(conn, data, client_ip)
         logger.info(f"Клиент {client_ip}. Отправили данные о результате авторизации")
 
-        # Если была авторизация - принимаем последующие сообщения от пользователя
-        if auth_result:
+        # Если была успешная авторизация - принимаем последующие сообщения от пользователя
+        if auth_result == 1:
             self.message_logic(conn, client_ip)
 
     def router(self, conn, addr):
@@ -119,8 +147,12 @@ class Server:
         """
         client_ip = addr[0]
 
+        # Если клиенту нужна авторизация
+        if client_ip in self.reg_list:
+            self.reg_logic(conn, addr)
+
         # Если ip не авторизован - надо авторизовать
-        if client_ip not in self.authenticated_list:
+        elif client_ip not in self.authenticated_list:
             self.auth_logic(conn, addr)
 
         # Если уже был авторизован
