@@ -37,10 +37,10 @@ class Server:
         self.authenticated_list = []
         # Список ip, которым надо пройти регистрацию
         self.reg_list = []
-
-        #Список соединений, по которым рассылаются сообщения
+        # Список соединений, по которым рассылаются сообщения
         self.connections_list = []
 
+        self.ip2username_dict = {}
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
 
         # Ожидаем новое соединение
@@ -48,7 +48,7 @@ class Server:
             # Новое соединение
             conn, addr = self.sock.accept()
 
-            #Добавляем новое соединение
+            # Добавляем новое соединение
             self.connections_list.append((conn, addr))
             logging.info(f"Новое соединение от {addr[0]}")
             t = threading.Thread(target=self.router, args=(conn, addr))
@@ -85,14 +85,19 @@ class Server:
 
             # Если это конец сообщения, то значит, что мы все собрали и можем отдавать данные каждому соединению
             if END_MESSAGE_FLAG in data:
-                logging.info(f"Получили сообщение {data} от клиента {client_ip}")
-                
-                #Рассылка по каждому соединению
+
+                username = self.ip2username_dict[client_ip]
+                logging.info(
+                    f"Получили сообщение {data} от клиента {client_ip} ({username})"
+                )
+                data = {"username": username, "text": data}
+
+                # Рассылка по каждому соединению
                 for connection in self.connections_list:
                     current_conn, current_ip = connection
                     self.send_message(current_conn, data, current_ip)
-                
-                #Обнуляемся
+
+                # Обнуляемся
                 data = ""
 
             # Значит пришла только часть большого сообщения
@@ -137,6 +142,7 @@ class Server:
             data = {"result": True, "body": {"username": username}}
             if client_ip not in self.authenticated_list:
                 self.authenticated_list.append(client_ip)
+                self.ip2username_dict[client_ip] = username
                 logging.info(f"Добавили клиента {client_ip} в список авторизации")
         # Если авторизация не удалась, но пользователь с таким ip существует
         elif auth_result == 0:

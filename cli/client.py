@@ -11,7 +11,7 @@ END_MESSAGE_FLAG = "CRLF"
 # Настройки логирования
 logging.basicConfig(
     format="%(asctime)-15s [%(levelname)s] %(funcName)s: %(message)s",
-    handlers=[logging.FileHandler("./logs/client.log"), logging.StreamHandler()],
+    handlers=[logging.FileHandler("./logs/client.log")],
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class Client:
         # Авторизуемся
         self.send_auth()
 
-        #Поток чтения данных от сервера
+        # Поток чтения данных от сервера
         t = threading.Thread(target=self.read_message)
         t.daemon = True
         t.start()
@@ -95,7 +95,9 @@ class Client:
 
                 # Если успешно авторизовались
                 if response["result"]:
-                    print("Авторизация прошла успешно")
+                    print(
+                        "Авторизация прошла успешно, можете вводить сообщения для отправки:"
+                    )
                     break
 
                 # Если авторизация не удалась
@@ -133,8 +135,11 @@ class Client:
             if END_MESSAGE_FLAG in data:
                 logger.info(f"Прием данных от сервера: '{data}'")
                 data = data.replace(END_MESSAGE_FLAG, "")
-                
-                print(f"Полученные данные от сервера -> {data}")
+
+                data = json.loads(data)
+                message_text, user_name = data["text"], data["username"]
+
+                print(f"[{user_name}] {message_text}")
                 data = ""
 
             # Если приняли часть данных - сообщаем
@@ -155,7 +160,7 @@ class Client:
         """Обработка ввода сообщений пользователя"""
 
         while True:
-            msg = input("-> ")
+            msg = input()
             # Если сообщение exit
             if msg == "exit":
                 break
