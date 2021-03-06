@@ -37,6 +37,10 @@ class Server:
         self.authenticated_list = []
         # Список ip, которым надо пройти регистрацию
         self.reg_list = []
+
+        #Список соединений, по которым рассылаются сообщения
+        self.connections_list = []
+
         logging.info(f"Сервер инициализировался, слушает порт {port_number}")
 
         # Ожидаем новое соединение
@@ -44,6 +48,8 @@ class Server:
             # Новое соединение
             conn, addr = self.sock.accept()
 
+            #Добавляем новое соединение
+            self.connections_list.append((conn, addr))
             logging.info(f"Новое соединение от {addr[0]}")
             t = threading.Thread(target=self.router, args=(conn, addr))
             t.daemon = True
@@ -77,10 +83,16 @@ class Server:
             chunk = conn.recv(1024)
             data += chunk.decode()
 
-            # Если это конец сообщения, то значит, что мы все собрали и можем обратно отдавать клиенту
+            # Если это конец сообщения, то значит, что мы все собрали и можем отдавать данные каждому соединению
             if END_MESSAGE_FLAG in data:
                 logging.info(f"Получили сообщение {data} от клиента {client_ip}")
-                self.send_message(conn, data, client_ip)
+                
+                #Рассылка по каждому соединению
+                for connection in self.connections_list:
+                    current_conn, current_ip = connection
+                    self.send_message(current_conn, data, current_ip)
+                
+                #Обнуляемся
                 data = ""
 
             # Значит пришла только часть большого сообщения
@@ -170,6 +182,9 @@ class Server:
         # Если клиент был в списке авторизации - удаляем его
         if client_ip in self.authenticated_list:
             self.authenticated_list.remove(client_ip)
+            self.connections_list.remove((conn, addr))
+            print("Список соединений:")
+            print(self.connections_list)
             logging.info(f"Удалили клиента {client_ip} из списка авторизации")
 
     def __del__(self):

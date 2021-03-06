@@ -1,3 +1,6 @@
 - ip_addr: 127.0.0.1
   password: fa2b7c22247b9fc8179f3911d9b8d859aecc8e60d59a74aba7fc710b
   username: georgiydemo
+- ip_addr: 192.168.5.51
+  password: fa2b7c22247b9fc8179f3911d9b8d859aecc8e60d59a74aba7fc710b
+  username: lol

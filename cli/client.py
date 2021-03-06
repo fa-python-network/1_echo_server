@@ -1,6 +1,7 @@
 import socket
 import json
 import logging
+import threading
 from cli_validator import port_validation, ip_validation
 
 DEFAULT_PORT = 9090
@@ -25,6 +26,12 @@ class Client:
 
         # Авторизуемся
         self.send_auth()
+
+        #Поток чтения данных от сервера
+        t = threading.Thread(target=self.read_message)
+        t.daemon = True
+        t.start()
+
         # Работа с данными, поступающими от пользователя
         self.user_processing()
 
@@ -114,17 +121,8 @@ class Client:
 
             login_iter += 1
 
-    def send_message(self, message: str):
-        """Отправка сообщения"""
-
-        # Добавляем флаг конца сообщения (по-другому я не знаю как передавать больше 1024 и не разрывать соединение)
-        message += END_MESSAGE_FLAG
-
-        # Отправляем сообщение
-        self.sock.send(message.encode())
-        logger.info(f"Отправка данных серверу: '{message}'")
-        # Получаем ответ
-
+    def read_message(self):
+        """Чтение сообщения"""
         data = ""
         while True:
             # Получаем данные и собираем их по кусочкам
@@ -135,11 +133,23 @@ class Client:
             if END_MESSAGE_FLAG in data:
                 logger.info(f"Прием данных от сервера: '{data}'")
                 data = data.replace(END_MESSAGE_FLAG, "")
-                break
+                
+                print(f"Полученные данные от сервера -> {data}")
+                data = ""
 
             # Если приняли часть данных - сообщаем
             else:
                 logger.info(f"Приняли часть данных от сервера: '{data}'")
+
+    def send_message(self, message: str):
+        """Отправка сообщения"""
+
+        # Добавляем флаг конца сообщения (по-другому я не знаю как передавать больше 1024 и не разрывать соединение)
+        message += END_MESSAGE_FLAG
+
+        # Отправляем сообщение
+        self.sock.send(message.encode())
+        logger.info(f"Отправка данных серверу: '{message}'")
 
     def user_processing(self):
         """Обработка ввода сообщений пользователя"""
