@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def hash(password: str) -> str:
+    """Хеширование данных"""
     return sha3.sha3_224(password.encode("utf-8")).hexdigest()
 
 
@@ -95,9 +96,14 @@ class Server:
                 data = {"username": username, "text": data}
 
                 # Рассылка по каждому соединению
+                logger.info(f"Текущее кол-во подключений к серверу: {len(self.connections_list)}")
                 for connection in self.connections_list:
                     current_conn, current_ip = connection
-                    self.send_message(current_conn, data, current_ip)
+                    try:
+                        self.send_message(current_conn, data, current_ip)
+                    #Если вдруг у нас появилсоь соедиение, которое уже неактивно
+                    except BrokenPipeError:
+                        continue
 
                 # Обнуляемся
                 data = ""
@@ -187,10 +193,10 @@ class Server:
             self.message_logic(conn, client_ip)
 
         logging.info(f"Отключение клиента {client_ip}")
+        self.connections_list.remove((conn, addr))
         # Если клиент был в списке авторизации - удаляем его
         if client_ip in self.authenticated_list:
             self.authenticated_list.remove(client_ip)
-            self.connections_list.remove((conn, addr))
             print("Список соединений:")
             print(self.connections_list)
             logging.info(f"Удалили клиента {client_ip} из списка авторизации")
