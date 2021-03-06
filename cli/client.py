@@ -46,27 +46,34 @@ class Client:
             if input_username == "":
                 print("Имя пользователя не может быть пустым!")
             else:
-                data = json.dumps({"password": password, "username" : input_username}, ensure_ascii=False)
+                data = json.dumps(
+                    {"password": password, "username": input_username},
+                    ensure_ascii=False,
+                )
                 self.sock.send(data.encode())
                 logger.info(f"Отправка данных серверу: '{data}'")
 
                 # Получаем данные с сервера
                 response = json.loads(self.sock.recv(1024).decode())
                 if not response["result"]:
-                    raise ValueError(f"Не удалось осуществить регистрацию, ответ сервера {response}, более подробно см логи сервера")
+                    raise ValueError(
+                        f"Не удалось осуществить регистрацию, ответ сервера {response}, более подробно см логи сервера"
+                    )
                 logger.info("Успешно зарегистрировались")
                 break
-
 
     def send_auth(self):
         """Логика авторизации клиента"""
         login_iter = 1
         while True:
-            
-            #Отдельные строки для объяснения механизма авторизации при первом входе
-            req_password_str = "Введите пароль авторизации"
-            req_password_str +="\nЕсли это ваш первый вход в систему, то он будет использоваться для последующей авторизации в системе -> " if login_iter == 1 else " -> "
 
+            # Отдельные строки для объяснения механизма авторизации при первом входе
+            req_password_str = "Введите пароль авторизации"
+            req_password_str += (
+                "\nЕсли это ваш первый вход в систему, то он будет использоваться для последующей авторизации в системе -> "
+                if login_iter == 1
+                else " -> "
+            )
 
             user_password = input(req_password_str)
             if user_password != "":
@@ -90,16 +97,17 @@ class Client:
                     # Делаем новое соединение
                     # т.к. сервер рвет соединение, если авторизация не удалась
                     self.new_connection()
-                
-                #Если это первый вход с таким ip-адресом, то необходима регистрация
+
+                # Если это первый вход с таким ip-адресом, то необходима регистрация
                 elif response["description"] == "registration required":
                     self.new_connection()
                     self.send_reg(user_password)
                     self.new_connection()
 
                 else:
-                    raise ValueError(f"Получили неожиданный ответ от сервера: {response}")
-
+                    raise ValueError(
+                        f"Получили неожиданный ответ от сервера: {response}"
+                    )
 
             else:
                 print("Пароль не может быть пустым")
