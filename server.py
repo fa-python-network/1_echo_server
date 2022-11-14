@@ -14,6 +14,7 @@ while True:
 		break
 	msg += data.decode()
 	conn.send(data)
+	print(data)
 
 print(msg)
 
